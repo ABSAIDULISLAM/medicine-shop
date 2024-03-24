@@ -30,7 +30,7 @@
                 <div class="text-center" style="margin-bottom: 30px">
                     <img src="{{asset('backend/assets/img/logo.png')}}" style="height: 170px;width: 200px"/>
                 </div>
-                <form method="post" action="{{{route()}}}">
+                <form method="post" action="{{{route('Admin.dashboard')}}}">
                     <div class="form-group has-feedback">
                         <input type="text" name="txtuserName" class="form-control" placeholder="Username" autocomplete="off">
                         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
