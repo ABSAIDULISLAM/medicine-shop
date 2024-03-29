@@ -23,9 +23,9 @@
                     <div class="box-header with-border">
                         <h3 class="box-title"> Stock Matching List</h3>
                         <div class="box-tools pull-right">
-                              
-                            <a href="{{route('Admin.stock.matching.create')}}"><button type="button" class="btn bg-navy btn-flat">Add New</button></a>
-                                                    </div>
+
+                            <a href="{{route('Stock-matching.create')}}"><button type="button" class="btn bg-navy btn-flat">Add New</button></a>
+                        </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
                             <form method="post" action="bill-list">
@@ -36,7 +36,7 @@
                         </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        
+
                         <div class="table-responsive">
                             <table id="example1" class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -50,7 +50,7 @@
                                 </thead>
                                 <tbody>
                                                                     </tbody>
-                               
+
                             </table>
                         </div>
                     </div>

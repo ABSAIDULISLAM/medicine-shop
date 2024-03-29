@@ -22,7 +22,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title"> Income List</h3>
                         <div class="box-tools pull-right">
-                                                            <a href="{{route('Account.income.create')}}"><button type="button" class="btn bg-navy btn-flat">Add New</button></a>
+                                                            <a href="{{route('Account.other-income.create')}}"><button type="button" class="btn bg-navy btn-flat">Add New</button></a>
                                                     </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">

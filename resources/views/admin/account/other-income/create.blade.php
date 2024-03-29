@@ -1,17 +1,17 @@
 @extends('admin.layouts.master')
-@section('title', 'Income-create')
+@section('title', 'Expense-list')
 
 @section('content')
 
     <section class="content-header">
         <h1>
-            Others Income
-            <small>Add Others Income</small>
+            Expense
+            <small>Add Expense</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Others Income</a></li>
-            <li class="active">Add Others Income</li>
+            <li><a href="#">Expense</a></li>
+            <li class="active">Add Expense</li>
         </ol>
     </section>
     <!-- Main content -->
@@ -22,7 +22,7 @@
                 <!-- general form elements -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Add Others Income</h3>
+                        <h3 class="box-title">Add Expense</h3>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                             <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -99,7 +99,7 @@
                                         <label for="file">File Upload</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="file" name="income_file" id="file" class="form-control" title="File Upload" autocomplete="off">
+                                            <input type="file" name="expense_file" id="file" class="form-control" title="File Upload" autocomplete="off">
                                             <div style="margin-top: 5px;" id="preview"></div>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
                                         </div>
                                         <!-- /.input group -->
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" style="display: none">
                                         <label for="cashAmount">Cash Amount</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user-o"></i></span>
@@ -170,10 +170,10 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="voucher_no">Money Receipt</label>
+                                        <label for="voucher_no">Voucher Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                            <input type="text" name="money_receipt" id="money_receipt" class="form-control" value="3" autocomplete="off">
+                                            <input type="text" name="voucher_no" id="voucher_no" class="form-control" value="90" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -300,5 +300,5 @@
 
     </script>
 @endpush
-@endsection
 
+@endsection
