@@ -65,7 +65,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -121,7 +121,7 @@
             }
         });
         // fetch data and show as autocompleter
-        
+
         $("#tags").autocomplete({
             minLength: 2,
             source: function(req, resp){
@@ -142,7 +142,7 @@
                 return false;
             }
         });
-    
+
         // append row after select from autoCompleter
         $("#tags").keypress(function (event) {
             if (event.keyCode == 13) {
@@ -150,11 +150,11 @@
                 addItemDetailsAsTableRow(productName);
             }
         });
-    
+
         function addItemDetailsAsTableRow(productName) {
-            
+
             // alert(productName);
-            
+
             if (productName != '') {
                 $.ajax({
                     type: "POST",
@@ -188,10 +188,10 @@
                 });
             }
         }
-    
+
         //========= add table row ===================================
         var rowIdx = 0;
-    
+
         function addTableRow(responseObject) {
             // Adding a row inside the tbody.
             $('#tbody').append(`<tr id="R${++rowIdx}">
@@ -210,7 +210,7 @@
                 </td>
             </tr>`);
         }
-    
+
         // ========= Remove table row ===============
         $('#tbody').on('click', '.remove', function () {
             var child = $(this).closest('tr').nextAll();
@@ -224,7 +224,7 @@
             $(this).closest('tr').remove();
             rowIdx--;
         });
-        
+
         // ###--Quantity Toggle Function End--###
         $(document).on('keyup', '.add_qty', function () {
             var tID = $(this).closest('tr').attr('id');
@@ -238,8 +238,8 @@
 
             $('#' + tID + ' .inStock').val(currStock);
         });
-        //###--Payment Calculation Function Start--### 
-        
+        //###--Payment Calculation Function Start--###
+
         // ###--Quantity Toggle Function End--###
         $(document).on('keyup', '.minus_qty', function () {
             var tID = $(this).closest('tr').attr('id');
@@ -253,10 +253,10 @@
 
             $('#' + tID + ' .inStock').val(currStock);
         });
-        //###--Payment Calculation Function Start--### 
-        
-       
-    });  
+        //###--Payment Calculation Function Start--###
+
+
+    });
 </script>
 @endpush
 

@@ -1,24 +1,39 @@
 <?php
 
-use App\Http\Controllers\admin\AccountController;
-use App\Http\Controllers\admin\CollectionController;
-use App\Http\Controllers\admin\CustomerController;
-use App\Http\Controllers\admin\HRManagementController;
-use App\Http\Controllers\admin\SupliyerController;
-use App\Http\Controllers\admin\MedicineController;
-use App\Http\Controllers\admin\PurchaseController;
-use App\Http\Controllers\admin\ReportController;
-use App\Http\Controllers\admin\SalesController;
-use App\Http\Controllers\admin\SettingsController;
-use App\Http\Controllers\admin\SupliyerPaymentController;
+use App\Http\Controllers\Admin\Account\BankController;
+use App\Http\Controllers\Admin\Account\BankDepositController;
+use App\Http\Controllers\Admin\Account\BankTransferController;
+use App\Http\Controllers\Admin\Account\BankWithdrawalController;
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\CollectionController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\Account\ExpenseController;
+use App\Http\Controllers\Admin\Account\OtherIncomeController;
+use App\Http\Controllers\Admin\HR\DesignationController;
+use App\Http\Controllers\Admin\HR\EmployeeController;
+use App\Http\Controllers\Admin\HR\EmployeeTypeController;
+use App\Http\Controllers\Admin\HRManagementController;
+use App\Http\Controllers\Admin\SupliyerController;
+use App\Http\Controllers\Admin\MedicineController;
+use App\Http\Controllers\Admin\PurchaseController;
+use App\Http\Controllers\Admin\Report\CustomerReportController;
+use App\Http\Controllers\Admin\Report\EmployeeReportController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SalesController;
+use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\SupliyerPaymentController;
 use App\Http\Controllers\backend\HomeController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('admin/')->as('Admin.')->group(function(){
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
-    Route::get('stock-matching', [HomeController::class, 'StockMatching'])->name('stack.matching');
-    Route::get('stock-matching/create', [HomeController::class, 'StockMatchingCreate'])->name('stock.matching.create');
+});
+
+Route::controller(StockController::class)->prefix('stock-matching/')->as('Stock-matching.')->group(function(){
+    Route::get('index', 'index')->name('index');
+    Route::get('create', 'create')->name('create');
 });
 
 Route::controller(CustomerController::class)->prefix('customer/')->as('Customer.')->group(function(){
@@ -64,37 +79,85 @@ Route::controller(SupliyerPaymentController::class)->prefix('supliyer-payment/')
     Route::get('edit', 'edit')->name('edit');
 });
 
-Route::controller(HRManagementController::class)->prefix('hr-management/')->as('HR.')->group(function(){
-    Route::prefix('employee')->group(function(){
-        Route::get('type', 'EmployeeType')->name('employee.type');
-
-        Route::get('list', 'EmployeeList')->name('employee.list');
-        Route::get('create', 'EmployeeCreate')->name('employee.create');
-        Route::get('edit', 'EmployeeEdit')->name('employee.edit');
-
-        Route::get('statement', 'EmployeeStatement')->name('employee.statement');
-        Route::get('designation', 'EmployeeDesignation')->name('employee.designation');
-        Route::get('salary', 'EmployeeSalary')->name('employee.salary');
-    });
+// Account Module
+Route::controller(ExpenseController::class)->prefix('account/expense/')->as('Account.expense.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit/{id}', 'edit')->name('edit');
 });
-Route::controller(AccountController::class)->prefix('account/')->as('Account.')->group(function(){
+Route::controller(OtherIncomeController::class)->prefix('account/other-income/')->as('Account.other-income.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(BankDepositController::class)->prefix('account/bank/deposit')->as('Account.bank.deposit.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(BankWithdrawalController::class)->prefix('account/bank/withdraw')->as('Account.bank.withdraw.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(BankTransferController::class)->prefix('account/bank/transfer')->as('Account.bank.transfer.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
 
-    Route::prefix('expense/')->group(function(){
-        Route::get('list', 'ExpenseList')->name('expense.list');
-        Route::get('create', 'ExpenseCreate')->name('expense.create');
-    });
-    Route::prefix('income/')->group(function(){
-        Route::get('list', 'IncomeList')->name('income.list');
-        Route::get('create', 'IncomeCreate')->name('income.create');
-        // Route::get('create', 'IncomeCreate')->name('income.create');
-    });
-    Route::prefix('bank/')->group(function(){
-        Route::get('deposite', 'BankDeposite')->name('bank.deposite');
-        Route::get('withdraw', 'BankWithdraw')->name('bank.withdraw');
-        Route::get('transfer', 'BankTransfer')->name('bank.transfer');
-        Route::get('create', 'Bankcreate')->name('bank.create');
-    });
+// HR-Module
+Route::controller(EmployeeTypeController::class)->prefix('hr/employee/type/')->as('HR.employee.type.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(EmployeeController::class)->prefix('hr/employee/')->as('HR.employee.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+    Route::get('statement', 'statement')->name('statement');
+});
+Route::controller(DesignationController::class)->prefix('hr/employee/designation/')->as('HR.employee.designation.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit', 'edit')->name('edit');
+    Route::get('update', 'edit')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+    Route::get('statement', 'statement')->name('statement');
+});
+Route::controller(DesignationController::class)->prefix('hr/employee/salary')->as('HR.employee.salary.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit', 'edit')->name('edit');
 
+});
+
+// Reports
+Route::controller(EmployeeReportController::class)->prefix('report/employee')->as('Report.employee.')->group(function(){
+    Route::get('report', 'EmployeeReport')->name('report');
+    Route::get('expense', 'EmployeeExpense')->name('expense');
+    Route::get('ledger', 'EmployeeLedger')->name('ledger');
+    Route::get('monthly-salary-sheet', 'MonthlySalarySheet')->name('monthly.salary.sheet');
+    Route::get('employee-statement', 'EmployeeStatement')->name('statement');
+});
+Route::controller(CustomerReportController::class)->prefix('report/customer')->as('Report.customer.')->group(function(){
+    Route::get('report', 'report')->name('report');
+    Route::get('due', 'due')->name('due');
+    Route::get('statement', 'statement')->name('statement');
+    Route::get('ledger', 'ledger')->name('ledger');
 
 });
 
@@ -106,23 +169,17 @@ Route::controller(ReportController::class)->prefix('report/')->as('Report.')->gr
         Route::get('stock-report', 'StockReport')->name('stock.report');
         Route::get('stockout', 'Stockout')->name('stockout');
         Route::get('sales-report', 'SalesReport')->name('sales.report');
-        Route::get('purchase-report', 'PurchaseReport')->name('purchase.report');
         Route::get('sales-details', 'SalesDetails')->name('sales.details');
-        Route::get('customer-report', 'CustomerReport')->name('customer.report');
+        Route::get('purchase-report', 'PurchaseReport')->name('purchase.report');
         Route::get('supliyer-report', 'SupliyerReport')->name('supliyer.report');
-        Route::get('customer-due', 'CustomerDue')->name('customer.due');
-        Route::get('customer-statement', 'CustomerStatement')->name('customer.statement');
+        Route::get('supliyer-ledger', 'SupliyerLedger')->name('supliyer.ledger');
+
 
         Route::get('bank-leadger', 'BankLeadger')->name('bank.leadger');
         Route::get('collection-report', 'CollectionReport')->name('collection.report');
         Route::get('payment-report', 'PaymentReport')->name('payment.report');
-        Route::get('employee-report', 'EmployeeReport')->name('employee.report');
-        Route::get('employee-expense', 'EmployeeExpense')->name('employee.expense');
-        Route::get('employee-ledger', 'EmployeeLedger')->name('employee.ledger');
-        Route::get('monthly-salary-sheet', 'MonthlySalarySheet')->name('monthly.salary.sheet');
-        Route::get('employee-statement', 'EmployeeStatement')->name('employee.statement');
-        Route::get('customer-ledger', 'CustomerLedger')->name('customer.ledger');
-        Route::get('supliyer-ledger', 'SupliyerLedger')->name('supliyer.ledger');
+
+
         Route::get('expense-head-report', 'ExpenseHeadReport')->name('expense.head.report');
         Route::get('single-head-report', 'SingleHeadReport')->name('single.head.report');
         Route::get('expense-report', 'ExpenseReport')->name('expense.report');

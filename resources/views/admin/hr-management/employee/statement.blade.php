@@ -129,7 +129,7 @@
                             <th style="width: 370px" colspan="3"></th>
                             <th class="text-right" style="width: 100px">0.00</th>
                             <th class="text-right" style="width: 100px"><strong>0.00</strong></th>
-                        </tr>  
+                        </tr>
                         <tr>
                             <th colspan="5">Current Balance : </th>
                             <th class="text-right" style="color: red">0.00</th>
