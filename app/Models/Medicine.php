@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Medicine extends Model
 {
     use HasFactory;
+
+    public function generic()
+    {
+        return $this->belongsTo(Generic::class)->withDefault();
+    }
+    public function company()
+    {
+        return $this->belongsTo(Company::class)->withDefault();
+    }
 }

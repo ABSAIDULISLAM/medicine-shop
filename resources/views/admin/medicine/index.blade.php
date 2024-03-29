@@ -47,12 +47,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @php
+                                        $i=1;
+                                    @endphp
+                                    @foreach ($data as $item)
                                     <tr>
-                                        <td style="width: 10px">1</td>
-                                        <td style="width: 80px" class="text-center">20-Mar-2024</td>
-                                        <td style="width: 80px" class="text-center">20-Mar-2024</td>
-                                        <td style="width: 80px" class="text-center">20-Mar-2024</td>
+                                        <td style="width: 10px">{{ $i++ }}</td>
+                                        <td style="width: 80px" class="text-center">{{ $item->medicine_name }}</td>
+                                        <td style="width: 80px" class="text-center">{{ $item->generic->generic_name }}</td>
+                                        <td style="width: 80px" class="text-center">{{ $item->company->company_name }}</td>
                                         <td style="width: 80px" class="text-center">20-Mar-2024</td>
                                         <td style="width: 120px">
                                             BIO-TRADE INTERNATIONAL </td>
@@ -73,6 +76,7 @@
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
 
                             </table>
