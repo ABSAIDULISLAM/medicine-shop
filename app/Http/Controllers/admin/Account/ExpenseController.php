@@ -9,6 +9,7 @@ class ExpenseController extends Controller
 {
     public function index()
     {
+        // return 
         return view('admin.account.expense.index');
     }
     public function create()

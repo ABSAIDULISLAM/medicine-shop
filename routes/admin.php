@@ -20,6 +20,16 @@ use App\Http\Controllers\Admin\Report\CustomerReportController;
 use App\Http\Controllers\Admin\Report\EmployeeReportController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SalesController;
+use App\Http\Controllers\admin\Settings\AccountHeadController;
+use App\Http\Controllers\admin\Settings\BankSetupController;
+use App\Http\Controllers\admin\Settings\CompanyController;
+use App\Http\Controllers\admin\Settings\CompanySetupController;
+use App\Http\Controllers\admin\Settings\GenericController;
+use App\Http\Controllers\admin\Settings\JournalController;
+use App\Http\Controllers\admin\Settings\MedicineFormController;
+use App\Http\Controllers\admin\Settings\OwnCompanyController;
+use App\Http\Controllers\admin\Settings\RackController;
+use App\Http\Controllers\admin\Settings\SubHeadController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupliyerPaymentController;
@@ -31,17 +41,20 @@ Route::prefix('admin/')->as('Admin.')->group(function(){
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
 });
 
-Route::controller(StockController::class)->prefix('stock-matching/')->as('Stock-matching.')->group(function(){
-    Route::get('index', 'index')->name('index');
-    Route::get('create', 'create')->name('create');
-});
-
 Route::controller(CustomerController::class)->prefix('customer/')->as('Customer.')->group(function(){
     Route::get('list', 'index')->name('index');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
 });
-
 Route::controller(SupliyerController::class)->prefix('supliyer/')->as('Supliyer.')->group(function(){
     Route::get('list', 'index')->name('index');
+});
+
+Route::controller(SupliyerPaymentController::class)->prefix('supliyer-payment/')->as('Supliyer-payment.')->group(function(){
+    Route::get('list', 'index')->name('index');
+    Route::get('create', 'create')->name('create');
+    Route::get('edit', 'edit')->name('edit');
 });
 
 Route::controller(MedicineController::class)->prefix('medicine/')->as('Medicine.')->group(function(){
@@ -49,6 +62,8 @@ Route::controller(MedicineController::class)->prefix('medicine/')->as('Medicine.
     Route::get('create', 'create')->name('create');
     Route::get('edit', 'edit')->name('edit');
 });
+
+
 
 Route::controller(PurchaseController::class)->prefix('purchase/')->as('Purchase.')->group(function(){
     Route::get('list', 'index')->name('index');
@@ -73,11 +88,7 @@ Route::controller(CollectionController::class)->prefix('collection/')->as('Colle
     Route::get('edit', 'edit')->name('edit');
 });
 
-Route::controller(SupliyerPaymentController::class)->prefix('supliyer-payment/')->as('Supliyer-payment.')->group(function(){
-    Route::get('list', 'index')->name('index');
-    Route::get('create', 'create')->name('create');
-    Route::get('edit', 'edit')->name('edit');
-});
+
 
 // Account Module
 Route::controller(ExpenseController::class)->prefix('account/expense/')->as('Account.expense.')->group(function(){
@@ -160,6 +171,10 @@ Route::controller(CustomerReportController::class)->prefix('report/customer')->a
     Route::get('ledger', 'ledger')->name('ledger');
 
 });
+Route::controller(StockController::class)->prefix('stock-matching/')->as('Stock-matching.')->group(function(){
+    Route::get('index', 'index')->name('index');
+    Route::get('create', 'create')->name('create');
+});
 
 
 Route::controller(ReportController::class)->prefix('report/')->as('Report.')->group(function(){
@@ -190,19 +205,66 @@ Route::controller(ReportController::class)->prefix('report/')->as('Report.')->gr
 
 });
 
+
+Route::controller(GenericController::class)->prefix('settings/generic')->as('Settings.generic.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(CompanyController::class)->prefix('settings/company')->as('Settings.company.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(MedicineFormController::class)->prefix('settings/medicine-form')->as('Settings.medicine-form.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(RackController::class)->prefix('settings/rack')->as('Settings.rack.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(JournalController::class)->prefix('settings/journal')->as('Settings.journal.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(AccountHeadController::class)->prefix('settings/account-head')->as('Settings.account-head.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+
+Route::controller(SubHeadController::class)->prefix('settings/sub-head')->as('Settings.sub-head.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+
+Route::controller(BankSetupController::class)->prefix('settings/bank-setup')->as('Settings.bank-setup.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+Route::controller(CompanySetupController::class)->prefix('settings/company-setup')->as('Settings.company-setup.')->group(function(){
+    Route::get('list', 'index')->name('list');
+    Route::post('store', 'store')->name('store');
+    Route::post('update', 'update')->name('update');
+    Route::get('delete/{id}', 'delete')->name('delete');
+});
+
 Route::controller(SettingsController::class)->prefix('settings/')->as('Settings.')->group(function(){
 
-    Route::get('generic-list', 'GenericList')->name('generic.list');
-    Route::get('company-list', 'CompanyList')->name('company.list');
-    Route::get('medicine-form-list', 'MedicineFormList')->name('medicine.form.list');
-    Route::get('rack-list', 'RackList')->name('rack.list');
-    Route::get('journal-list', 'JournalList')->name('journal.list');
-    Route::get('account-head', 'AccountHead')->name('account.head');
-    Route::get('sub-head', 'SubHead')->name('sub.head');
-    Route::get('bank-setup', 'BankSetup')->name('bank.setup');
-    Route::get('company-setup', 'CompanySetup')->name('company.setup');
     Route::get('new-barcode', 'NewBarcode')->name('new.barcode');
-
-
 
 });

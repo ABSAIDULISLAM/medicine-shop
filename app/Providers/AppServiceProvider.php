@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         {
-            \Debugbar::disable();
+            \Debugbar::enable();
         }
         // for load with artisan commands for project faster
         // event(new ProjectLoaded());

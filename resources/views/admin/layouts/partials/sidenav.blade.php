@@ -269,32 +269,32 @@
                 <ul class="treeview-menu">
 
                     <li><a href="{{ route('Settings.generic.list') }}"
-                            class="{{ Request::is('settings/generic-list') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('settings/generic/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Generic List</a></li>
 
                     <li><a href="{{ route('Settings.company.list') }}"
-                            class="{{ Request::is('settings/company-list') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('settings/company/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Company List</a></li>
-                    <li><a href="{{ route('Settings.medicine.form.list') }}"
-                            class="{{ Request::is('settings/medicine-form-list') ? 'activeLink' : '' }}"><i
+                    <li><a href="{{ route('Settings.medicine-form.list') }}"
+                            class="{{ Request::is('settings/medicine-form/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Medicine Form</a></li>
                     <li><a href="{{ route('Settings.rack.list') }}"
-                            class="{{ Request::is('settings/rack-list') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('settings/rack/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Rack List</a></li>
                     <li><a href="{{ route('Settings.journal.list') }}"
-                            class="{{ Request::is('settings/journal-list') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('settings/journal/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Journal List</a></li>
-                    <li><a href="{{ route('Settings.account.head') }}"
-                            class="{{ Request::is('settings/account-head') ? 'activeLink' : '' }}"><i
+                    <li><a href="{{ route('Settings.account-head.list') }}"
+                            class="{{ Request::is('settings/account-head/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Account Head</a></li>
-                    <li><a href="{{ route('Settings.sub.head') }}"
-                            class="{{ Request::is('settings/sub-head') ? 'activeLink' : '' }}"><i
+                    <li><a href="{{ route('Settings.sub-head.list') }}"
+                            class="{{ Request::is('settings/sub-head/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Sub Head</a></li>
-                    <li><a href="{{ route('Settings.bank.setup') }}"
-                            class="{{ Request::is('settings/bank-setup') ? 'activeLink' : '' }}"><i
+                    <li><a href="{{ route('Settings.bank-setup.list') }}"
+                            class="{{ Request::is('settings/bank-setup/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Bank Setup</a></li>
-                    <li><a href="{{ route('Settings.company.setup') }}"
-                            class="{{ Request::is('settings/company-setup') ? 'activeLink' : '' }}"><i
+                    <li><a href="{{ route('Settings.company-setup.list') }}"
+                            class="{{ Request::is('settings/company-setup/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Company Setup</a></li>
                     <!--<li><a href="/upload-medicine-stock"><i class="fa fa-user-circle"></i> Stock Upload</a></li>-->
                     <li><a href="database-bacup.html"><i class="fa fa-user-circle" class=""></i> Database

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin\HR;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
     public function index()
     {
+       return Employee::latest()->get();
         return view('admin.hr-management.employee.index');
     }
     public function create()

@@ -9,6 +9,7 @@ class CustomerReportController extends Controller
 {
     public function report()
     {
+        
         return view('admin.report.customer.report');
     }
 

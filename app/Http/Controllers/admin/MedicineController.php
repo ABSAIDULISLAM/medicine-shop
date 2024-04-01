@@ -10,7 +10,7 @@ class MedicineController extends Controller
 {
     public function index()
     {
-        $data = Medicine::with('generic','company')->orderBy('medicine_name','asc')->get();
+        $data = Medicine::with('generic','company')->orderBy('medicine_name','asc')->paginate(50);
         return view('admin.medicine.index',compact('data'));
     }
 

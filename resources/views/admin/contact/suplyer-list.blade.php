@@ -18,124 +18,205 @@
 
     <!-- Main content -->
     <section class="content">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title"> Supplier List</h3>
-              <div class="box-tools pull-right">
-                <button type="button" data-toggle="modal" data-target="#add" class="btn bg-navy btn-flat">Add
-                  New</button>
-              </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <div class="table-responsive">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                    <tr style="background-color: #14A586;color: #fff;">
-                      <th>SL</th>
-                      <th>Company Name</th>
-                      <th>Contact Person</th>
-                      <th>Mobile Number</th>
-                      <th>Email Address</th>
-                      <th>Address</th>
-                      <th>Opening Balance</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                        <td>735</td>
-                        <td class="text-left">Zuellig Pharma Bangladesh LTD.</td>
-                        <td class="text-left">Zuellig Pharma Bangladesh LTD.</td>
-                        <td class="text-left">0</td>
-                        <td class="text-left"></td>
-                        <td class="text-left">N/A</td>
-                        <td class="text-left">0.00</td>
-                        <td>
-  
-                          <span class="label label-success" style="font-size: 14px;">Active</span>
-                        </td>
-                        <td class="text-center">
-                          <button data-toggle="modal" data-target="#edit715" class="btn red-meadow"
-                            style="background-color : #006666"><i class="fa fa-pencil"
-                              style="color : #fff"></i></button>
-                          <a href="?name=delete&id=715" onclick=" return checkDelete();"><button class="btn red-meadow"
-                              style="background-color : red"><i class="fa fa-trash-o "
-                                style="color : #fff"></i></button></a>
-                        </td>
-                      </tr>
-                      <div id="edit715" class="modal fade">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header" style="background-color: #2E4D62;color: #fff">
-                              <button type="button" class="close" data-dismiss="modal">&times;</button>
-                              <h4 class="modal-title">Edit Supplier</h4>
-                            </div>
-  
-  
-                            <div class="modal-body">
-                              <form method="post" action="" enctype="multipart/form-data">
-                                <label>Company Name</label>
-                                <input type="text" name="company_name" value="Zuellig Pharma Bangladesh LTD."
-                                  class="form-control" placeholder="Company Name" autocomplete="off" />
-                                <input type="hidden" name="id" value="715" class="form-control"
-                                  placeholder="Company Name" autocomplete="off" />
-                                <br />
-                                <label>Contact Person</label>
-                                <input type="text" name="contact_person" value="Zuellig Pharma Bangladesh LTD."
-                                  class="form-control" placeholder="Contact Name" autocomplete="off" />
-                                <br />
-                                <label>Mobile Number</label>
-                                <input type="text" name="contact_num" value="0" class="form-control"
-                                  placeholder="Mobile Number" autocomplete="off" />
-                                <br />
-                                <label>Email Address</label>
-                                <input type="text" name="email_address" value="" class="form-control"
-                                  placeholder="Email Address" />
-                                <br />
-                                <label>Address</label>
-                                <input type="text" name="address" value="N/A" class="form-control" placeholder="Address"
-                                  autocomplete="off" />
-                                <br />
-                                <label>Opening Balance</label>
-                                <input type="text" name="opening_balance" value="0.00" class="form-control"
-                                  placeholder="Opening Balance" autocomplete="off" />
-                                <br />
-                                <label>Status</label>
-                                <select name="status" class="form-control select2" style="width: 100%">
-                                  <option value="1" selected>Active</option>
-                                  <option value="0">Inactive</option>
-                                </select>
-                                <br />
-                                <br />
-  
-                                <input type="submit" name="edit_supplier" value="Update"
-                                  class="btn btn-success pull-right" />
-                              </form>
-                            </div>
-                            <div class="modal-footer">
-                            </div>
-                          </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"> Customer List</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" data-toggle="modal" data-target="#add" class="btn bg-navy btn-flat">Add
+                                New</button>
                         </div>
-                      </div>
-                </table>
-              </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr style="background-color: #14A586;color: #fff;">
+                                        <th>SL</th>
+                                        <th>Company Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Mobile Number</th>
+                                        <th>Email Address</th>
+                                        <th>Address</th>
+                                        <th>Opening Balance</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $startSerial = ($data->currentPage() - 1) * $data->perPage() + 1;
+                                    @endphp
+                                    @forelse ($data as $item)
+                                        <tr>
+                                            <td>{{ $startSerial++ }}</td>
+                                            <td class="text-left">{{ $item->company_name }}</td>
+                                            <td class="text-left">{{ $item->contact_person }}</td>
+                                            <td class="text-left">{{ $item->contact_num }}</td>
+                                            <td class="text-left">{{ $item->email_address }}</td>
+                                            <td class="text-left">{{ $item->address }}</td>
+                                            <td class="text-left">{{ $item->opening_balance }}</td>
+                                            <td>
+                                                <span class="label label-{{ $item->status == 1 ? 'success' : 'danger' }}"
+                                                    style="font-size: 14px;">{{ $item->status == 1 ? 'Active' : 'Inactive' }}</span>
+                                            </td>
+                                            <td class="text-center d-flex">
+                                                <button
+                                                    onclick="editModal('{{ $item->id }}', '{{ $item->company_name }}','{{ $item->contact_person }}','{{ $item->contact_num }}','{{ $item->email_address }}','{{ $item->address }}','{{ $item->opening_balance }}','{{ $item->status }}' )"
+                                                    class="btn red-meadow" style="background-color: #006666">
+                                                    <i class="fa fa-pencil" style="color: #fff"></i>
+                                                </button>
+                                                <a href="{{ route('Customer.delete', Crypt::encrypt($item->id)) }}"
+                                                    onclick="return checkDelete();">
+                                                    <button class="btn red-meadow" style="background-color: red">
+                                                        <i class="fa fa-trash-o " style="color: #fff"></i>
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="9">No data available</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-center mt-4">
+                                <ul class="pagination">
+                                    <!-- Previous Page Link -->
+                                    @if ($data->onFirstPage())
+                                        <li class="page-item disabled">
+                                            <span class="page-link">&laquo; Previous</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $data->previousPageUrl() }}"
+                                                rel="prev">&laquo; Previous</a>
+                                        </li>
+                                    @endif
+
+                                    <!-- Pagination Elements -->
+                                    @php
+                                        $start = max($data->currentPage() - 2, 1);
+                                        $end = min($start + 4, $data->lastPage());
+                                    @endphp
+
+                                    @if ($start > 1)
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $data->url(1) }}">1</a>
+                                        </li>
+                                        @if ($start > 2)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        @endif
+                                    @endif
+
+                                    @for ($i = $start; $i <= $end; $i++)
+                                        <li class="page-item {{ $i == $data->currentPage() ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ $data->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endfor
+
+                                    @if ($end < $data->lastPage())
+                                        @if ($end < $data->lastPage() - 1)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        @endif
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="{{ $data->url($data->lastPage()) }}">{{ $data->lastPage() }}</a>
+                                        </li>
+                                    @endif
+
+                                    <!-- Next Page Link -->
+                                    @if ($data->hasMorePages())
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $data->nextPageUrl() }}" rel="next">Next
+                                                &raquo;</a>
+                                        </li>
+                                    @else
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Next &raquo;</span>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
             </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
+            <!-- /.col -->
         </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
+        <!-- /.row -->
     </section>
     <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  <div id="add" class="modal fade">
+    </div>
+
+    {{-- edit  --}}
+    <div id="edit" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #2E4D62;color: #fff">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Customer</h4>
+                </div>
+
+
+                <div class="modal-body">
+                    <form method="post" action="{{ route('Customer.update') }}" enctype="multipart/form-data">
+                        @csrf
+                        <label>Company Name</label>
+                        <input type="text" name="id" id="id">
+                        <input type="text" name="company_name" value="Zaman" class="form-control"
+                            placeholder="Company Name" autocomplete="off" />
+                        <input type="hidden" name="id" value="1256" class="form-control" placeholder="Company Name"
+                            autocomplete="off" />
+                        <br />
+                        <label>Contact Person</label>
+                        <input type="text" name="contact_person" value="" class="form-control"
+                            placeholder="Contact Name" autocomplete="off" />
+                        <br />
+                        <label>Mobile Number</label>
+                        <input type="text" name="contact_num" value="01727451135" class="form-control"
+                            placeholder="Mobile Number" autocomplete="off" />
+                        <br />
+                        <label>Email Address</label>
+                        <input type="text" name="email_address" value="" class="form-control"
+                            placeholder="Email Address" />
+                        <br />
+                        <label>Address</label>
+                        <input type="text" name="address" value="" class="form-control" placeholder="Address"
+                            autocomplete="off" />
+                        <br />
+                        <label>Opening Balance</label>
+                        <input type="text" name="opening_balance" value="0.00" class="form-control"
+                            placeholder="Opening Balance" autocomplete="off" />
+                        <br />
+                        <label>Status</label>
+                        <select name="status" class="form-control select2" style="width: 100%">
+                            <option value="1" selected>Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                        <br />
+                        <br />
+                        <input type="submit" value="Update" class="btn btn-success pull-right" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /.content-wrapper -->
+    <div id="add" class="modal fade">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header" style="background-color: #2E4D62;color: #fff">
@@ -192,5 +273,17 @@
     </div>
 
 
-
+    <script>
+        function editModal(id, cname,cp, cn,ea,address,ob,status){
+            $('#edit').modal('show');
+            $('#edit').find('input[name="id"]').val(id);
+            $('#edit').find('input[name="company_name"]').val(cname);
+            $('#edit').find('input[name="contact_person"]').val(cp);
+            $('#edit').find('input[name="contact_num"]').val(cn);
+            $('#edit').find('input[name="email_address"]').val(ea);
+            $('#edit').find('input[name="address"]').val(address);
+            $('#edit').find('input[name="opening_balance"]').val(ob);
+            $('#edit').find('input[name="status"]').val(status);
+        }
+    </script>
     @endsection

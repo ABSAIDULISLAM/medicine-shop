@@ -17,4 +17,13 @@ class Medicine extends Model
     {
         return $this->belongsTo(Company::class)->withDefault();
     }
+
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
+    protected $attributes = [
+        'deletion_status' => 0,
+    ];
 }
