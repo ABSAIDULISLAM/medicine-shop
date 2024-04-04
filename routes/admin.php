@@ -60,14 +60,15 @@ Route::controller(SupliyerPaymentController::class)->prefix('supliyer-payment/')
 Route::controller(MedicineController::class)->prefix('medicine/')->as('Medicine.')->group(function(){
     Route::get('list', 'index')->name('index');
     Route::get('create', 'create')->name('create');
+    Route::post('store', 'store')->name('store');
     Route::get('edit', 'edit')->name('edit');
 });
-
 
 
 Route::controller(PurchaseController::class)->prefix('purchase/')->as('Purchase.')->group(function(){
     Route::get('list', 'index')->name('index');
     Route::get('create', 'create')->name('create');
+    Route::get('store', 'store')->name('store');
     Route::get('edit', 'edit')->name('edit');
     Route::get('windowPop/invoice', 'windowPopInvoice')->name('windowPop.invoice');
 });

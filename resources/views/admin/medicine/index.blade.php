@@ -46,12 +46,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
+                                    {{-- @php
                                         $startSerial = ($data->currentPage() - 1) * $data->perPage() + 1;
-                                    @endphp
+                                    @endphp --}}
                                     @foreach ($data as $item)
                                     <tr>
-                                        <td style="width: 10px">{{ $startSerial++ }}</td>
+                                        <td style="width: 10px">{{ $loop->index+1 }}</td>
                                         <td style="width: 80px" class="text-center">{{ $item->medicine_name }}</td>
                                         <td style="width: 80px" class="text-center">{{ $item->generic->generic_name }}</td>
                                         <td style="width: 80px" class="text-center">{{ $item->company->company_name }}</td>
@@ -78,7 +78,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center mt-4">
+                            {{-- <div class="d-flex justify-content-center mt-4">
                                 <ul class="pagination">
                                     <!-- Previous Page Link -->
                                     @if ($data->onFirstPage())
@@ -139,7 +139,7 @@
                                         </li>
                                     @endif
                                 </ul>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <!-- /.box-body -->

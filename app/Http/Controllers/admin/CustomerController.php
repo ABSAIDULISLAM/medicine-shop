@@ -25,7 +25,7 @@ class CustomerController extends Controller
             'contact_num' => ['required','regex:/\+?(88)?0?1[3456789][0-9]{8}\b/'],
             'email_address' => ['nullable', 'email', 'max:100'],
             'address' => ['nullable', 'string', 'max:100'],
-            'opening_balance' => ['nullable', 'numeric', 'max:100'],
+            'opening_balance' => ['nullable', 'numeric'],
             'status' => ['required'],
         ]);
 
@@ -52,7 +52,7 @@ class CustomerController extends Controller
             'contact_num' => ['required','regex:/\+?(88)?0?1[3456789][0-9]{8}\b/'],
             'email_address' => ['nullable', 'email', 'max:100'],
             'address' => ['nullable', 'string', 'max:100'],
-            'opening_balance' => ['nullable', 'numeric', 'max:100'],
+            'opening_balance' => ['nullable', 'numeric'],
             'status' => ['required'],
         ]);
 

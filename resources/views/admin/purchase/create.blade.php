@@ -38,7 +38,7 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="">
+                    <form method="POST" action="{{route('Purchase.store')}}">
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-3">

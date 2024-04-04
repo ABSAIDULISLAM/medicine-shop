@@ -16,6 +16,12 @@ class PurchaseController extends Controller
     {
         return view('admin.purchase.create');
     }
+
+    public function store(Request $request)
+    {
+        return $request->all();
+    }
+
     public function edit()
     {
         return view('admin.purchase.edit');
