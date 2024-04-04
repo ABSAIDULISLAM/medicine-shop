@@ -19,8 +19,6 @@ class BankSetupController extends Controller
 
     public function store(Request $request)
     {
-        // return $request->all();
-
         $validated = $request->validate([
             'bank_name' => ['required', 'string', 'max:100'],
             'opening_balance' => ['nullable', 'numeric'],
@@ -40,7 +38,6 @@ class BankSetupController extends Controller
 
     public function update(Request $request)
     {
-        return $request->all();
 
         $validated = $request->validate([
             'bank_name' => ['required', 'string', 'max:100'],
@@ -66,7 +63,6 @@ class BankSetupController extends Controller
         BankSetup::find($id)->delete();
         return redirect()->back()->with('success', 'Bank Setup Info Deleted Successfully');
     }
-
 
 
 }

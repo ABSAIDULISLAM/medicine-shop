@@ -44,7 +44,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @forelse ($datas as $item)
+                                    <tr>
+                                        <td>{{$loop->index+1}}</td>
+                                        <td>
+                                            <img src="{{asset($item->company_logo)}}" alt="{{asset($item->company_name)}}" height="40px" width="30px">
+                                        </td>
+                                        <td>{{$item->company_name}}</td>
+                                        <td>{{$item->company_address}}</td>
+                                        <td>{{$item->contact_person}}</td>
+                                        <td>{{$item->contact_number}}</td>
+                                        <td>{{$item->web_link}}</td>
+                                        <td>{{$item->company_setup_date}}</td>
+                                        <td><a href="{{route('Settings.company-setup.update')}}">Edit</a></td>
+                                    </tr>
+                                    @empty
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -60,6 +75,7 @@
     <!-- /.content -->
 
 <!-- /.content-wrapper -->
+    @include('errors.error')
 <div id="add" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -68,7 +84,8 @@
                 <h4 class="modal-title">Add Company Setup</h4>
             </div>
             <div class="modal-body">
-                <form method="post" action="{{route('')}}" enctype="multipart/form-data">
+                <form method="post" action="{{route('Settings.company-setup.store')}}" enctype="multipart/form-data">
+                    @csrf
                     <label>Company Name</label>
                     <input type="text" name="company_name" class="form-control" placeholder="Company Name" autocomplete="off" required=""/>
                     <br />

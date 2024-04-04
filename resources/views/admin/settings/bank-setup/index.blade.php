@@ -97,7 +97,7 @@
                     <h4 class="modal-title">Edit Bank </h4>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{route('Settings.bank-setup.store')}}">
+                    <form method="post" action="{{route('Settings.bank-setup.update')}}">
                         @csrf
                         <label>Bank Name</label>
                         <input type="hidden" name="id">
