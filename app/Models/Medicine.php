@@ -25,6 +25,14 @@ class Medicine extends Model
     {
         return $this->belongsTo(Company::class)->withDefault();
     }
+    public function mediform()
+    {
+        return $this->belongsTo(MedicineForm::class, 'medicine_form', 'id');
+    }
+    public function rack()
+    {
+        return $this->belongsTo(Rack::class)->withDefault();
+    }
 
 
 }

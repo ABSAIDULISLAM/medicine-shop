@@ -41,16 +41,16 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                    @if ($item->account && $item->journal)
+                                    @if ($item->accounthead && $item->journal)
                                     <tr>
                                         <td>{{$loop->index+1}}</td>
-                                        <td class="text-left">{{$item->account->head_name}}</td>
+                                        <td class="text-left">{{$item->accounthead->head_name}}</td>
                                         <td class="text-left">{{$item->journal->name}}</td>
                                         <td>{{$item->sub_head}}</td>
                                         <td class="text-center">
-                                            <button data-toggle="modal" data-target="#edit1" class="btn red-meadow"
-                                                style="background-color : #006666"><i class="fa fa-pencil"
-                                                    style="color : #fff"></i></button>
+                                            <button onclick="editModal('{{ $item->id }}', '{{ $item->accounthead->id }}', '{{ $item->journal->id }}', '{{ $item->sub_head }}', '{{ $item->second_sub_head }}')" class="btn red-meadow" style="background-color: #006666">
+                                                <i class="fa fa-pencil" style="color: #fff"></i>
+                                            </button>
                                             <a href="?name=delete&id=1" onclick=" return checkDelete();"><button
                                                     class="btn red-meadow" style="background-color : red"><i
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
@@ -73,7 +73,7 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-
+    @includeIf('errors.error')
     {{-- edit  --}}
     <div id="edit" class="modal fade">
         <div class="modal-dialog">
@@ -84,33 +84,46 @@
                     <h4 class="modal-title">Edit Sub Head</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="">
-                        <label>Select Journal</label>
-                        <select name="account_head" class="form-control select2"
-                            style="width: 100%;">
-                            <option value="8">Administrative </option>
-                            <option value="7">Projonmo</option>
-                        </select>
-                        <br />
-                        <label style="margin-top: 10px">Select Account Head</label>
-                        <select name="sub_head_id" class="form-control select2"
-                            style="width: 100%;">
-                            <option value="11">
-                                Dan</option>
-                            <option value="14">
-                                Moh</option>
-                            <option value="13">
-                                Office & Stationary Exp</option>
-                        </select>
-                        <br />
-                        <label style="margin-top: 10px">Sub head</label>
-                        <input type="text" name="second_sub_head" class="form-control"
-                            value="Cash " />
-                        <input type="hidden" name="id" class="form-control"
-                            value="1" />
-                        <br />
-                        <input type="submit" name="edit_cat" value="Update"
-                            class="btn btn-success pull-right" />
+                    <form method="post" action="{{route('Settings.sub-head.update')}}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="account_head">Account Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <select name="account_head" id="account_head" class="form-control select2"
+                                    style="width: 100%;">
+                                    <option value="">Select Account Head</option>
+                                    @forelse ($accountheads as $item)
+                                        <option value="{{$item->id}}">{{$item->head_name}}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="jornal_id">Journal Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <select name="journal_id" id="journal_id" class="form-control select2"
+                                    style="width: 100%;">
+                                    <option disabled>Select Journal</option>
+                                    @forelse ($journals as $item)
+                                        <option value="{{$item->id}}">{{$item->name}}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub_head">Sub head</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                                <input type="text" name="id" id="id">
+                                <input type="text" name="sub_head" id="sub_head"
+                                    class="form-control" placeholder="Sub head" autocomplete="off">
+                            </div>
+                        </div>
+                        <input type="submit" value="Insert" class="btn btn-success pull-right" />
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -120,7 +133,15 @@
         </div>
     </div>
 
-
+    <script>
+        function editModal(id, accountHeadId, journalId, subHead, secondSubHead) {
+            $('#edit').modal('show');
+            $('#edit').find('input[name="id"]').val(id);
+            $('#edit').find('select[name="account_head"]').val(accountHeadId);
+            $('#edit').find('select[name="sub_head_id"]').val(journalId);
+            $('#edit').find('input[name="sub_head"]').val(secondSubHead);
+        }
+    </script>
     <!-- /.content-wrapper -->
     <div id="add" class="modal fade">
         <div class="modal-dialog">
@@ -178,7 +199,7 @@
         </div>
     </div>
 
-    @push('js')
+    {{-- @push('js')
         <script>
             $(document).ready(function() {
                 $('#account_head').change(function() {
@@ -196,7 +217,7 @@
                 });
             });
         </script>
-    @endpush
+    @endpush --}}
 
 
 @endsection

@@ -8,14 +8,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Generic;
 use App\Models\MedicineForm;
+use App\Models\MedicineType;
 use App\Models\Rack;
+use Illuminate\Support\Facades\Crypt;
 
 class MedicineController extends Controller
 {
     public function index()
     {
-        $data = Medicine::with('generic','company')->orderBy('medicine_name','asc')->get();
-        return view('admin.medicine.index',compact('data'));
+        $data = collect(); // Create an empty collection to store the results
+
+        // Use chunk method
+        Medicine::with('generic', 'company', 'mediform')
+            ->orderBy('medicine_name', 'asc')
+            ->chunk(200, function ($medicines) use ($data) {
+                foreach ($medicines as $medicine) {
+                    $data->push($medicine);
+                }
+            });
+
+        return view('admin.medicine.index', compact('data'));
     }
 
     public function create()
@@ -35,7 +47,6 @@ class MedicineController extends Controller
 
     public function store(Request $request)
     {
-        // return $request->all();
         $validated = $request->validate([
             'medicine_name' => ['required','string', 'max:256'],
             'purchases_price' => ['required', 'numeric','min:0', 'max:1000000000'],
@@ -69,11 +80,72 @@ class MedicineController extends Controller
         $medicine->medi_type = 1;
         $medicine->serial_number = 1;
         $medicine->save();
+
+        return redirect()->route('Medicine.index')->with('success', 'Medicine Inserted Successfully');
+
     }
 
-    public function edit()
+    public function edit($id)
     {
-        return view('admin.medicine.edit');
+        $id = Crypt::decrypt($id);
+        $data = Medicine::with(['generic','company','mediform', 'rack'])->find($id);
+
+        $generics = Generic::orderBy('id', 'asc')->get();;
+        $mediForms = MedicineForm::orderBy('id', 'asc')->get();
+        $mediType = MedicineType::orderBy('id', 'asc')->get();
+        $companies = Company::orderBy('id', 'asc')->get();
+        $racks = Rack::orderBy('id', 'asc')->get();
+
+        return view('admin.medicine.edit', compact([
+            'generics',
+            'mediForms',
+            'mediType',
+            'companies',
+            'racks',
+            'data',
+        ]));
+    }
+
+    public function addMedicineType(Request $request)
+    {
+        $medicineType = new MedicineType();
+        $medicineType->medicine_type = $request->medicineType;
+        $medicineType->status = $request->medicineStatus;
+        $medicineType->save();
+        return response()->json($medicineType);
+    }
+
+    public function update(Request $request)
+    {
+        return $request->all();
+        $validated = $request->validate([
+            'medicine_name' => ['required','string', 'max:256'],
+            'purchases_price' => ['required', 'numeric','min:0', 'max:1000000000'],
+            'sale_price' => ['required', 'numeric','min:0', 'max:1000000000'],
+            'min_stock' => ['required', 'numeric','min:0', 'max:1000000000'],
+            'company_id' => ['required','integer','exists:companies,id'],
+            'rack_id' => ['required','integer','exists:racks,id'],
+            'generic_id' => ['required','integer','exists:generics,id'],
+            'medicine_form' => ['required','integer','exists:medicine_forms,id'],
+            'indication' => ['nullable','string', 'max:256'],
+            'side_effect' => ['nullable','string', 'max:256'],
+            'medicine_strength' => ['nullable','string', 'max:256'],
+            'administration' => ['nullable','string', 'max:256'],
+        ]);
+
+        $medicine = Medicine::find($request->id);
+
+
+
+        return redirect()->back()->with('success', 'Medicine Form Updated Successfully');
+    }
+
+
+    public function delete($id)
+    {
+        $id = Crypt::decrypt($id);
+        MedicineForm::find($id)->delete();
+        return redirect()->back()->with('success', 'Medicine Form Deleted Successfully');
     }
 
 

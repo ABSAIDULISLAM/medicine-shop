@@ -33,6 +33,7 @@
                         </div>
                     </div>
                     <!-- /.box-header -->
+                    @include('errors.error')
                     <!-- form start -->
                     <form method="POST" action="{{route('Medicine.store')}}" >
                         @csrf

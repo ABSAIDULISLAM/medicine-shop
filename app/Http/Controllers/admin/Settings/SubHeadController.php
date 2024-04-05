@@ -17,25 +17,26 @@ class SubHeadController extends Controller
         $accountheads = AccountHead::all();
         $journals = Journal::all();
 
-         $data = SubHead::with(['accounthead','journal'])->orderBy('id', 'desc')->paginate();
-        return view('admin.settings.sub-head.index', compact(['data', 'journals', 'accountheads']));
+        $data = SubHead::with(['accounthead','journal'])->orderBy('id', 'desc')->paginate();
+        return view('admin.settings.sub-head.index', compact([
+            'data',
+            'journals',
+            'accountheads'
+        ]));
     }
-
 
     public function store(Request $request)
     {
-        // return $request->all();
         $validated = $request->validate([
             'account_head' => ['required', 'exists:account_heads,id'],
             'journal_id' => ['required', 'exists:journals,id'],
-            'status' => ['required'],
+            'sub_head' => ['required'],
         ]);
-
        $subhead = new SubHead();
 
        $subhead->account_head =$request->account_head;
        $subhead->journal_id =$request->journal_id;
-       $subhead->status =$request->status;
+       $subhead->sub_head =$request->sub_head;
        $subhead->save();
 
         return redirect()->back()->with('success', 'Sub head Created Successfully');
@@ -43,17 +44,17 @@ class SubHeadController extends Controller
 
     public function update(Request $request)
     {
-        // return $request->all();
+
         $validated = $request->validate([
             'account_head' => ['required', 'exists:account_heads,id'],
             'journal_id' => ['required', 'exists:journals,id'],
-            'status' => ['required'],
+            'sub_head' => ['required'],
         ]);
 
         SubHead::find($request->id)->update([
             'account_head' => $request->account_head,
             'journal_id' => $request->journal_id,
-            'status' => $request->status,
+            'sub_head' => $request->sub_head,
         ]);
         return redirect()->back()->with('success', 'Sub head Upated Successfully');
     }

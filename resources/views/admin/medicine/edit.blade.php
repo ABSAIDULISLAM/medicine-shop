@@ -17,6 +17,7 @@
     <section class="content">
         <div class="row">
             <!-- left column -->
+
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div class="box box-primary">
@@ -28,8 +29,10 @@
                         </div>
                     </div>
                     <!-- /.box-header -->
+                    @includeIf('errors.error')
                     <!-- form start -->
-                    <form method="POST" action="">
+                    <form method="POST" action="{{route('Medicine.update')}}">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-4">
@@ -37,24 +40,28 @@
                                         <label for="medicine_name">Medicine Name <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-medkit"></i></span>
-                                            <input type="text" name="medicine_name" id="medicine_name" class="form-control" value="Nana Extra" placeholder="Medicine Name" autocomplete="off" required="">
+                                            <input type="text" name="medicine_name" id="medicine_name" class="form-control" value="{{$data->medicine_name}}" placeholder="Medicine Name" autocomplete="off" required="">
                                             <input type="hidden" name="created_by" class="form-control" value="17" autocomplete="off">
-                                            <input type="hidden" name="id" class="form-control" value="19822" autocomplete="off">
+                                            <input type="hidden" name="id" class="form-control" value="{{$data->id}}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="purchases_price">Purchases Prices</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="purchases_price" id="purchases_price" class="form-control" value="4.00" placeholder="Purchases Prices" autocomplete="off">
+                                            <input type="text" name="purchases_price" id="purchases_price" class="form-control" value="{{$data->purchases_price}}" placeholder="Purchases Prices" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="company_id">Company Name </label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="company_id" id="company_id" class="company_id form-control">
-                                                <option value="37" selected>Beximco Pharmaceuticals Ltd.</option>
+                                            <select name="company_id" id="company_id" class="select2 form-control">
+                                                <option disabled selected>Select Company Name</option>
+                                                @forelse ($companies as $item)
+                                                    <option value="{{$item->id}}" {{$data->company_id == $item->id ? 'selected' : ''}} >{{$item->company_name}}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
@@ -62,7 +69,7 @@
                                         <label for="box_qty">Pack Size</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="box_qty" id="box_qty" class="form-control" placeholder="Pack Size" value="0.00" autocomplete="off">
+                                            <input type="text" name="box_qty" id="box_qty" class="form-control" placeholder="Pack Size" value="{{$data->box_qty}}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -70,15 +77,11 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="medi_type" class="form-control select2" id="med_type" style="width: 100%">
-
-                                                <option value="Medical " >Medical </option>
-
-                                                <option value="Medicine" >Medicine</option>
-
-                                                <option value="Toiletries" >Toiletries</option>
-
-                                                <option value="Toiletries" >Toiletries</option>
-
+                                                <option disabled selected>Select Medicine Type</option>
+                                                @forelse ($mediType as $item)
+                                                    <option value="{{$item->id}}" {{$data->medi_type == $item->id ? 'selected' : ''}} >{{$item->medicine_type}}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                             <span class="input-group-btn">
                                                 <button type="button" style="padding: 8px;height: 34px" data-toggle="modal" data-target="#add_medi_type" class="btn btn-default btn-flat"><i style="vertical-align: 0% !important;" class="fa fa-plus-circle text-primary fa-lg" aria-hidden="true"></i></button>
@@ -89,7 +92,7 @@
                                         <label for="expire_date">Expire Date</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="date" name="expire_date" id="expire_date" class="form-control" value=""  autocomplete="off">
+                                            <input type="date" name="expire_date" id="expire_date" class="form-control" value="{{$data->expire_date}}"  autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -98,8 +101,12 @@
                                         <label for="generic_id">Generic Name</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="generic_id" id="generic_id" class="generic_id form-control">
-                                                <option value="1124" selected>Paracetamol</option>
+                                            <select name="generic_id" id="generic_id" class="select2 form-control">
+                                                <option disabled selected>Select Generic Name</option>
+                                                @forelse ($generics as $item)
+                                                    <option value="{{$item->id}}" {{$data->generic_id == $item->id ? 'selected' : ''}} >{{$item->generic_name}}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
@@ -107,15 +114,19 @@
                                         <label for="sale_price">Sales Price</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="sale_price" id="sale_price" class="form-control" value="5.00" placeholder=" Sales Price" autocomplete="off">
+                                            <input type="text" name="sale_price" id="sale_price" class="form-control" value="{{$data->sale_price}}" placeholder=" Sales Price" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="rack_id">Rack Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="rack_id" id="rack_id" class="rack_id form-control">
-                                                <option value="0" selected></option>
+                                            <select name="rack_id" id="rack_id" class="select2 form-control">
+                                                <option disabled selected>Select Rack Name</option>
+                                                @forelse ($racks as $item)
+                                                    <option value="{{$item->id}}" {{$data->rack_id == $item->id ? 'selected' : ''}} >{{$item->rack_name}}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
@@ -123,14 +134,14 @@
                                         <label for="min_stock">Minimum Stock</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="min_stock" class="form-control" value="0" placeholder="Minimum Stock" autocomplete="off">
+                                            <input type="text" name="min_stock" class="form-control" value="{{$data->min_stock}}" placeholder="Minimum Stock" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="serial_number">Serial Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="serial_number" id="serial_number" class="form-control" placeholder="Serial Number" value="0" autocomplete="off">
+                                            <input type="text" name="serial_number" id="serial_number" class="form-control" placeholder="Serial Number" value="{{$data->serial_number}}" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -139,8 +150,12 @@
                                         <label for="medicine_form">Medicine Form</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="medicine_form" id="medicine_form" class="medicine_form form-control">
-                                                <option value="" selected></option>
+                                            <select name="medicine_form" id="medicine_form" class="select2 form-control">
+                                                <option disabled selected>Select Rack Name</option>
+                                                @forelse ($mediForms as $item)
+                                                    <option value="{{$item->id}}" {{$data->medicine_form == $item->id ? 'selected' : ''}} >{{$item->medicine_strength}}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
@@ -149,28 +164,28 @@
                                         <label for="mrp_price">MRP Price</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="mrp_price" id="mrp_price" class="form-control" value="0.00" placeholder="MRP Price" autocomplete="off">
+                                            <input type="text" name="mrp_price" id="mrp_price" class="form-control" value="{{$data->mrp_price}}" placeholder="MRP Price" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="trade_price">Trade Price</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="trade_price" id="trade_price" class="form-control" value="0.00" placeholder="Trade Price" autocomplete="off">
+                                            <input type="text" name="trade_price" id="trade_price" class="form-control" value="{{$data->trade_price}}" placeholder="Trade Price" autocomplete="off">
                                         </div>
                                     </div>
                                    <div class="form-group">
                                         <label for="medicine_strength">Strength </label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="medicine_strength" id="medicine_strength" class="form-control" value="" placeholder="Strength" autocomplete="off">
+                                            <input type="text" name="medicine_strength" id="medicine_strength" class="form-control" value="{{$data->medicine_strength}}" placeholder="Strength" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="opening_stock">Opening Stock</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="opening_stock" id="opening_stock" class="form-control" value="0.00" placeholder="Opening Stock" autocomplete="off">
+                                            <input type="text" name="opening_stock" id="opening_stock" class="form-control" value="{{$data->opening_stock}}" placeholder="Opening Stock" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -178,7 +193,7 @@
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer text-center">
-                            <button type="submit" name="editMedicine" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
                             <button type="reset" class="btn btn-danger">Cancel</button>
                         </div>
                     </form>
@@ -190,168 +205,72 @@
     </section>
     <!-- /.content -->
 
-<div id="add_medi_type" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #2E4D62;color: #fff">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add Medicine Type</h4>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="">
-                    <label>Medicine Type</label>
-                    <input type="text" id="medicineType" class="form-control" placeholder="Medicine Type"/>
-                    <br />
-                    <label>Select status</label>
-                    <select id="medicineStatus" class="form-control">
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
-                    <br />
-                    <input type="button" value="Submit" id="addMedicineType" class="btn btn-success pull-right" />
-                </form>
-            </div>
-            <div class="modal-footer">
+    <div id="add_medi_type" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #2E4D62;color: #fff">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Medicine Type</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="">
+                        <label>Medicine Type</label>
+                        <input type="text" id="medicineType" class="form-control" placeholder="Medicine Type"/>
+                        <br />
+                        <label>Select status</label>
+                        <select id="medicineStatus" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                        <br />
+                        <input type="button" value="Submit" id="addMedicineType" class="btn btn-success pull-right" />
+                    </form>
+                </div>
+                <div class="modal-footer">
 
+                </div>
             </div>
         </div>
     </div>
-</div>
-@push('js')
-<script>
-    $(document).ready(function () {
-        $('#addMedicineType').click(function (e) {
 
-      e.preventDefault();
-      var medicineType = $('#medicineType').val();
-      var medicineStatus = $('#medicineStatus').val();
+    @push('js')
+    <script>
+        $(document).ready(function () {
+            $('#addMedicineType').click(function (e) {
+                e.preventDefault();
 
-      if(medicineType == ''){
-          alert("Sorry unauthorized access.");
-          return false;
-      }
-      if(medicineType == ""){
-          alert("Sorry Generic Name Can't be empty.");
-          return false;
-      }
+                var medicineType = $('#medicineType').val();
+                var medicineStatus = $('#medicineStatus').val();
 
-      $.ajax
-        ({
-          type: "POST",
-          url: "addMedicineType",
-          data: { "medicineType": medicineType, "medicineStatus": medicineStatus},
-          success: function (data) {
-              if(data != ""){
-                 alert('Save Successfully.');
-
-                 var customerinfo = data.split('##');
-                 var option = customerinfo[0];
-
-                 $('#med_type').children().remove();
-                 $('#med_type').append(option);
-                 $('#add_medi_type').modal('hide');
-              }
-
-          }
+                // Validation
+                if (medicineType.trim() == '') {
+                    alert("Medicine Type cannot be empty.");
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('Medicine.addMedicineType') }}",
+                    data: {
+                        "_token": "{{ csrf_token() }}", // Include CSRF token
+                        "medicineType": medicineType,
+                        "medicineStatus": medicineStatus
+                    },
+                    success: function (data) {
+                        if (data != "") {
+                            alert('Saved Successfully.');
+                            // Update select options
+                            $('#med_type').append($('<option>', {
+                                value: data.id,
+                                text: data.medicine_type,
+                                selected: true // Select newly added option
+                            }));
+                            $('#add_medi_type').modal('hide');
+                        }
+                    }
+                });
+            });
         });
-    });
-  });
-    $(document).ready(function () {
-        $('.company_id').select2({
-            minimumInputLength: 2,
-            allowClear: true,
-            placeholder: 'Please Enter Name',
-            ajax: {
-                url: 'ajax-response',
-                dataType: 'json',
-                delay: 250,
-                data: function (data) {
-                    return {
-                        searchCompany: data.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-        });
-    });
+    </script>
+    @endpush
 
-
-    $(document).ready(function () {
-        $('.generic_id').select2({
-            minimumInputLength: 2,
-            allowClear: true,
-            placeholder: 'Please Enter Name',
-            ajax: {
-                url: 'ajax-response',
-                dataType: 'json',
-                delay: 250,
-                data: function (data) {
-                    return {
-                        searchGeneric: data.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-        });
-    });
-
-    $(document).ready(function () {
-        $('.rack_id').select2({
-            minimumInputLength: 2,
-            allowClear: true,
-            placeholder: 'Please Enter Name',
-            ajax: {
-                url: 'ajax-response',
-                dataType: 'json',
-                delay: 250,
-                data: function (data) {
-                    return {
-                        searchRack: data.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-        });
-    });
-
-     $(document).ready(function () {
-        $('.medicine_form').select2({
-            minimumInputLength: 2,
-            allowClear: true,
-            placeholder: 'Please Enter Name',
-            ajax: {
-                url: 'ajax-response',
-                dataType: 'json',
-                delay: 250,
-                data: function (data) {
-                    return {
-                        searchMedicineForm: data.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-        });
-    });
-</script>
-@endpush
 @endsection

@@ -19,7 +19,6 @@ class AuthenticatedSessionController extends Controller
      * Display the login view.
      */
 
-
     public function create(): View
     {
         return view('login');
@@ -30,7 +29,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request):RedirectResponse
     {
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('user_name', $request->user_name)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return redirect()->back()->with('error', 'Opps !!. Invalid Credentials');
@@ -38,7 +37,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->authenticate();
         $request->session()->regenerate();
-        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Welcome'.' '. $user->name .' '. 'in Touch and Earn Empire');
+        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Welcome'.' '. $user->full_name .' '. 'in Softwate Company');
     }
 
     /**

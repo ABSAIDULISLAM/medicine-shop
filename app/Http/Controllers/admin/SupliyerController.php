@@ -10,8 +10,13 @@ class SupliyerController extends Controller
 {
     public function index()
     {
-        $data = Contact::where('contact_type',2)->latest()->paginate(20);
+        $data = [];
 
+        Contact::where('contact_type', 2)->latest()->chunk(20, function ($contacts) use (&$data) {
+            foreach ($contacts as $contact) {
+                $data[] = $contact;
+            }
+        });
         return view('admin.contact.suplyer-list', compact('data'));
     }
 }

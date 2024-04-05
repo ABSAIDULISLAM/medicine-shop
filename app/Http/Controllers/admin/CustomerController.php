@@ -11,7 +11,13 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $data = Contact::where('contact_type',1)->latest()->paginate(20);
+        $data = [];
+
+        Contact::where('contact_type', 1)->latest()->chunk(20, function ($contacts) use (&$data) {
+            foreach ($contacts as $contact) {
+                $data[] = $contact;
+            }
+        });
 
         return view('admin.contact.customer-list', compact('data'));
     }
