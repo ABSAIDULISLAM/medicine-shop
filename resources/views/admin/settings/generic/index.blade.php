@@ -39,12 +39,12 @@
                                     </tr>
                                 </thead>
                                 @php
-                                    $startSerial = ($data->currentPage() - 1) * $data->perPage() + 1;
+                                    // $startSerial = ($data->currentPage() - 1) * $data->perPage() + 1;
                                 @endphp
                                 <tbody>
                                     @forelse ($data as $item)
                                     <tr>
-                                        <td style="width: 10px">{{$startSerial++}}</td>
+                                        <td style="width: 10px">{{$loop->index+1}}</td>
                                         <td class="text-left" >{{$item->generic_name}}</td>
                                         <td>
                                             <span class="label label-{{ $item->status == 1 ? 'success' : 'danger' }}"
@@ -68,7 +68,7 @@
 
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center mt-4">
+                            {{-- <div class="d-flex justify-content-center mt-4">
                                 <ul class="pagination">
                                     <!-- Previous Page Link -->
                                     @if ($data->onFirstPage())
@@ -129,7 +129,7 @@
                                         </li>
                                     @endif
                                 </ul>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <!-- /.box-body -->

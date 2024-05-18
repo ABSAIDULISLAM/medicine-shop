@@ -9,6 +9,12 @@ class Purchases extends Model
 {
     use HasFactory;
 
+    public function suplyer()
+    {
+        return $this->belongsTo(Contact::class, 'supplier_id', 'id');
+    }
+
+
     protected $guarded = [];
 
     public $timestamps = false;

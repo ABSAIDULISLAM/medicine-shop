@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'image',
         'role_as',
         'number',
+        'user_name',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -47,6 +48,13 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+    ];
+
+    public $timestamps = false;
+    public $deletion_status = false;
+
+    protected $attributes = [
+        'deletion_status' => 0,
     ];
 
 

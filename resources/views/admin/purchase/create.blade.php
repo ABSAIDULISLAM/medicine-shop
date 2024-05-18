@@ -1,8 +1,11 @@
 @extends('admin.layouts.master')
-
 @section('title', 'add-Purchase')
 
 @section('content')
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <style>
         .ui-menu {
             margin-right: 21% !important;
@@ -38,7 +41,9 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="{{route('Purchase.store')}}">
+                    @includeIf('errors.error')
+                    <form method="POST" action="{{ route('Purchase.store') }}">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-3">
@@ -47,19 +52,25 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                             <select name="supplier_id" id="supplier_id" class="form-control select2"
-                                                required="">
-                                                <option value="">Select Supplier</option>
-                                                <option value="715">Zuellig Pharma Bangladesh LTD.</option>
+                                                required>
+                                                <option selected>Select Supplier</option>
+                                                @forelse ($suplyer as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->company_name }}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                             <span class="input-group-btn">
-                                                <button type="button" style="padding: 8px;height: 34px"
-                                                    data-toggle="modal" data-target="#addContact"
-                                                    class="btn btn-default btn-flat"><i
+                                                <button type="button" style="padding: 8px;height: 34px" data-toggle="modal"
+                                                    data-target="#addContact" class="btn btn-default btn-flat"><i
                                                         style="vertical-align: 0% !important;"
                                                         class="fa fa-plus-circle text-primary fa-lg"
                                                         aria-hidden="true"></i></button>
                                             </span>
                                         </div>
+
+                                        @error('supplier_id')
+                                                <div class="invalid-feedback error text-red">{{ $message }}</div>
+                                            @enderror
                                     </div>
                                     <div class="form-group">
                                         <label for="invoice_amount">Total Amount</label>
@@ -75,9 +86,12 @@
                                         <label for="payment">Payment</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-handshake-o"></i></span>
-                                            <input type="text" name="payment" class="form-control" id="payment"
+                                            <input type="text" name="payment" class="form-control @error('payment') is-invalid border border-danger @enderror" id="payment"
                                                 oninput="paymentAmount(this.id)" placeholder="0.00" autocomplete="off">
                                         </div>
+                                        @error('payment')
+                                            <div class="invalid-feedback error text-red">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -86,8 +100,8 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="previous_dues" id="previous_dues"
-                                                class="form-control" autocomplete="off" required=""
-                                                placeholder="0.00" readonly="">
+                                                class="form-control" autocomplete="off" required="" placeholder="0.00"
+                                                readonly="">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -108,14 +122,19 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
+                                    @php
+                                        $latesinvoice = App\Models\Purchases::latest()->first();
+                                        $invoiceId = $latesinvoice ? intval($latesinvoice->invoice_number) + 1 : 100001;
+                                        $invoiceId = str_pad($invoiceId, 5, '0', STR_PAD_LEFT);
+                                    @endphp
                                     <div class="form-group">
                                         <label for="invoice_number">Invoice Number <span
                                                 style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                                             <input type="text" name="invoice_number" id="invoice_number"
-                                                class="form-control" value="17110103191" autocomplete="off"
-                                                required="" readonly="">
+                                                value="{{ $invoiceId }}" class="form-control" value="17110103191"
+                                                autocomplete="off" required="" readonly="">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -134,11 +153,17 @@
                                             <select name="bank_id" id="bank_id" class="form-control select2"
                                                 style="width: 100%">
                                                 <option value="">Select Bank</option>
+                                                @forelse ($bank as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->bank_name }}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
-
                                 </div>
+                                @php
+                                    $date = date('Y-m-d');
+                                @endphp
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="datepicker">Date </label>
@@ -146,7 +171,7 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="date" class="form-control pull-right"
+                                            <input type="date" name="date" value="{{ $date }}" class="form-control pull-right"
                                                 id="datepicker" autocomplete="off">
                                         </div>
                                     </div>
@@ -173,6 +198,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -191,6 +217,9 @@
                                                         class="fa fa-plus-circle text-primary fa-lg"
                                                         aria-hidden="true"></i></button>
                                             </span>
+                                        </div>
+                                        <div id="products">
+
                                         </div>
                                     </div>
                                     <div style="overflow-x:auto;">
@@ -221,7 +250,7 @@
                                                             style="width: 100%;color: red;font-weight:bold;text-align: center"
                                                             readonly>
                                                         <input type="hidden" class="form-control hiddenTotalAmount"
-                                                            id="hiddenTotalAmount" readonly>
+                                                            id="hiddenTotalAmount" name="total_cost" readonly>
                                                     </td>
                                                     <td style='width: 80px;'></td>
                                                     <td style='width: 70px;'></td>
@@ -245,150 +274,11 @@
         <!-- /.row -->
     </section>
 
-    <div id="addContact" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: #2E4D62;color: #fff">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Supplier</h4>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="" id="contactform">
-                        <label>Supplier Name</label>
-                        <input type="text" name="company_name" id="company_name" class="form-control"
-                            placeholder="Customer Name" autocomplete="off" />
-                        <br />
-                        <label>Mobile Number</label>
-                        <input type="text" name="contact_num" id="contact_num" class="form-control"
-                            placeholder="Mobile Number" autocomplete="off" />
-                        <input type="hidden" name="created_by" id="created_by" value="17"
-                            class="form-control" placeholder="Company Name" autocomplete="off" />
-                        <input type="hidden" name="status" id="status" value="1" class="form-control"
-                            placeholder="Company Name" autocomplete="off" />
-                        <input type="hidden" name="contact_type" id="contact_type" value="2"
-                            class="form-control" autocomplete="off" />
-                        <br />
-                        <label>Address</label>
-                        <input type="text" name="address" id="address" class="form-control"
-                            placeholder="Address" autocomplete="off" />
-                        <br />
-                        <input type="button" value="Submit" id="addSupplier" class="btn btn-success pull-right" />
-                    </form>
-                </div>
-                <div class="modal-footer">
+    @includeIf('admin.purchase.partials.supplier')
 
-                </div>
-            </div>
-        </div>
-    </div>
+    @includeIf('admin.purchase.partials.medicine')
 
-    <div id="addMedicine" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: #07855f;color: #fff">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Medicine</h4>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="" id="medicineform">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="medicine_name">Medicine Name <span style="color: red"> *</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-medkit"></i></span>
-                                        <input type="text" id="medicine_name" class="form-control"
-                                            placeholder="Medicine Name" autocomplete="off" required="">
-                                        <input type="hidden" id="created_by" class="form-control" value="17"
-                                            autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="medicine_form">Medicine Form</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                        <select id="medicine_form" class="medicine_form form-control"
-                                            style="width: 100%"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="company_id">Company Name <span style="color: red"> *</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                        <select id="company_id" class="company_id form-control"
-                                            style="width: 100%"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="purchases_price">Purchases Prices <span style="color: red">
-                                            *</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                        <input type="text" id="purchases_price" class="form-control"
-                                            placeholder="Purchases Prices" autocomplete="off" required="">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="min_stock">Minimum Stock</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                        <input type="text" id="min_stock" class="form-control"
-                                            placeholder="Minimum Stock" autocomplete="off">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="generic_id">Generic Name </label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                        <select id="generic_id" class="generic_id form-control"
-                                            style="width: 100%"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="medicine_strength">Strength </label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                        <input type="text" id="medicine_strength" class="form-control"
-                                            placeholder="Strength" autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="rack_id">Rack Number</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                        <select id="rack_id" class="rack_id form-control"
-                                            style="width: 100%"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="sale_price">Sales Price <span style="color: red"> *</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                        <input type="text" id="sale_price" class="form-control"
-                                            placeholder=" Sales Price" autocomplete="off" required="">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="opening_stock">Opening Stock<span style="color: red"> *</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                        <input type="text" id="opening_stock" class="form-control"
-                                            placeholder="Opening Stock" autocomplete="off" required="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="button" value="Submit" id="saveMedicine" class="btn btn-success pull-right" />
-                    </form>
-                </div>
-                <div class="modal-footer">
 
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     @push('js')
@@ -706,215 +596,11 @@
         </script>
 
         <script>
-            $(document).ready(function() {
-                $('#addSupplier').click(function(e) {
-
-                    e.preventDefault();
-                    var company_name = $('#company_name').val();
-                    var contact_num = $('#contact_num').val();
-                    var address = $('#address').val();
-                    var created_by = $('#created_by').val();
-                    var status = $('#status').val();
-                    var contact_type = $('#contact_type').val();
-
-                    if (created_by == '') {
-                        alert("Sorry unauthorized access.");
-                        return false;
-                    }
-                    if (company_name == "" || contact_num == "") {
-                        alert("Sorry Company Name and Contact Number Can't be empty.");
-                        return false;
-                    }
-
-                    $.ajax({
-                        type: "POST",
-                        url: "addSupplier",
-                        data: {
-                            "company_name": company_name,
-                            "contact_num": contact_num,
-                            "address": address,
-                            "created_by": created_by,
-                            "status": status,
-                            "contact_type": contact_type
-                        },
-                        success: function(data) {
-                            if (data != "") {
-                                alert('Save Successfully.');
-
-                                var customerinfo = data.split('##');
-
-                                var option = customerinfo[0];
-                                var pre_blnc = customerinfo[1];
-
-                                $('#supplier_id').children().remove();
-                                $('#supplier_id').append(option);
-                                $('#previous_dues').val(pre_blnc);
-                                $('#addContact').modal('hide');
-                            }
-
-                        }
-                    });
-                });
-            });
-
-
-            $(document).ready(function() {
-                $('#saveMedicine').click(function(e) {
-
-                    e.preventDefault();
-                    var medicine_name = $('#medicine_name').val();
-                    var created_by = $('#created_by').val();
-                    var medicine_form = $('#medicine_form').val();
-                    var company_id = $('#company_id').val();
-                    var purchases_price = $('#purchases_price').val();
-                    var min_stock = $('#min_stock').val();
-                    var generic_id = $('#generic_id').val();
-                    var medicine_strength = $('#medicine_strength').val();
-                    var rack_id = $('#rack_id').val();
-                    var sale_price = $('#sale_price').val();
-                    var opening_stock = $('#opening_stock').val();
-
-                    if (created_by == '') {
-                        alert("Sorry unauthorized access.");
-                        return false;
-                    }
-                    if (medicine_name == "" || generic_id == "") {
-                        alert("Sorry Medicine Name and Generic Number and Box Qty Can not be empty.");
-                        return false;
-                    }
-
-                    $.ajax({
-                        type: "POST",
-                        url: "addMedicine",
-
-                        data: {
-                            "medicine_name": medicine_name,
-                            "created_by": created_by,
-                            "medicine_form": medicine_form,
-                            "company_id": company_id,
-                            "purchases_price": purchases_price,
-                            "min_stock": min_stock,
-                            "generic_id": generic_id,
-                            "medicine_strength": medicine_strength,
-                            "rack_id": rack_id,
-                            "sale_price": sale_price,
-                            "opening_stock": opening_stock
-                        },
-
-                        success: function(successData) {
-                            if (successData != "") {
-                                alert(successData);
-                                $('#addMedicine').modal('hide');
-                            }
-                        }
-                    });
-                });
-            });
-
-
-            $(document).ready(function() {
-                $('.company_id').select2({
-                    minimumInputLength: 2,
-                    allowClear: true,
-                    placeholder: 'Please Enter Name',
-                    ajax: {
-                        url: 'ajax-response',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(data) {
-                            return {
-                                searchCompany: data.term // search term
-                            };
-                        },
-                        processResults: function(response) {
-                            return {
-                                results: response
-                            };
-                        },
-                        cache: true
-                    }
-                });
-            });
-
-
-            $(document).ready(function() {
-                $('.generic_id').select2({
-                    minimumInputLength: 2,
-                    allowClear: true,
-                    placeholder: 'Please Enter Name',
-                    ajax: {
-                        url: 'ajax-response',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(data) {
-                            return {
-                                searchGeneric: data.term // search term
-                            };
-                        },
-                        processResults: function(response) {
-                            return {
-                                results: response
-                            };
-                        },
-                        cache: true
-                    }
-                });
-            });
-
-            $(document).ready(function() {
-                $('.rack_id').select2({
-                    minimumInputLength: 2,
-                    allowClear: true,
-                    placeholder: 'Please Enter Name',
-                    ajax: {
-                        url: 'ajax-response',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(data) {
-                            return {
-                                searchRack: data.term // search term
-                            };
-                        },
-                        processResults: function(response) {
-                            return {
-                                results: response
-                            };
-                        },
-                        cache: true
-                    }
-                });
-            });
-
-            $(document).ready(function() {
-                $('.medicine_form').select2({
-                    minimumInputLength: 2,
-                    allowClear: true,
-                    placeholder: 'Please Enter Name',
-                    ajax: {
-                        url: 'ajax-response',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(data) {
-                            return {
-                                searchMedicineForm: data.term // search term
-                            };
-                        },
-                        processResults: function(response) {
-                            return {
-                                results: response
-                            };
-                        },
-                        cache: true
-                    }
-                });
-            });
-
-
             $('#supplier_id').change(function() {
                 var id = $(this).val();
                 $.ajax({
                     type: 'POST',
-                    url: 'ajax-response',
+                    url: '{{ route('Purchase.supplier.info') }}',
                     data: {
                         'supplier_id': id
                     },
@@ -972,27 +658,25 @@
 
             }
 
+            // ###--product add secation ---###
             $(document).ready(function() {
-                // button type change to 'submit' if data submit
-                $("#btnSubmitInvoice").click(function(event) {
-                    if ($('#tbody').find('tr').length > 0) {
-                        $('#btnSubmitInvoice').attr("type", "submit");
-                    }
-                });
-                // fetch data and show as autocompleter
-
+                // Autocomplete setup with modified source function to directly add item if only one result is found
                 $("#tags").autocomplete({
                     minLength: 2,
                     source: function(req, resp) {
                         $.ajax({
                             type: "POST",
-                            url: 'ajax-response',
+                            url: '{{ route('Purchase.product.search') }}',
                             data: {
-                                request: 'fetchSimilarData',
+                                _token: '{{ csrf_token() }}',
                                 pursearchQuery: req.term
                             },
-                            success: function(d) {
-                                resp(d);
+                            success: function(data) {
+                                if (data.length === 1) {
+                                    addItemDetailsAsTableRow(data[0].value);
+                                } else {
+                                    resp(data);
+                                }
                             }
                         });
                     },
@@ -1004,7 +688,7 @@
                     }
                 });
 
-                // append row after select from autoCompleter
+                // Add item details as table row if enter is pressed
                 $("#tags").keypress(function(event) {
                     if (event.keyCode == 13) {
                         var productName = $(this).val();
@@ -1013,80 +697,68 @@
                 });
 
                 function addItemDetailsAsTableRow(productName) {
-
-                    // alert(productName);
-
                     if (productName != '') {
                         $.ajax({
                             type: "POST",
                             data: {
-                                request: 'fetchSingleProductData',
+                                _token: '{{ csrf_token() }}', // CSRF token
                                 purchasesProductName: productName
                             },
-                            url: 'ajax-response',
-                            dataType: 'text',
+                            url: '{{ route('Purchase.fetch.single.product') }}',
+                            dataType: 'json',
                             success: function(response) {
-                                console.log(response);
-                                if (response != '') {
-                                    var array = [];
-                                    var responseObject = JSON.parse(response);
-                                    if (responseObject != '') {
-                                        var alreadyListed = 0;
-                                        $('#tbody .productId').each(function() {
-                                            if (this.value == responseObject.id) {
-                                                alreadyListed++;
-                                            }
-                                        });
-                                        if (alreadyListed > 0) {
-                                            alert(responseObject.product_name + ' - already listed.');
-                                            return flase;
-                                        } else {
-                                            addTableRow(responseObject);
-                                            $('#tags').val('');
-                                            calculateTotalAmount();
+                                if (response.id) {
+                                    var alreadyListed = 0;
+                                    $('#tbody .productId').each(function() {
+                                        if (this.value == response.id) {
+                                            alreadyListed++;
                                         }
+                                    });
+                                    if (alreadyListed > 0) {
+                                        alert(response.medicine_name + ' - already listed.');
+                                        return false;
+                                    } else {
+                                        addTableRow(response);
+                                        $('#tags').val('');
+                                        calculateTotalAmount();
                                     }
+                                } else {
+                                    alert('Product not found.');
                                 }
                             }
                         });
                     }
                 }
 
-                //========= add table row ===================================
                 var rowIdx = 0;
 
                 function addTableRow(responseObject) {
-                    // Adding a row inside the tbody.
-
                     $('#tbody').append(`<tr id="R${++rowIdx}">
-                <td class="row-index text-center" style="width: 10px"><p>${rowIdx}</p></td>
-                <td class="text-left" style="width: 150px;">` + responseObject.medicine_name + ` <br> ` +
-                        responseObject.medicine_form + `<br> ` + responseObject.medicine_strength + `<br> ` +
-                        responseObject.generic_name + `<input type="hidden" name="product_id[]" value="` +
-                        responseObject.id + `" class="productId"></td>
-                <td class="text-center" style="width: 70px;"><input type="text" value="1" name="quantity[]" class="form-control cl_qty" style="width:100%;" autocomplete="off"></td>
-                <td class="text-center" style="width: 80px;"><input type="text" value="` + responseObject.cost_price + `" name="cost_price[]" class="form-control unitPrice" style="width:100%;text-align: center" autocomplete="off"></td>
-                <td class="text-center" style="width: 80px;"><input type="text" value="` + responseObject.sales_price + `" name="sales_price[]" class="form-control sales_price" style="width:100%;text-align: center" autocomplete="off"></td>
-                <td class="text-center" style="width: 80px;"><input type="date" value="` + responseObject.expire_date +
-                        `" name="expire_date[]" class="form-control exp_date" style="width:100%;text-align: center"></td>
-                <td class="text-center" style="width: 80px;"><select name="rack_id[]" class="form-control rack_id" style="width:100%;text-align: center;color: red;font-weight: bold"> <option value="` +
-                        responseObject.rack_id + `"  >` + responseObject.rack_name + `</option>  <option value="1"  ></option>  <option value="2"  >Rack2</option>  <option value="3"  >Rack3</option>  <option value="4"  >Rack4</option>  <option value="5"  >Rack5</option>  <option value="6"  >Rack6</option>  <option value="7"  >Rack7</option>  <option value="8"  >Rack8</option>  <option value="9"  >Rack9</option>  <option value="13"  >Rack13</option>  <option value="14"  >Rack14</option>  <option value="15"  >Rack15</option>  <option value="16"  >Rack16</option>  <option value="17"  >Rack17</option>  <option value="18"  >Rack18</option>  <option value="19"  >Rack19</option>  <option value="20"  >Rack20</option>  <option value="21"  >Rack21</option>  <option value="22"  >Rack22</option>  <option value="23"  >Rack23</option>  <option value="24"  >Rack24</option>  <option value="25"  >Rack25</option>  <option value="26"  >Rack26</option>  <option value="27"  >Rack27</option>  <option value="28"  >Rack28</option>  <option value="29"  >Rack29</option>  <option value="30"  ></option>  <option value="31"  >Rack1</option> </select></td>
-                <td class="text-center" style="width: 100px;">
-                    <input type="text" value="` + responseObject.cost_price + `" name="sub_total[]" class="form-control proPrice" style="width:100%;text-align: center">
-                    <input type="hidden" value="` + responseObject.cost_price + `" name="hiddnTotal[]" class="form-control hiddnTotal" style="width:100%;text-align: center">
-                </td>
-                <td class="text-center" style="width: 70px;">
-                    <input type="text" value="` + responseObject.inStock + `" name="stock[]" tabindex="1" class="form-control inStock" style="width:100%;text-align: center" readonly>
-                    <input type="hidden" value="` + responseObject.preStock + `" name="preStock[]" tabindex="1" class="form-control preStock" style="width:100%;text-align: center" readonly>
-                    <input type="hidden" value="` + responseObject.generic_id + `" name="product_code[]" tabindex="1" class="form-control product_code" style="width:100%;text-align: center" readonly>
-                </td>
-                <td class="text-center" style="width: 50px;">
-                    <button class="btn btn-danger remove" tabindex="1" type="button"><i class="fa fa-times" aria-hidden="true"></i></button>
-                </td>
-            </tr>`);
+                        <td class="row-index text-center"><p>${rowIdx}</p></td>
+                        <td class="text-left">${responseObject.medicine_name} <br> ${responseObject.medicine_form} <br> ${responseObject.medicine_strength} <br> ${responseObject.generic_name}
+                            <input type="hidden" name="product_id[]" value="${responseObject.id}" class="productId">
+                        </td>
+                        <td class="text-center"><input type="number" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
+                        <td class="text-center"><input type="number" value="${responseObject.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
+                        <td class="text-center"><input type="number" value="${responseObject.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
+                        <td class="text-center"><input type="date" value="${responseObject.expire_date}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
+                        <td class="text-center">
+                            <select name="rack_id[]" class="form-control rack_id">
+                                <option value="${responseObject.rack_id}">${responseObject.rack_name}</option>
+                            </select>
+                        </td>
+                        <td class="text-center"><input type="text" value="${responseObject.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
+                            <input type="hidden" value="${responseObject.cost_price}" name="hiddnTotal[]" class="form-control hiddnTotal" autocomplete="off">
+                        </td>
+                        <td class="text-center"><input type="text" value="${responseObject.inStock}" name="stock[]" class="form-control inStock" readonly>
+                            <input type="hidden" value="${responseObject.preStock}" name="preStock[]" class="form-control preStock" readonly>
+                            <input type="hidden" value="${responseObject.generic_id}" name="product_code[]" class="form-control product_code" readonly>
+                        </td>
+                        <td class="text-center"><button class="btn btn-danger remove" type="button"><i class="fa fa-times"></i></button></td>
+                    </tr>`);
                 }
 
-                // ========= Remove table row ===============
+                // Remove table row
                 $('#tbody').on('click', '.remove', function() {
                     var child = $(this).closest('tr').nextAll();
                     child.each(function() {
@@ -1100,13 +772,14 @@
                     rowIdx--;
                     calculateTotalAmount();
                 });
-                // ###--Quantity Toggle Function End--###
+
+                // Update stock and price when quantity changes
                 $(document).on('keyup', '.cl_qty', function() {
                     var tID = $(this).closest('tr').attr('id');
-                    var cl_qty = $(this).val();
+                    var cl_qty = parseFloat($(this).val()) || 0;
 
-                    var preStock = $('#' + tID + ' .preStock').val();
-                    var unit_price = $('#' + tID + ' .unitPrice').val();
+                    var preStock = parseFloat($('#' + tID + ' .preStock').val()) || 0;
+                    var unit_price = parseFloat($('#' + tID + ' .unitPrice').val()) || 0;
 
                     var currStock = Number(preStock) + Number(cl_qty);
                     var line_total = Number(unit_price) * Number(cl_qty);
@@ -1116,44 +789,39 @@
                     $('#' + tID + ' .hiddnTotal').val(roundToTwo(line_total));
                     calculateTotalAmount();
                 });
-                //###--Payment Calculation Function Start--###
 
-                //###--Quantity Toggle Function End--###
+                // Update line total when unit price changes
                 $(document).on('keyup', '.unitPrice', function() {
                     var tID = $(this).closest('tr').attr('id');
-                    var unit_price = $(this).val();
+                    var unit_price = parseFloat($(this).val()) || 0;
 
-                    var cl_qty = $('#' + tID + ' .cl_qty').val();
+                    var cl_qty = parseFloat($('#' + tID + ' .cl_qty').val()) || 0;
 
                     var line_total = Number(unit_price) * Number(cl_qty);
                     $('#' + tID + ' .proPrice').val(roundToTwo(line_total));
                     $('#' + tID + ' .hiddnTotal').val(roundToTwo(line_total));
                     calculateTotalAmount();
                 });
-                //###--Payment Calculation Function Start--###
 
-
-                //###--Quantity Toggle Function End--###
+                // Update unit price when line total changes
                 $(document).on('keyup', '.proPrice', function() {
                     var tID = $(this).closest('tr').attr('id');
-                    var proPrice = $(this).val();
+                    var proPrice = parseFloat($(this).val()) || 0;
 
-                    var cl_qty = $('#' + tID + ' .cl_qty').val();
+                    var cl_qty = parseFloat($('#' + tID + ' .cl_qty').val()) || 0;
 
-                    var new_cost = Number(proPrice) / Number(cl_qty);
+                    var new_cost = (cl_qty !== 0) ? Number(proPrice) / Number(cl_qty) : 0;
                     var line_total = Number(new_cost) * Number(cl_qty);
 
                     $('#' + tID + ' .unitPrice').val(roundToTwo(new_cost));
                     $('#' + tID + ' .hiddnTotal').val(roundToTwo(line_total));
                     calculateTotalAmount();
                 });
-                //###--Payment Calculation Function Start--###
-
 
                 function calculateTotalAmount() {
                     var sum = 0;
                     $('.hiddnTotal').each(function() {
-                        sum += parseFloat(this.value);
+                        sum += parseFloat(this.value) || 0;
                     });
                     sum = sum.toFixed(2);
                     $('#totalAmount').val(sum);
@@ -1165,12 +833,12 @@
                 function roundToTwo(num) {
                     return num.toFixed(2);
                 }
-
             });
 
             function roundToTwo(num) {
                 return num.toFixed(2);
             }
+
 
             $("#payment_method").change(function() {
                 if ($(this).val() == "1") {
@@ -1183,5 +851,6 @@
             });
         </script>
     @endpush
+
 
 @endsection

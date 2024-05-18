@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request):RedirectResponse
+    public function store(LoginRequest $request)
     {
         $user = User::where('user_name', $request->user_name)->first();
 
@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->authenticate();
         $request->session()->regenerate();
-        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Welcome'.' '. $user->full_name .' '. 'in Softwate Company');
+        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Welcome'.' '. $user->full_name .' '. 'in Software Company');
     }
 
     /**

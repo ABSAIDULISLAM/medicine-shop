@@ -4,8 +4,6 @@
 
 @section('content')
 
-
-
     <style>
         .ui-menu {
             margin-right: 21% !important;
@@ -624,7 +622,7 @@
             function ShowTime() {
                 var dt = new Date();
                 document.getElementById("lblTime").innerHTML = dt.toLocaleTimeString();
-                window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec  
+                window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec
             }
 
 
@@ -643,7 +641,7 @@
 
                 var chart = new CanvasJS.Chart("chartContainer", {
                     theme: "light1", // "light2", "dark1", "dark2"
-                    animationEnabled: false, // change to true		
+                    animationEnabled: false, // change to true
                     title: {
                         text: "Monthly Sales History"
                     },

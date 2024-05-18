@@ -45,7 +45,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-medkit"></i></span>
                                             <input type="text" name="medicine_name" id="medicine_name"
-                                                class="form-control" placeholder="Medicine Name" autocomplete="off"
+                                                class="form-control" placeholder="Medicine Name" autocomplete="off" value="{{old('medicine_name')}}"
                                                 required="">
                                         </div>
                                     </div>
@@ -55,7 +55,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="purchases_price" id="purchases_price"
-                                                class="form-control" placeholder="Purchases Prices" autocomplete="off"
+                                                class="form-control" placeholder="Purchases Prices" autocomplete="off"  value="{{old('purchases_price')}}"
                                                 required="">
                                         </div>
                                     </div>
@@ -78,7 +78,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <textarea name="indication" id="indication" cols="5" rows="5" class="form-control" placeholder="Indication"
-                                                autocomplete="off"></textarea>
+                                                autocomplete="off">{{old('indication')}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +102,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
                                             <input type="text" name="sale_price" id="sale_price" class="form-control"
-                                                placeholder=" Sales Price" autocomplete="off" required="">
+                                                placeholder=" Sales Price" autocomplete="off" value="{{old('sale_price')}}" required="">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -123,7 +123,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <textarea name="side_effect" id="side_effect" cols="5" rows="5" class="form-control"
-                                                placeholder="Side Effect" autocomplete="off"></textarea>
+                                                placeholder="Side Effect" autocomplete="off">{{old('side_effect')}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="medicine_strength" id="medicine_strength"
-                                                class="form-control" placeholder="Strength" autocomplete="off">
+                                                class="form-control" placeholder="Strength" value="{{old('medicine_strength')}}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -156,7 +156,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="min_stock" id="min_stock" class="form-control"
-                                                placeholder="Minimum Stock" autocomplete="off">
+                                                placeholder="Minimum Stock" value="0" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -164,7 +164,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <textarea name="administration" id="administration" cols="5" rows="5" class="form-control"
-                                                placeholder="Administration" autocomplete="off"></textarea>
+                                                placeholder="Administration" autocomplete="off">{{old('administration')}}</textarea>
                                         </div>
                                     </div>
                                 </div>

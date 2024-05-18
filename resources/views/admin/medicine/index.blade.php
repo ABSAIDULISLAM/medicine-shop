@@ -66,7 +66,7 @@
                                             <a href="{{route('Medicine.edit', Crypt::encrypt($item->id))}}"><button class="btn red-meadow"
                                                     style="background-color : #006666"><i class="fa fa-pencil"
                                                         style="color : #fff"></i></button></a>
-                                            <a href="?name=delete&id=1073" onclick=" return checkDelete();"><button
+                                            <a href="{{route('Medicine.delete',Crypt::encrypt($item->id))}}" onclick=" return checkDelete();"><button
                                                     class="btn red-meadow" style="background-color : red"><i
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>

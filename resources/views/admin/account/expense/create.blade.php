@@ -17,6 +17,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="row">
+            @includeIf('errors.error')
             <!-- left column -->
             <div class="col-md-12">
                 <!-- general form elements -->
@@ -24,13 +25,16 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">Add Expense</h3>
                         <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
+                                    class="fa fa-times"></i></button>
                         </div>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="" enctype="multipart/form-data">
+                    <form method="POST" action="{{route('Account.expense.store')}}" enctype="multipart/form-data">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-3">
@@ -38,40 +42,52 @@
                                         <label for="account_head">Account Head</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="account_head" id="account_head" class="form-control select2" style="width: 100%;" required="">
+                                            <select name="account_head" id="account_head" class="form-control select2 @error('account_head') is-invalid @enderror"
+                                                style="width: 100%;" required="">
                                                 <option value="">Select Account Head</option>
-                                                                                                    <option value="8">Administrative </option>
-                                                                                                    <option value="7">Projonmo</option>
-                                                                                            </select>
+                                                @forelse ($accountHead as $item)
+                                                <option value="{{$item->id}}">{{$item->head_name}}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="employee_id">Employee</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="employee_id" id="employee_id" class="form-control select2" style="width: 100%;">
-                                                <option value="">Select Employee</option>
-                                                                                                    <option value="2">Md.ashed hossin</option>
-                                                                                                    <option value="1">Md.Hafizulla</option>
-                                                                                                    <option value="3">Sakib Al Hasan</option>
-                                                                                            </select>
+                                            <select name="employee_id" id="employee_id" class="form-control select2 @error('employee_id') is-invalid @enderror"
+                                                style="width: 100%;">
+                                                    <option value="">Select Employee
+                                                </option>@forelse ($employee as $item)
+                                                    <option value="{{$item->id}}">{{$item->employee_name}}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="amount">Amount</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="amount" id="amount" class="form-control" placeholder="0.00" autocomplete="off">
-                                            <input type="hidden" name="creator" class="form-control" value="Software Solution Company" required="" readonly="">
+                                            <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror"
+                                                placeholder="0.00" autocomplete="off" value="{{old('amount')}}">
+                                            <input type="hidden" name="creator" class="form-control"
+                                                value="{{auth()->user()->id}}" readonly="">
                                         </div>
                                     </div>
                                     <div class="form-group" id="card_paid" style="display: none">
                                         <label for="bank_id3">Bank</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-bank"></i></span>
-                                            <select name="bank_id" id="bank_id" class="form-control select2" style="width: 100%;">
+                                            <select name="bank_id" id="bank_id" class="form-control select2 @error('bank_id') is-invalid @enderror"
+                                                style="width: 100%;">
                                                 <option value="">Select Bank</option>
-                                                                                            </select>
+                                            </option>@forelse ($bank as $item)
+                                                <option value="{{$item->id}}">{{$item->bank_name}}</option>
+                                            @empty
+                                            @endforelse
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -80,26 +96,30 @@
                                         <label for="sub_head_id">Sub Head</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="sub_head_id" id="sub_head_id" class="form-control select2" style="width: 100%;">
+                                            <select name="sub_head_id" id="sub_head_id" class="form-control select2 @error('sub_head_id') is-invalid @enderror"
+                                                style="width: 100%;">
                                                 <option value="">Select Sub Head</option>
-                                                                                                    <option value="11">Dan</option>
-                                                                                                    <option value="14">Moh</option>
-                                                                                                    <option value="13">Office & Stationary Exp</option>
-                                                                                            </select>
+                                            </option>@forelse ($subHead as $item)
+                                                <option value="{{$item->id}}">{{$item->sub_head}}</option>
+                                            @empty
+                                            @endforelse
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="purpose">Purpose</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="remarks" id="purpose" class="form-control" placeholder=" Purpose" autocomplete="off">
+                                            <input type="text" name="remarks" id="purpose" class="form-control @error('remarks') is-invalid @enderror" value="{{old('remarks')}}"
+                                                placeholder=" Purpose" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="file">File Upload</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="file" name="expense_file" id="file" class="form-control" title="File Upload" autocomplete="off">
+                                            <input type="file" name="expense_file" id="file"
+                                                class="form-control @error('expense_file') is-invalid @enderror" title="File Upload" autocomplete="off">
                                             <div style="margin-top: 5px;" id="preview"></div>
                                         </div>
                                     </div>
@@ -107,7 +127,9 @@
                                         <label for="bankPreviousAmount">Bank Amount</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="purpose" id="bankPreviousAmount" class="form-control" placeholder=" 0.0" autocomplete="off" readonly="">
+                                            <input type="text" id="bankPreviousAmount"
+                                                class="form-control " placeholder=" 0.0" autocomplete="off"
+                                                readonly="">
                                         </div>
                                     </div>
                                 </div>
@@ -116,31 +138,14 @@
                                         <label for="account_head">S.Sub Head</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="scnd_head_id" id="scnd_head_id" class="form-control select2" style="width: 100%;">
+                                            <select name="scnd_head_id" id="scnd_head_id" class="form-control select2 @error('scnd_head_id') is-invalid @enderror"
+                                                style="width: 100%;">
                                                 <option value="1">Select Second Sub Head</option>
-                                                                                                    <option value="1">Cash </option>
-                                                                                                    <option value="2">Bkash</option>
-                                                                                                    <option value="3">T-Cash</option>
-                                                                                                    <option value="4">Nagad</option>
-                                                                                                    <option value="5">Rocket</option>
-                                                                                                    <option value="6">Islami Bank Ltd A/C-20503910100037818</option>
-                                                                                                    <option value="7">Islami Bank POS</option>
-                                                                                                    <option value="8">City Bank POS</option>
-                                                                                                    <option value="9">UCB Bank POS</option>
-                                                                                                    <option value="10">DBBL POS</option>
-                                                                                                    <option value="11">Accounts Receivable</option>
-                                                                                                    <option value="12">Inventory Asset</option>
-                                                                                                    <option value="13">Computer Equipment</option>
-                                                                                                    <option value="14">Furniture and Decoration</option>
-                                                                                                    <option value="15">Electrical Equipment</option>
-                                                                                                    <option value="16">Accounts Payable</option>
-                                                                                                    <option value="17">Supplier Payable</option>
-                                                                                                    <option value="18">Shop Rent</option>
-                                                                                                    <option value="19">Staff Salary</option>
-                                                                                                    <option value="20">Staff Bonus</option>
-                                                                                                    <option value="21">Electric Bill</option>
-                                                                                                    <option value="22">Internet Bill</option>
-                                                                                            </select>
+                                            </option>@forelse ($scnSubHead as $item)
+                                                <option value="{{$item->id}}">{{$item->second_sub_head}}</option>
+                                            @empty
+                                            @endforelse
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -149,7 +154,8 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="date" class="form-control pull-right" id="datepicker" autocomplete="off" required="">
+                                            <input type="text" name="date" class="form-control pull-right  @error('date') is-invalid @enderror"
+                                                id="datepicker" autocomplete="off" required="">
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -157,14 +163,16 @@
                                         <label for="cashAmount">Cash Amount</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user-o"></i></span>
-                                            <input type="text" name="cashAmount" id="cashAmount" class="form-control" value="51210360" placeholder="0.00" autocomplete="off" readonly="">
+                                            <input type="text" name="cashAmount" id="cashAmount" class="form-control  @error('cashAmount') is-invalid @enderror"
+                                                value="51210360" placeholder="0.00" autocomplete="off" readonly="">
                                         </div>
                                     </div>
                                     <div class="form-group" id="card_paid3" style="display: none">
                                         <label for="check_no">Check Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="chequeNum" id="check_no" class="form-control" placeholder=" Check Number" autocomplete="off">
+                                            <input type="text" name="chequeNum" id="check_no" class="form-control @error('chequeNum') is-invalid @enderror"
+                                                placeholder=" Check Number" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -173,14 +181,16 @@
                                         <label for="voucher_no">Voucher Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                            <input type="text" name="voucher_no" id="voucher_no" class="form-control" value="90" autocomplete="off">
+                                            <input type="text" name="voucher_no" id="voucher_no" class="form-control  @error('voucher_no') is-invalid @enderror"
+                                                autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="show">Payment Method</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="payment_method" id="show" class="form-control" onchange="change()" style="width: 100%;">
+                                            <select name="payment_method" id="show" class="form-control @error('payment_method') is-invalid @enderror"
+                                                onchange="change()" style="width: 100%;">
                                                 <option value="0">Cash in Hand</option>
                                                 <option value="1">Cheque Paid</option>
                                             </select>
@@ -190,7 +200,8 @@
                                         <label for="status">Status</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="status" id="status" class="form-control select2" style="width: 100%;">
+                                            <select name="status" id="status" class="form-control select2 @error('status') is-invalid @enderror"
+                                                style="width: 100%;">
                                                 <option value="1">Active</option>
                                                 <option value="0">Inactive</option>
                                             </select>
@@ -202,7 +213,8 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="chuque_app_date" class="form-control pull-right" id="datepicker2" autocomplete="off" required="">
+                                            <input type="text" name="chuque_app_date" class="form-control pull-right  @error('chuque_app_date') is-invalid @enderror"
+                                                id="datepicker2" autocomplete="off" required="">
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -224,81 +236,84 @@
     <!-- /.content -->
 
 
-@push('js')
-    <script>
-
-        $(document).ready(function () {
-            $('#account_head').change(function () {
-                var id = $(this).val();
-                $.ajax({
-                    type: 'POST',
-                    url: 'ajax-response',
-                    data: {'account_head': id},
-                    success: function (html) {
-                        $('#sub_head_id').html(html);
-                    }
+    @push('js')
+        <script>
+            $(document).ready(function() {
+                $('#account_head').change(function() {
+                    var id = $(this).val();
+                    $.ajax({
+                        type: 'POST',
+                        url: 'ajax-response',
+                        data: {
+                            'account_head': id
+                        },
+                        success: function(html) {
+                            $('#sub_head_id').html(html);
+                        }
+                    });
                 });
             });
-        });
 
-        $(document).ready(function () {
-            $('#sub_head_id').change(function () {
-                var id = $(this).val();
-                $.ajax({
-                    type: 'POST',
-                    url: 'ajax-response',
-                    data: {'sub_head_id': id},
-                    success: function (html) {
-                        $('#scnd_head_id').html(html);
-                    }
+            $(document).ready(function() {
+                $('#sub_head_id').change(function() {
+                    var id = $(this).val();
+                    $.ajax({
+                        type: 'POST',
+                        url: 'ajax-response',
+                        data: {
+                            'sub_head_id': id
+                        },
+                        success: function(html) {
+                            $('#scnd_head_id').html(html);
+                        }
+                    });
                 });
             });
-        });
 
-        $(document).ready(function () {
-            $('#bank_id').change(function () {
-                var id = $(this).val();
-                $.ajax({
-                    type: 'POST',
-                    url: 'ajax-response',
-                    data: {'bank_id': id},
-                    success: function (html) {
-                        console.log(html);
-                        $('#bankPreviousAmount').val(html);
-                    }
+            $(document).ready(function() {
+                $('#bank_id').change(function() {
+                    var id = $(this).val();
+                    $.ajax({
+                        type: 'post',
+                        "_token": "{{ csrf_token() }}",
+                        url: '{{route('Account.expense.bank.balance')}}',
+                        data: {
+                            'bank_id': id
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            $('#bankPreviousAmount').val(data);
+                        }
+                    });
                 });
             });
-        });
-        ///###--Payment Calculation Function End--###
-        $("#show").change(function () {
-            if ($(this).val() == "1")
-            {
-                $('#bank_id').attr('required', 'required');
+            ///###--Payment Calculation Function End--###
+            $("#show").change(function() {
+                if ($(this).val() == "1") {
+                    $('#bank_id').attr('required', 'required');
 
-                $("#card_paid").show();
-                $("#card_paid2").show();
-                $("#card_paid3").show();
-                $("#card_paid5").show();
-            } else
-            {
-                $('#bank_id').attr('required', false);
-                $("#card_paid").hide();
-                $("#card_paid2").hide();
-                $("#card_paid3").hide();
-                $("#card_paid5").hide();
-            }
-        });
-        /* image preview */
-        $('#file').change(function () {
-            var oFReader = new FileReader();
-            oFReader.readAsDataURL(this.files[0]);
-            console.log(this.files[0]);
-            oFReader.onload = function (oFREvent) {
-                $('#preview').html('<img src="' + oFREvent.target.result + '">');
-            };
-        });
-
-    </script>
-@endpush
+                    $("#card_paid").show();
+                    $("#card_paid2").show();
+                    $("#card_paid3").show();
+                    $("#card_paid5").show();
+                } else {
+                    $('#bank_id').attr('required', false);
+                    $("#card_paid").hide();
+                    $("#card_paid2").hide();
+                    $("#card_paid3").hide();
+                    $("#card_paid5").hide();
+                }
+            });
+            /* image preview */
+            $('#file').change(function() {
+                var oFReader = new FileReader();
+                oFReader.readAsDataURL(this.files[0]);
+                console.log(this.files[0]);
+                oFReader.onload = function(oFREvent) {
+                    $('#preview').html('<img src="' + oFREvent.target.result + '" height="50px" width="150px">');
+                };
+            });
+        </script>
+    @endpush
 
 @endsection

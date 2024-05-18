@@ -10,7 +10,7 @@ class EmployeeTypeController extends Controller
 {
     public function index()
     {
-        return EmployeeType::latest()->get();
+         EmployeeType::orderBy('id', 'desc')->get();
         return view('admin.hr-management.employee-type.index');
     }
 

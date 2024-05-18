@@ -42,7 +42,7 @@ class CustomerController extends Controller
             'contact_num' => $request->contact_num,
             'email_address' => $request->email_address,
             'address' => $request->address,
-            'created_by' => 1, //auth()->user()->id
+            'created_by' => auth()->user()->id,
             'opening_balance' => $request->opening_balance,
             'status' => $request->status,
         ]);

@@ -88,13 +88,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="expire_date">Expire Date</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="date" name="expire_date" id="expire_date" class="form-control" value="{{$data->expire_date}}"  autocomplete="off">
-                                        </div>
-                                    </div>
+
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -138,10 +132,10 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="serial_number">Serial Number</label>
+                                        <label for="expire_date">Expire Date</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="serial_number" id="serial_number" class="form-control" placeholder="Serial Number" value="{{$data->serial_number}}" autocomplete="off">
+                                            <input type="date" name="expire_date" id="expire_date" class="form-control" value="{{$data->expire_date}}"  autocomplete="off">
                                         </div>
                                     </div>
                                 </div>

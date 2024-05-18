@@ -109,7 +109,7 @@
                     <form method="post" action="{{ route('Customer.update') }}" enctype="multipart/form-data">
                         @csrf
                         <label>Company Name</label>
-                        <input type="text" name="id" id="id">
+                        <input type="hidden" name="id" id="id">
                         <input type="text" name="company_name" value="Zaman" class="form-control"
                             placeholder="Company Name" autocomplete="off" />
                         <input type="hidden" name="id" value="1256" class="form-control" placeholder="Company Name"

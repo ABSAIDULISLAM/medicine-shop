@@ -1,10 +1,6 @@
 @extends('admin.layouts.master')
-
 @section('title', 'Purchase-list')
-
 @section('content')
-
-
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
@@ -61,40 +57,47 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @php
+                                    $totalAmount = 0;
+                                    $payment = 0;
+                                    $dues = 0;
+                                    @endphp
+                                    @forelse ($purchases as $index => $purchase)
                                     <tr>
-                                        <td style="width: 10px">1</td>
-                                        <td style="width: 80px" class="text-center">20-Mar-2024</td>
-                                        <td style="width: 120px">
-                                            BIO-TRADE INTERNATIONAL </td>
-                                        <td class="text-center" style="width: 80px"><a
-                                                href="{{route('Purchase.windowPop.invoice')}}"
-                                                onclick="return PopWindow(this.href, this.target);">17108847101</a>
-                                        </td>
-
-                                        <td style="width: 100px" class="text-center">749.60</td>
-                                        <td style="width: 100px" class="text-center">0.00</td>
-                                        <td style="width: 100px" class="text-center">749.60</td>
+                                        <td style="width: 10px">{{ $index + 1 }}</td>
+                                        <td style="width: 80px" class="text-center">{{ $purchase->date }}</td>
+                                        <td style="width: 120px">{{ $purchase->suplyer->company_name }}</td>
+                                        <td class="text-center" style="width: 80px"><a href="{{ route('Purchase.windowPop.invoice', ['id' => $purchase->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $purchase->invoice_number }}</a></td>
+                                        <td style="width: 100px" class="text-center">{{ $purchase->total_amount }}</td>
+                                        <td style="width: 100px" class="text-center">{{ $purchase->payment }}</td>
+                                        <td style="width: 100px" class="text-center">{{ $purchase->dues }}</td>
                                         <td class="text-center" style="width: 120px">
-                                            <a href="{{route('Purchase.edit')}}"><button class="btn red-meadow"
-                                                    style="background-color : #006666"><i class="fa fa-pencil"
-                                                        style="color : #fff"></i></button></a>
-                                            <a href="?name=delete&id=1073" onclick=" return checkDelete();"><button
-                                                    class="btn red-meadow" style="background-color : red"><i
-                                                        class="fa fa-trash-o " style="color : #fff"></i></button></a>
+                                            <a href="{{ route('Purchase.edit', ['id' => Crypt::encrypt($purchase->id)]) }}"><button class="btn red-meadow" style="background-color: #006666"><i class="fa fa-pencil" style="color: #fff"></i></button></a>
+                                            <a href="{{ route('Purchase.delete', ['id' => Crypt::encrypt($purchase->id)]) }}" onclick="return checkDelete();"><button class="btn red-meadow" style="background-color: red"><i class="fa fa-trash-o" style="color: #fff"></i></button></a>
                                         </td>
                                     </tr>
+                                    @php
+                                    $totalAmount += $purchase->total_amount;
+                                    $payment += $purchase->payment;
+                                    $dues += $purchase->dues;
+                                    @endphp
+                                    @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center">No data available</td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" style="width: 300px">Total</th>
-                                        <th style="width: 100px" class="text-center">749.6</th>
-                                        <th style="width: 100px" class="text-center">0</th>
-                                        <th style="width: 100px" class="text-center">749.6</th>
+                                        <th style="width: 100px" class="text-center">{{ $totalAmount }}</th>
+                                        <th style="width: 100px" class="text-center">{{ $payment }}</th>
+                                        <th style="width: 100px" class="text-center">{{ $dues }}</th>
                                         <th style="width: 120px"></th>
                                     </tr>
                                 </tfoot>
                             </table>
+
                         </div>
                     </div>
                     <!-- /.box-body -->
@@ -314,7 +317,7 @@
             function ShowTime() {
                 var dt = new Date();
                 document.getElementById("lblTime").innerHTML = dt.toLocaleTimeString();
-                window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec  
+                window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec
             }
 
 
@@ -326,14 +329,9 @@
 
             window.onload = function() {
 
-
-
-
-
-
                 var chart = new CanvasJS.Chart("chartContainer", {
                     theme: "light1", // "light2", "dark1", "dark2"
-                    animationEnabled: false, // change to true		
+                    animationEnabled: false, // change to true
                     title: {
                         text: "Monthly Sales History"
                     },

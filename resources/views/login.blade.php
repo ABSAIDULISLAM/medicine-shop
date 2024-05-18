@@ -21,23 +21,24 @@
     </head>
     <body class="hold-transition login-page">
         <div class="login-box">
-            @includeIf('error.error')
-            <div class="login-box-body">
+            @includeIf('errors.error')
+            <div class="login-box-body mx-3">
                 <div class="text-center" style="margin-bottom: 30px">
                     <img src="{{asset('backend/assets/logo.jpg')}}" style="height: 170px;width: 200px"/>
                 </div>
-                <form method="get" action="{{route('login.store')}}">
+                <form method="post" action="{{route('login.store')}}">
+                    @csrf
                     <div class="form-group has-feedback">
-                        <input type="text" name="user_name" class="form-control" placeholder="Username" autocomplete="off">
+                        <input type="text" name="user_name" value="sharif" class="form-control" required placeholder="Username" autocomplete="off">
                         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </div>
                     <div class="form-group has-feedback">
-                        <input type="password" name="password" class="form-control" placeholder="Password" autocomplete="off">
+                        <input type="password" name="password" value="password" class="form-control" required placeholder="Password" autocomplete="off">
                         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                     </div>
-                    <div class="row" style="padding: 25px 0 15px 0">
-                        <div class="col-xs-8">
-                            <div class="checkbox icheck">
+                    <div class="row" style="padding: 25px 0 15px 20px">
+                        <div class="col-xs-8 ">
+                            <div class="checkbox icheck ml-4">
                                 <label>
                                     <input type="checkbox"> Remember Me
                                 </label>

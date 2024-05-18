@@ -80,7 +80,14 @@
                   <a href="user-profile?user_id=17" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="?signOut=logout" class="btn btn-default btn-flat">Sign out</a>
+                    <a href="{{ route('logout') }}"
+                        onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();" class="btn btn-default btn-flat">
+                        Sign out
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </div>
               </li>
             </ul>

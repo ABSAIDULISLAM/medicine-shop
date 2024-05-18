@@ -36,11 +36,9 @@ use App\Http\Controllers\Admin\SupliyerPaymentController;
 use App\Http\Controllers\backend\HomeController;
 use Illuminate\Support\Facades\Route;
 
-// Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
+Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
 
-    Route::prefix('/admin')->as('Admin.')->group(function(){
-        Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
-    });
+    Route::get('dashboard', [HomeController::class, 'index'])->name('Admin.dashboard');
 
     Route::controller(CustomerController::class)->prefix('customer/')->as('Customer.')->group(function(){
         Route::get('list', 'index')->name('index');
@@ -48,8 +46,11 @@ use Illuminate\Support\Facades\Route;
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
     });
-    Route::controller(SupliyerController::class)->prefix('supliyer/')->as('Supliyer.')->group(function(){
+    Route::controller(SupliyerController::class)->prefix('suplyer/')->as('Supliyer.')->group(function(){
         Route::get('list', 'index')->name('index');
+        Route::post('store', 'store')->name('store');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
     });
 
     Route::controller(SupliyerPaymentController::class)->prefix('supliyer-payment/')->as('Supliyer-payment.')->group(function(){
@@ -64,19 +65,25 @@ use Illuminate\Support\Facades\Route;
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+
+        Route::get('addMedicineType', 'addMedicineType')->name('addMedicineType');
 
     });
-    Route::prefix('medicine')->name('Medicine.')->group(function () {
-        Route::post('/addMedicineType', [MedicineController::class, 'addMedicineType'])->name('addMedicineType');
-    });
-
 
     Route::controller(PurchaseController::class)->prefix('purchase/')->as('Purchase.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::get('create', 'create')->name('create');
-        Route::get('store', 'store')->name('store');
-        Route::get('edit', 'edit')->name('edit');
+        Route::post('store', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::get('delete', 'delete')->name('delete');
         Route::get('windowPop/invoice', 'windowPopInvoice')->name('windowPop.invoice');
+        Route::post('supplier/store', 'SupplierStore')->name('supplier.store');
+        Route::post('supplier-info', 'SupplierInfo')->name('supplier.info');
+        Route::post('company_id', 'companySearch')->name('company.search');
+        Route::post('medicine/store', 'medicineStore')->name('medicine.store');
+        Route::post('product/search', 'searchProduct')->name('product.search');
+        Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
     });
 
     Route::controller(SalesController::class)->prefix('sales/')->as('Sales.')->group(function(){
@@ -96,12 +103,14 @@ use Illuminate\Support\Facades\Route;
     });
 
 
-
     // Account Module
     Route::controller(ExpenseController::class)->prefix('account/expense/')->as('Account.expense.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
+        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::post('bank/balance', 'bankBalance')->name('bank.balance');
     });
     Route::controller(OtherIncomeController::class)->prefix('account/other-income/')->as('Account.other-income.')->group(function(){
         Route::get('list', 'index')->name('list');
@@ -274,4 +283,4 @@ use Illuminate\Support\Facades\Route;
     });
 
 
-// });
+});

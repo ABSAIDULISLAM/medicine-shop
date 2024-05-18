@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="refresh" content="10000;signOut=logout" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title')- Medical Shop</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -20,7 +21,7 @@
   <link rel="stylesheet" href="{{asset('backend/assets/dist/css/AdminLTE.min.css')}}">
   <link rel="stylesheet" href="{{asset('backend/assets/dist/css/skins/_all-skins.min.css')}}">
   <!-- daterange picker -->
-  <link rel="stylesheet" href="{{asset('backend/assets/bower_components/bootstrap-daterangepicker/daterangepicker.css')}}">
+  {{-- <link rel="stylesheet" href="{{asset('backend/assets/bower_components/bootstrap-daterangepicker/daterangepicker.css')}}"> --}}
   <!-- bootstrap datepicker -->
   <link rel="stylesheet" href="{{asset('backend/assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')}}">
   <!-- iCheck for checkboxes and radio inputs -->
@@ -190,7 +191,7 @@
   <script src="{{asset('backend/assets/plugins/input-mask/jquery.inputmask.extensions.js')}}"></script>
   <!-- date-range-picker -->
   <script src="{{asset('backend/assets/bower_components/moment/min/moment.min.js')}}"></script>
-  <script src="{{asset('backend/assets/bower_components/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
+  {{-- <script src="{{asset('backend/assets/bower_components/bootstrap-daterangepicker/daterangepicker.js')}}"></script> --}}
   <!-- bootstrap datepicker -->
   <script src="{{asset('backend/assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
   <!-- bootstrap color picker -->
@@ -202,8 +203,15 @@
   <script src="{{asset('backend/assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
   <!-- iCheck 1.0.1 -->
   <script src="{{asset('backend/assets/plugins/iCheck/icheck.min.js')}}"></script>
-  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+  {{-- <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script> --}}
+  <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+  </script>
   <script>
 
     function checkDelete() {
@@ -360,11 +368,6 @@
 
     window.onload = function () {
 
-
-
-
-
-
       var chart = new CanvasJS.Chart("chartContainer", {
         theme: "light1", // "light2", "dark1", "dark2"
         animationEnabled: false, // change to true
@@ -404,7 +407,7 @@
   </script>
 
   @stack('js')
-  
+
 </body>
 
 </html>

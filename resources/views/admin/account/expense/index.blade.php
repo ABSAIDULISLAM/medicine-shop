@@ -60,11 +60,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $total = 0;
+                                    @endphp
+                                    @forelse ($expense as $item)
+                                    <tr>
+                                        <td class="text-center">{{$loop->index+1}}</td>
+                                        <td class="text-center">{{$item->date}}</td>
+                                        <td class="text-center"> {{$item->money_receipt}}</td>
+                                        <td class="text-center">{{$item->accounthead->head_name}}</td>
+                                        <td class="text-center">{{$item->purpose}}</td>
+                                        <td class="text-right">{{$item->amount}}</td>
+                                        <td class="text-center">{{$item->status==1 ? 'Active':'deactive'}}</td>
+                                        <td class="text-center" style="width: 120px">
+                                            <a href="{{route('Medicine.edit', Crypt::encrypt($item->id))}}"><button class="btn red-meadow"
+                                                    style="background-color : #006666"><i class="fa fa-pencil"
+                                                        style="color : #fff"></i></button></a>
+                                            <a href="{{route('Medicine.delete',Crypt::encrypt($item->id))}}" onclick=" return checkDelete();"><button
+                                                    class="btn red-meadow" style="background-color : red"><i
+                                                        class="fa fa-trash-o " style="color : #fff"></i></button></a>
+                                        </td>
+                                    </tr>
+                                    {{$total += $item->amount}}
+                                    @empty
+                                    @endforelse
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th colspan="5" style="width: 440px">Total</th>
-                                        <th style="width: 100px" class="text-right">0</th>
+                                        <th style="width: 100px" class="text-right">{{$total}}</th>
                                         <th style="width: 80px"></th>
                                         <th style="width: 100px"></th>
                                     </tr>

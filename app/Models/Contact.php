@@ -16,4 +16,9 @@ class Contact extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function purchase()
+    {
+        return $this->hasMany(Purchases::class, 'supplier_id', 'id');
+    }
 }

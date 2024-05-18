@@ -16,7 +16,7 @@ class GenericController extends Controller
         // $data = Cache::remember('data', $minutes, function () {
         //     return Generic::orderBy('generic_name', 'asc')->paginate(50);
         // });
-        $data = Generic::orderBy('generic_name', 'asc')->paginate(200);
+        $data = Generic::orderBy('id', 'asc')->get();
         return view('admin.settings.generic.index', compact('data'));
     }
 

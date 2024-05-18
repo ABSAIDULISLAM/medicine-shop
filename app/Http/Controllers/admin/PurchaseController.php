@@ -3,31 +3,355 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductPurchaseRequest;
+use App\Models\BankSetup;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Generic;
+use App\Models\Medicine;
+use App\Models\MedicineForm;
+use App\Models\MedicineType;
+use App\Models\Purchases;
+use App\Models\PurchasesDetail;
+use App\Models\Rack;
+use App\Services\admin\ProductPerchaseService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use PHPUnit\Framework\Constraint\Count;
 
 class PurchaseController extends Controller
 {
     public function index()
     {
-        return view('admin.purchase.index');
+        $purchases = Purchases::with(['suplyer'=>function($query){
+            $query->select('id', 'company_name');
+        }])
+        ->latest()->get();
+
+        return view('admin.purchase.index', compact('purchases'));
     }
 
     public function create()
     {
-        return view('admin.purchase.create');
+        $suplyer = Contact::where('contact_type', 2)->select('id', 'company_name')->get();
+        $bank = BankSetup::orderBy('id', 'asc')->select('id', 'bank_name')->get();
+
+        $generics = Generic::orderBy('id', 'asc')->select('id', 'generic_name')->get();
+        $mediForms = MedicineForm::orderBy('id', 'asc')->select('id', 'medicine_strength')->get();
+        $companies = Company::orderBy('id', 'asc')->select('id', 'company_name')->get();
+        $racks = Rack::orderBy('id', 'asc')->get();
+
+        return view('admin.Purchase.create', compact([
+            'suplyer',
+            'bank',
+            'generics',
+            'mediForms',
+            'companies',
+            'racks',
+        ]));
     }
 
-    public function store(Request $request)
+
+    public function SupplierStore(Request $request)
     {
-        return $request->all();
+
+        $request->validate([
+            'company_name' => ['required', 'string', 'max:256'],
+            'contact_num' => ['required', 'numeric', 'digits:11', 'regex:/\+?(88)?0?1[3-9][0-9]{8}\b/'],
+            'address' => ['required', 'string'],
+        ]);
+
+        $contact = Contact::create([
+            'company_name' => $request->company_name,
+            'contact_person' => $request->company_name,
+            'contact_num' => $request->contact_num,
+            'address' => $request->address,
+            'created_by' => $request->created_by,
+            'contact_type' => $request->contact_type,
+            'status' => $request->status,
+            'opening_balance' => 0,
+        ]);
+
+        // Prepare response data
+        $option = '<option value="' . $contact->id . '">' . $contact->company_name . '</option>';
+        $pre_blnc = 0; // You can fetch previous balance here if needed
+
+        return response()->json([
+            'success' => true,
+            'option' => $option,
+            'pre_blnc' => $pre_blnc
+        ]);
     }
 
-    public function edit()
+    public function SupplierInfo(Request $request)
     {
-        return view('admin.purchase.edit');
+        $supplierId = $request->input('supplier_id');
+
+        $previousDue = Purchases::where('supplier_id', $supplierId)->value('previous_dues');
+
+        if (!is_null($previousDue)) {
+            return response()->json($previousDue);
+        } else {
+            return response()->json(0);
+        }
     }
+
+    // public function companySearch(Request $request)
+    // {
+    //     $request->validate([
+    //         'searchCompany' => 'required|string|min:2',
+    //     ]);
+
+    //     $searchCompany = $request->input('searchCompany');
+
+    //     $companies = Company::where('name', 'like', '%' . $searchCompany . '%')
+    //                         ->select('id', 'name')
+    //                         ->get();
+    //     $data = [];
+    //     foreach ($companies as $company) {
+    //         $data[] = [
+    //             'id' => $company->id,
+    //             'text' => $company->company_name,
+    //         ];
+    //     }
+
+    //     return response()->json($data);
+    // }
+
+    public function medicineStore(Request $request)
+    {
+        $request->validate([
+            'medicine_name' => 'required|string|max:255',
+            // 'created_by' => 'required|exists:users,id',
+            'medicine_form' => 'required|string|max:255',
+            'company_id' => 'required|exists:companies,id',
+            'purchases_price' => 'required|numeric',
+            'min_stock' => 'required|numeric',
+            'generic_id' => 'required|exists:generics,id',
+            'medicine_strength' => 'required|string|max:255',
+            'rack_id' => 'required|exists:racks,id',
+            'sale_price' => 'required|numeric',
+            'opening_stock' => 'required|numeric',
+        ]);
+
+        $medicine = new Medicine();
+        $medicine->medicine_name = $request->medicine_name;
+        // $medicine->created_by = $request->created_by;
+        $medicine->medicine_form = $request->medicine_form;
+        $medicine->company_id = $request->company_id;
+        $medicine->purchases_price = $request->purchases_price;
+        $medicine->min_stock = $request->min_stock;
+        $medicine->generic_id = $request->generic_id;
+        $medicine->medicine_strength = $request->medicine_strength;
+        $medicine->rack_id = $request->rack_id;
+        $medicine->sale_price = $request->sale_price;
+        $medicine->opening_stock = $request->opening_stock;
+        $medicine->medi_type = 1;
+        $medicine->serial_number = rand(1000, 1000000);
+        $medicine->company_name = 'Random Company';
+        $medicine->generic_name = 'Random Generic';
+        $medicine->save();
+
+        return response()->json('Medicine saved successfully.');
+    }
+
+
+
+    public function searchProduct(Request $request)
+    {
+        $search = $request->input('pursearchQuery'); // Correct input field name
+
+        $products = Medicine::where('medicine_name', 'like', '%' . $search . '%')
+                    ->orWhere('serial_number', 'like', '%' . $search . '%')
+                    ->get();
+
+        $response = [];
+        foreach ($products as $product) {
+            $response[] = [
+                'value' => $product->medicine_name,
+                'label' => $product->serial_number.' || '.$product->medicine_name.' || '. $product->medicine_form.' || '.$product->medicine_strength.' || '.$product->company_name.' || '.$product->sale_price,
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    public function fetchSingleProduct(Request $request)
+    {
+        $productName = $request->input('purchasesProductName');
+
+        $product = Medicine::where('medicine_name', $productName)->first();
+
+        if ($product) {
+            $response = [
+                'id' => $product->id,
+                'medicine_name' => $product->medicine_name,
+                'medicine_form' => $product->medicine_form,
+                'medicine_strength' => $product->medicine_strength,
+                'generic_name' => $product->generic_name,
+                'cost_price' => $product->purchases_price,
+                'sales_price' => $product->sale_price,
+                'expire_date' => $product->expire_date,
+                'rack_id' => $product->rack_id,
+                'rack_name' => $product->rack_name,
+                'inStock' => $product->stock,
+                'preStock' => $product->min_stock,
+                'generic_id' => $product->generic_id,
+            ];
+
+            return response()->json($response);
+        }
+
+        return response()->json([], 404); // Return an error if the product is not found
+    }
+
+
+    public function store(ProductPurchaseRequest $request)
+    {
+        // return $request->all();
+        $purchase = new Purchases();
+        $purchase->supplier_id = $request->supplier_id;
+        $purchase->previous_dues = $request->previous_dues ?? 0;
+        $purchase->invoice_number = $request->invoice_number;
+        $purchase->date = $request->date;
+        $purchase->total_cost_amount = $request->total_coast;
+        $purchase->total_amount = $request->total_amount;
+        $purchase->grand_trade_amount = 0;
+        $purchase->grand_vat_amount = 0;
+        $purchase->discount = $request->discount ?? 0;
+        $purchase->shipping_charge = $request->shipping_charge ?? 0;
+        $purchase->final_amount = $request->final_amount;
+        $purchase->payment = $request->payment ?? 0;
+        $purchase->dues = $request->dues ?? 0;
+        if ($request->payment_method == '1') {
+            $purchase->bank_id = $request->bank_id;
+            $purchase->cheque_no = $request->cheque_no;
+        } else {
+            $purchase->payment_method = $request->payment_method;
+            $purchase->bank_id = 0;
+            $purchase->cheque_no = 0;
+        }
+        $purchase->cheque_appr_date = Carbon::now();
+        $purchase->created_by = Auth::id();
+        $purchase->update_by = Auth::id();
+        $purchase->updated_at = Carbon::now();
+        $purchase->save();
+
+        foreach ($request->quantity as $key => $value) {
+            $purchaseDetail = new PurchasesDetail();
+            $purchaseDetail->product_id = $request->product_id[$key];
+            $purchaseDetail->generic_id = 0;
+            $purchaseDetail->company_id = 0;
+            $purchaseDetail->quantity = $value;
+            $purchaseDetail->cost_price = $request->cost_price[$key];
+            $purchaseDetail->sales_price = $request->sales_price[$key];
+            $purchaseDetail->expire_date = $request->expire_date[$key];
+            $purchaseDetail->rack_id = $request->rack_id[$key];
+            $purchaseDetail->sub_total = $request->sub_total[$key];
+            $purchaseDetail->inStock = $request->stock[$key];
+            $purchaseDetail->common_id = 0;
+            $purchaseDetail->supplier_id = $request->supplier_id;
+            $purchaseDetail->date = $request->date;
+            $purchaseDetail->created_by = Auth::id();
+            $purchaseDetail->update_by = Auth::id();
+            $purchaseDetail->save();
+        }
+
+        return redirect()->route('Purchase.index')->with('success', 'Purchase Inserted Successfully'); // corrected success message
+    }
+
+
+
+    public function edit($id)
+    {
+        $id = Crypt::decrypt($id);
+        $data = Medicine::with(['generic', 'company', 'mediform', 'rack'])->find($id);
+
+        $generics = Generic::orderBy('id', 'asc')->get();;
+        $mediForms = MedicineForm::orderBy('id', 'asc')->get();
+        $mediType = MedicineType::orderBy('id', 'asc')->get();
+        $companies = Company::orderBy('id', 'asc')->get();
+        $racks = Rack::orderBy('id', 'asc')->get();
+
+        return view('admin.purchase.edit', compact([
+            'generics',
+            'mediForms',
+            'mediType',
+            'companies',
+            'racks',
+            'data',
+        ]));
+    }
+
+    public function addMedicineType(Request $request)
+    {
+        $medicineType = new MedicineType();
+        $medicineType->medicine_type = $request->medicineType;
+        $medicineType->status = $request->medicineStatus;
+        $medicineType->save();
+        return response()->json($medicineType);
+    }
+
+    public function update(Request $request)
+    {
+        // return $request->all();
+        $validated = $request->validate([
+            'medicine_name' => ['required', 'string', 'max:256'],
+            'purchases_price' => ['required', 'numeric', 'min:0'],
+            'sale_price' => ['required', 'numeric', 'min:0'],
+            'min_stock' => ['required', 'numeric', 'min:0'],
+            'company_id' => ['required', 'integer', 'exists:companies,id'],
+            'rack_id' => ['required', 'integer', 'exists:racks,id'],
+            'generic_id' => ['required', 'integer', 'exists:generics,id'],
+            'medicine_form' => ['required', 'integer', 'exists:medicine_forms,id'],
+            // 'indication' => ['nullable','string', 'max:256'],
+            // 'side_effect' => ['nullable','string', 'max:256'],
+
+            'medicine_strength' => ['nullable', 'string', 'max:256'],
+            'administration' => ['nullable', 'string', 'max:256'],
+        ]);
+
+        $medicine = Medicine::find($request->id);
+
+        $medicine->medicine_name = $request->medicine_name;
+        $medicine->purchases_price = $request->purchases_price;
+        $medicine->sale_price = $request->sale_price;
+        $medicine->min_stock = $request->min_stock;
+        $medicine->company_id = $request->company_id;
+        $medicine->company_name = 'Random Company';
+        $medicine->generic_id = $request->generic_id;
+        $medicine->generic_name = 'Random Generic';
+        $medicine->rack_id = $request->rack_id;
+        $medicine->medicine_form = $request->medicine_form;
+        // $medicine->indication = $request->indication;
+        // $medicine->side_effect = $request->side_effect;
+        $medicine->medicine_strength = $request->medicine_strength;
+        $medicine->administration = $request->administration;
+        $medicine->medi_type = 1;
+        $medicine->serial_number = 1;
+        $medicine->expire_date = $request->expire_date;
+        $medicine->box_qty = $request->box_qty;
+        $medicine->mrp_price = $request->mrp_price;
+        $medicine->trade_price = $request->trade_price;
+        $medicine->opening_stock = $request->opening_stock;
+        $medicine->save();
+
+        return redirect()->route('Medicine.index')->with('success', 'Medicine Updated Successfully');
+    }
+
+    public function delete($id)
+    {
+        $id = Crypt::decrypt($id);
+        Medicine::find($id)->delete();
+        return redirect()->back()->with('success', 'Medicine Deleted Successfully');
+    }
+
+
     public function windowPopInvoice()
     {
         return view('admin.purchase.invoice');
     }
+
 }

@@ -10,7 +10,8 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-       return Employee::latest()->get();
+        return Employee::orderBy('id', 'desc')->get();
+
         return view('admin.hr-management.employee.index');
     }
     public function create()

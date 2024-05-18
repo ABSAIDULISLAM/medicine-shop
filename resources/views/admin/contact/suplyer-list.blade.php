@@ -22,7 +22,7 @@
             <div class="col-xs-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title"> Customer List</h3>
+                        <h3 class="box-title"> Supplier List</h3>
                         <div class="box-tools pull-right">
                             <button type="button" data-toggle="modal" data-target="#add" class="btn bg-navy btn-flat">Add
                                 New</button>
@@ -101,15 +101,15 @@
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #2E4D62;color: #fff">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Edit Customer</h4>
+                    <h4 class="modal-title">Edit Suppliyer</h4>
                 </div>
 
 
                 <div class="modal-body">
-                    <form method="post" action="{{ route('Customer.update') }}" enctype="multipart/form-data">
+                    <form method="post" action="{{ route('Supliyer.update') }}" enctype="multipart/form-data">
                         @csrf
                         <label>Company Name</label>
-                        <input type="text" name="id" id="id">
+                        <input type="hidden" name="id" id="id">
                         <input type="text" name="company_name" value="Zaman" class="form-control"
                             placeholder="Company Name" autocomplete="off" />
                         <input type="hidden" name="id" value="1256" class="form-control" placeholder="Company Name"
@@ -160,7 +160,8 @@
           <h4 class="modal-title">Add Supplier</h4>
         </div>
         <div class="modal-body">
-          <form method="post" action="" enctype="multipart/form-data">
+          <form method="post" action="{{route('Supliyer.store')}}" enctype="multipart/form-data">
+            @csrf
             <label>Contact Type</label>
             <select name="contact_type" class="form-control select2" style="width: 100%">
               <option value="2">Supplier</option>
@@ -207,7 +208,6 @@
         </div>
       </div>
     </div>
-
 
     <script>
         function editModal(id, cname,cp, cn,ea,address,ob,status){

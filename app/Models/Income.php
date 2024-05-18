@@ -16,4 +16,11 @@ class Income extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+
+    public function accounthead()
+    {
+        return $this->belongsTo(AccountHead::class, 'account_head', 'id');
+    }
+
 }
