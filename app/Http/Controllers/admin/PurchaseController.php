@@ -157,8 +157,6 @@ class PurchaseController extends Controller
         return response()->json('Medicine saved successfully.');
     }
 
-
-
     public function searchProduct(Request $request)
     {
         $search = $request->input('pursearchQuery'); // Correct input field name
@@ -241,7 +239,7 @@ class PurchaseController extends Controller
 
         foreach ($request->quantity as $key => $value) {
             $purchaseDetail = new PurchasesDetail();
-            $purchaseDetail->product_id = $request->product_id[$key];
+            $purchaseDetail->product_id =$request->product_id[$key];
             $purchaseDetail->generic_id = 0;
             $purchaseDetail->company_id = 0;
             $purchaseDetail->quantity = $value;
@@ -251,7 +249,7 @@ class PurchaseController extends Controller
             $purchaseDetail->rack_id = $request->rack_id[$key];
             $purchaseDetail->sub_total = $request->sub_total[$key];
             $purchaseDetail->inStock = $request->stock[$key];
-            $purchaseDetail->common_id = 0;
+            $purchaseDetail->common_id = $purchase->id;
             $purchaseDetail->supplier_id = $request->supplier_id;
             $purchaseDetail->date = $request->date;
             $purchaseDetail->created_by = Auth::id();
@@ -259,29 +257,28 @@ class PurchaseController extends Controller
             $purchaseDetail->save();
         }
 
-        return redirect()->route('Purchase.index')->with('success', 'Purchase Inserted Successfully'); // corrected success message
+        return redirect()->route('Purchase.index')->with('success', 'Purchase Inserted Successfully');
     }
-
-
 
     public function edit($id)
     {
         $id = Crypt::decrypt($id);
-        $data = Medicine::with(['generic', 'company', 'mediform', 'rack'])->find($id);
 
-        $generics = Generic::orderBy('id', 'asc')->get();;
-        $mediForms = MedicineForm::orderBy('id', 'asc')->get();
-        $mediType = MedicineType::orderBy('id', 'asc')->get();
-        $companies = Company::orderBy('id', 'asc')->get();
+        $data = Purchases::with(['purchasedetails', 'purchasedetails.product'])->find($id);
+
+        $suplyer = Contact::where('contact_type', 2)->select('id', 'company_name')->get();
+        $bank = BankSetup::orderBy('id', 'asc')->select('id', 'bank_name')->get();
         $racks = Rack::orderBy('id', 'asc')->get();
 
         return view('admin.purchase.edit', compact([
-            'generics',
-            'mediForms',
-            'mediType',
-            'companies',
+            // 'generics',
+            // 'mediForms',
+            // 'mediType',
+            // 'companies',
             'racks',
+            'bank',
             'data',
+            'suplyer',
         ]));
     }
 
@@ -294,64 +291,90 @@ class PurchaseController extends Controller
         return response()->json($medicineType);
     }
 
-    public function update(Request $request)
+
+    public function update(ProductPurchaseRequest $request)
     {
-        // return $request->all();
-        $validated = $request->validate([
-            'medicine_name' => ['required', 'string', 'max:256'],
-            'purchases_price' => ['required', 'numeric', 'min:0'],
-            'sale_price' => ['required', 'numeric', 'min:0'],
-            'min_stock' => ['required', 'numeric', 'min:0'],
-            'company_id' => ['required', 'integer', 'exists:companies,id'],
-            'rack_id' => ['required', 'integer', 'exists:racks,id'],
-            'generic_id' => ['required', 'integer', 'exists:generics,id'],
-            'medicine_form' => ['required', 'integer', 'exists:medicine_forms,id'],
-            // 'indication' => ['nullable','string', 'max:256'],
-            // 'side_effect' => ['nullable','string', 'max:256'],
+        // Find the purchase record by ID
+        $purchase = Purchases::find($request->purchaseId);
+        if (!$purchase) {
+            return redirect()->back()->with('error', 'Purchase record not found.');
+        }
+        // Update purchase details
+        $purchase->supplier_id = $request->supplier_id;
+        $purchase->previous_dues = $request->previous_dues ?? 0;
+        $purchase->date = $request->date;
+        $purchase->total_cost_amount = $request->total_coast;
+        $purchase->total_amount = $request->total_amount;
+        $purchase->grand_trade_amount = 0;
+        $purchase->grand_vat_amount = 0;
+        $purchase->discount = $request->discount ?? 0;
+        $purchase->shipping_charge = $request->shipping_charge ?? 0;
+        $purchase->final_amount = $request->final_amount;
+        $purchase->payment = $request->payment ?? 0;
+        $purchase->dues = $request->dues ?? 0;
 
-            'medicine_strength' => ['nullable', 'string', 'max:256'],
-            'administration' => ['nullable', 'string', 'max:256'],
-        ]);
+        if ($request->payment_method == '1') {
+            $purchase->bank_id = $request->bank_id;
+            $purchase->cheque_no = $request->cheque_no;
+        } else {
+            $purchase->payment_method = $request->payment_method;
+            $purchase->bank_id = 0;
+            $purchase->cheque_no = 0;
+        }
 
-        $medicine = Medicine::find($request->id);
+        $purchase->cheque_appr_date = Carbon::now();
+        $purchase->created_by = Auth::id();
+        $purchase->update_by = Auth::id();
+        $purchase->updated_at = Carbon::now();
+        $purchase->save();
 
-        $medicine->medicine_name = $request->medicine_name;
-        $medicine->purchases_price = $request->purchases_price;
-        $medicine->sale_price = $request->sale_price;
-        $medicine->min_stock = $request->min_stock;
-        $medicine->company_id = $request->company_id;
-        $medicine->company_name = 'Random Company';
-        $medicine->generic_id = $request->generic_id;
-        $medicine->generic_name = 'Random Generic';
-        $medicine->rack_id = $request->rack_id;
-        $medicine->medicine_form = $request->medicine_form;
-        // $medicine->indication = $request->indication;
-        // $medicine->side_effect = $request->side_effect;
-        $medicine->medicine_strength = $request->medicine_strength;
-        $medicine->administration = $request->administration;
-        $medicine->medi_type = 1;
-        $medicine->serial_number = 1;
-        $medicine->expire_date = $request->expire_date;
-        $medicine->box_qty = $request->box_qty;
-        $medicine->mrp_price = $request->mrp_price;
-        $medicine->trade_price = $request->trade_price;
-        $medicine->opening_stock = $request->opening_stock;
-        $medicine->save();
+        // Update each purchase detail
+        foreach ($request->quantity as $key => $value) {
+            $purchaseDetailId = $request->purchaseetailsId[$key];
+            $purchaseDetail = PurchasesDetail::find($purchaseDetailId);
 
-        return redirect()->route('Medicine.index')->with('success', 'Medicine Updated Successfully');
+            if ($purchaseDetail) {
+                $purchaseDetail->product_id = $request->product_id[$key];
+                $purchaseDetail->generic_id = 0;
+                $purchaseDetail->company_id = 0;
+                $purchaseDetail->quantity = $value;
+                $purchaseDetail->cost_price = $request->cost_price[$key];
+                $purchaseDetail->sales_price = $request->sales_price[$key];
+                $purchaseDetail->expire_date = $request->expire_date[$key];
+                $purchaseDetail->sub_total = $request->sub_total[$key];
+                $purchaseDetail->inStock = $request->stock[$key];
+                $purchaseDetail->supplier_id = $request->supplier_id;
+                $purchaseDetail->date = $request->date;
+                $purchaseDetail->created_by = Auth::id();
+                $purchaseDetail->update_by = Auth::id();
+                $purchaseDetail->save();
+            } else {
+                return redirect()->back()->with('error', 'Purchase detail not found for ID ' . $purchaseDetailId);
+            }
+        }
+
+        return redirect()->route('Purchase.index')->with('success', 'Purchase Updated Successfully');
     }
+
 
     public function delete($id)
     {
         $id = Crypt::decrypt($id);
-        Medicine::find($id)->delete();
-        return redirect()->back()->with('success', 'Medicine Deleted Successfully');
+        Purchases::find($id)->delete();
+        return redirect()->back()->with('success', 'Purchase Deleted Successfully');
     }
 
 
-    public function windowPopInvoice()
+    public function windowPopInvoice($id)
     {
-        return view('admin.purchase.invoice');
+      $data = PurchasesDetail::where('common_id', $id)
+            ->with(['product' => function($query) {
+                $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');
+            }])
+            ->get();
+            
+        return view('admin.purchase.invoice', compact('data'));
     }
+
 
 }

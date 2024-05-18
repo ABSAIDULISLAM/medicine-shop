@@ -67,7 +67,7 @@
                                         <td style="width: 10px">{{ $index + 1 }}</td>
                                         <td style="width: 80px" class="text-center">{{ $purchase->date }}</td>
                                         <td style="width: 120px">{{ $purchase->suplyer->company_name }}</td>
-                                        <td class="text-center" style="width: 80px"><a href="{{ route('Purchase.windowPop.invoice', ['id' => $purchase->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $purchase->invoice_number }}</a></td>
+                                        <td class="text-center" style="width: 80px"><a href="{{ route('Purchase.windowPop.invoice', ['invno' => $purchase->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $purchase->invoice_number }}</a></td>
                                         <td style="width: 100px" class="text-center">{{ $purchase->total_amount }}</td>
                                         <td style="width: 100px" class="text-center">{{ $purchase->payment }}</td>
                                         <td style="width: 100px" class="text-center">{{ $purchase->dues }}</td>

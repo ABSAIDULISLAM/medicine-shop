@@ -55,7 +55,7 @@
                                         <td style="width: 80px" class="text-center">{{ $item->mediform->medicine_strength ?? '' }}</td>
                                         <td style="width: 120px">{{$item->medicine_strength ?? ''}}</td>
                                         <td class="text-center" style="width: 80px"><a
-                                                href="{{route('Purchase.windowPop.invoice')}}"
+                                                href="{{route('Medicine.windowPop.invoice', ['id'=>$item->id])}}"
                                                 onclick="return PopWindow(this.href, this.target);">{{$item->purchases_price ?? ''}}</a>
                                         </td>
 

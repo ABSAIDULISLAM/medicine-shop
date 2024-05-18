@@ -14,6 +14,12 @@ class Purchases extends Model
         return $this->belongsTo(Contact::class, 'supplier_id', 'id');
     }
 
+    public function purchasedetails()
+    {
+        return $this->hasMany(PurchasesDetail::class, 'common_id', 'id');
+    }
+
+
 
     protected $guarded = [];
 

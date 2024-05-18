@@ -66,8 +66,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
+        Route::get('windowPop/invoice/{id}', 'windowPopInvoice')->name('windowPop.invoice');
 
-        Route::get('addMedicineType', 'addMedicineType')->name('addMedicineType');
+        Route::post('addMedicineType', 'addMedicineType')->name('addMedicineType');
 
     });
 
@@ -76,8 +77,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('create', 'create')->name('create');
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
-        Route::get('delete', 'delete')->name('delete');
-        Route::get('windowPop/invoice', 'windowPopInvoice')->name('windowPop.invoice');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::get('windowPop/invoice/{invno}', 'windowPopInvoice')->name('windowPop.invoice');
         Route::post('supplier/store', 'SupplierStore')->name('supplier.store');
         Route::post('supplier-info', 'SupplierInfo')->name('supplier.info');
         Route::post('company_id', 'companySearch')->name('company.search');

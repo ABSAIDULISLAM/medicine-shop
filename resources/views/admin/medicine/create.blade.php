@@ -63,8 +63,8 @@
                                         <label for="company_id">Company Name <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                           <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                          <select name="company_id" id="company_id" class="select2 form-control">
-                                            <option disabled selected>Select Company Name</option>
+                                          <select name="company_id" id="company_id" class="select2 form-control" required="">
+                                            <option value="" disabled selected>Select Company Name</option>
                                             @forelse ($companies as $item)
                                                 <option value="{{$item->id}}">{{$item->company_name}}</option>
                                             @empty
@@ -74,7 +74,7 @@
                                       </div>
 
                                     <div class="form-group">
-                                        <label for="indication">Indication</label>
+                                        <label for="indication">Indication <span style="color: red"> </span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <textarea name="indication" id="indication" cols="5" rows="5" class="form-control" placeholder="Indication"
@@ -88,8 +88,8 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="generic_id" id="generic_id"
-                                                class="select2 form-control">
-                                                <option disabled selected>Select Generic Name</option>
+                                                class="select2 form-control" required>
+                                                <option value="" disabled selected>Select Generic Name</option>
                                                 @forelse ($generics as $item)
                                                     <option value="{{$item->id}}">{{$item->generic_name}}</option>
                                                 @empty
@@ -106,11 +106,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="rack_id">Rack Number</label>
+                                        <label for="rack_id">Rack Number <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="rack_id" id="rack_id" class="select2 form-control">
-                                                <option disabled selected>Select Rack Name</option>
+                                            <select name="rack_id" id="rack_id" class="select2 form-control" required>
+                                                <option value="" disabled selected>Select Rack Name</option>
                                                 @forelse ($racks as $item)
                                                     <option value="{{$item->id}}">{{$item->rack_name}}</option>
                                                 @empty
@@ -129,12 +129,12 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="medicine_form">Medicine Form</label>
+                                        <label for="medicine_form">Medicine Form <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="medicine_form" id="medicine_form"
-                                                class="select2 form-control">
-                                                <option disabled selected>Select Medicine form Name</option>
+                                                class="select2 form-control" required>
+                                                <option value="" disabled selected>Select Medicine form Name</option>
                                                 @forelse ($mediForms as $item)
                                                     <option value="{{$item->id}}">{{$item->medicine_strength}}</option>
                                                 @empty
@@ -144,19 +144,19 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="medicine_strength">Strength </label>
+                                        <label for="medicine_strength">Strength <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="medicine_strength" id="medicine_strength"
+                                            <input type="text" name="medicine_strength" id="medicine_strength" required
                                                 class="form-control" placeholder="Strength" value="{{old('medicine_strength')}}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="min_stock">Minimum Stock</label>
+                                        <label for="min_stock">Minimum Stock <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="min_stock" id="min_stock" class="form-control"
-                                                placeholder="Minimum Stock" value="0" autocomplete="off">
+                                                placeholder="Minimum Stock" value="0" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
