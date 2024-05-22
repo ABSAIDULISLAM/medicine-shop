@@ -349,6 +349,7 @@ class PurchaseController extends Controller
                 $purchaseDetail->sales_price = $request->sales_price[$key];
                 $purchaseDetail->expire_date = $request->expire_date[$key];
                 $purchaseDetail->sub_total = $request->sub_total[$key];
+                $purchaseDetail->rack_id = $request->rack_id[$key];
                 $purchaseDetail->inStock = $request->stock[$key];
                 $purchaseDetail->supplier_id = $request->supplier_id;
                 $purchaseDetail->date = $request->date;
@@ -374,6 +375,7 @@ class PurchaseController extends Controller
 
     public function windowPopInvoice($id)
     {
+        return 'ok';
       $data = PurchasesDetail::where('common_id', $id)
             ->with(['product' => function($query) {
                 $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');

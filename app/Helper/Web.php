@@ -109,7 +109,6 @@ if (!function_exists('uploadany_file')) {
 }
 
 
-
 function convertfloat($originalNumber)
 {
     return str_replace(',', '', $originalNumber);

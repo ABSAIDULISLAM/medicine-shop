@@ -49,9 +49,9 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                             <input type="hidden" name="purchaseId" value="{{$data->id}}" class="form-control">
-                                            <select name="supplier_id" id="supplier_id" class="form-control select2"
+                                            <select name="supplier_id" id="supplier_id" class="form-control select2" required
                                                 required>
-                                                <option selected>Select Supplier</option>
+                                                <option value="" selected>Select Supplier</option>
                                                 @forelse ($suplyer as $item)
                                                     <option value="{{ $item->id }}"{{$data->supplier_id == $item->id ? 'selected' : ''}}>{{ $item->company_name }}</option>
                                                 @empty
@@ -70,22 +70,22 @@
                                             @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="invoice_amount">Total Amount</label>
+                                        <label for="invoice_amount">Total Amount <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="final_amount" id="invoice_amount"
                                                 class="form-control" placeholder="0.00" readonly="" value="{{$data->final_amount}}">
-                                            <input type="hidden" id="hiddenInvoiceAmount" class="form-control"
+                                            <input type="hidden" id="hiddenInvoiceAmount" class="form-control" required
                                                 placeholder="0.00" readonly="">
 
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="payment">Payment</label>
+                                        <label for="payment">Payment <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-handshake-o"></i></span>
                                             <input type="text" name="payment" class="form-control @error('payment') is-invalid border border-danger @enderror" id="payment"
-                                                oninput="paymentAmount(this.id)" placeholder="0.00" autocomplete="off"  value="{{$data->payment}}">
+                                                oninput="paymentAmount(this.id)" placeholder="0.00" autocomplete="off" required  value="{{$data->payment}}">
                                         </div>
                                         @error('payment')
                                             <div class="invalid-feedback error text-red">{{ $message }}</div>
@@ -94,10 +94,10 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="previous_dues">Previous Dues</label>
+                                        <label for="previous_dues">Previous Dues <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="previous_dues" id="previous_dues"
+                                            <input type="text" name="previous_dues" id="previous_dues" required
                                                 class="form-control" autocomplete="off" required="" placeholder="0.00"
                                                 readonly=""  value="{{$data->previous_dues}}">
                                         </div>
@@ -111,10 +111,10 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="dues">Dues</label>
+                                        <label for="dues">Dues <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" class="form-control" name="dues" id="dues"
+                                            <input type="text" class="form-control" name="dues" id="dues" required
                                                 placeholder="0.00" autocomplete="off" readonly="" value="{{$data->dues}}">
                                         </div>
                                     </div>
@@ -159,13 +159,13 @@
                                 @endphp
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="datepicker">Date </label>
+                                        <label for="datepicker">Date <span style="color: red">*</span> </label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
                                             <input type="date" name="date" value="{{ $data->date }}" class="form-control pull-right"
-                                                id="datepicker" autocomplete="off">
+                                                id="datepicker" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -194,27 +194,6 @@
 
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-md-12">
-                                    {{-- <div class="form-group">
-                                        <label for="lname" class="text-danger"> Product Name <span style="color: red">
-                                                *</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-bars"></i></span>
-                                            <input type="text" name="search" id="tags" accesskey="A"
-                                                class="form-control" placeholder="Enter Product Name / Product Code"
-                                                autofocus="autofocus" autocomplete="off" />
-                                            <span class="input-group-btn">
-                                                <button type="button" style="padding: 8px;height: 34px"
-                                                    data-toggle="modal" data-target="#addMedicine"
-                                                    class="btn btn-default btn-flat"><i
-                                                        style="vertical-align: 0% !important;"
-                                                        class="fa fa-plus-circle text-primary fa-lg"
-                                                        aria-hidden="true"></i></button>
-                                            </span>
-                                        </div>
-                                        <div id="products">
-
-                                        </div>
-                                    </div> --}}
                                     <div style="overflow-x:auto;">
                                         <table class="table tbl table-bordered table-striped table-hover">
                                             <thead>
@@ -225,7 +204,7 @@
                                                     <th class="text-center" style='width: 100px;'>Cost Price</th>
                                                     <th class="text-center" style='width: 100px;'>Sales Price</th>
                                                     <th class="text-center" style='width: 100px;'>Expire Date</th>
-                                                    {{-- <th class="text-center" style='width: 100px;'>Rack No</th> --}}
+                                                    <th class="text-center" style='width: 100px;'>Rack No</th>
                                                     <th class="text-center" style='width: 120px;'>Sub Total</th>
                                                     <th class="text-center" style='width: 80px;'>Stock</th>
                                                     {{-- <th class="text-center" style='width: 70px;'>Action</th> --}}
@@ -244,14 +223,14 @@
                                                     <td class="text-center" style="width: 80px;"><input type="text" value="{{$item->cost_price}}" name="cost_price[]" class="form-control unitPrice" style="width:100%;text-align: center" autocomplete="off"></td>
                                                     <td class="text-center" style="width: 80px;"><input type="text" value="{{$item->sales_price}}" name="sales_price[]" class="form-control sales_price" style="width:100%;text-align: center" autocomplete="off"></td>
                                                     <td class="text-center" style="width: 80px;"><input type="date" value="{{$item->expire_date}}" name="expire_date[]" class="form-control exp_date" style="width:145px;text-align: center;margin-right: -25px"></td>
-                                                    {{-- <td class="text-center" style="width: 80px;">
-                                                        <select name="rack_id[]" class="form-control rack_id" style="width:100%;text-align: center;color: red;font-weight: bold">
+                                                    <td class="text-center" style="width: 80px;">
+                                                        <select name="rack_id[]" class="form-control rack_id" style="width:100%;text-align: center;">
                                                             @forelse ($racks as $rack)
-                                                            <option value="{{$rack->id}}" {{$item->rack->id==$rack->id ? 'selected':''}}>{{$rack->rack_name}}</option>
+                                                            <option value="{{$rack->id}}">{{$rack->rack_name}}</option>
                                                             @empty
                                                             @endforelse
                                                         </select>
-                                                    </td> --}}
+                                                    </td>
                                                     <td class="text-center" style="width: 100px;">
                                                         <input type="text" value="{{$item->sub_total}}" name="sub_total[]" class="form-control proPrice" style="width:100%;text-align: center">
                                                             <input type="hidden" value="{{$item->sub_total}}" name="hiddnTotal[]" class="form-control hiddnTotal" style="width:100%;text-align: center">
@@ -302,7 +281,7 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-
+    @includeIf('admin.purchase.partials.supplier')
     @push('js')
     <script>
         $(document).ready(function() {
