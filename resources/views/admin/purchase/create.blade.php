@@ -48,12 +48,12 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="supplier_id">Supplier Name <span style="color: red">*</span></label>
+                                        <label for="supplier_id">Supplier Name<span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                             <select name="supplier_id" id="supplier_id" class="form-control select2"
                                                 required>
-                                                <option selected>Select Supplier</option>
+                                                <option value="" disabled selected>Select Supplier</option>
                                                 @forelse ($suplyer as $item)
                                                     <option value="{{ $item->id }}">{{ $item->company_name }}</option>
                                                 @empty
@@ -67,27 +67,28 @@
                                                         aria-hidden="true"></i></button>
                                             </span>
                                         </div>
-
                                         @error('supplier_id')
-                                                <div class="invalid-feedback error text-red">{{ $message }}</div>
-                                            @enderror
+                                            <div class="invalid-feedback error text-red">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="invoice_amount">Total Amount</label>
+                                        <label for="invoice_amount">Total Amount <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="final_amount" id="invoice_amount"
-                                                class="form-control" placeholder="0.00" readonly="">
+                                                class="form-control" placeholder="0.00" readonly="" required>
                                             <input type="hidden" id="hiddenInvoiceAmount" class="form-control"
                                                 placeholder="0.00" readonly="">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="payment">Payment</label>
+                                        <label for="payment">Payment <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-handshake-o"></i></span>
-                                            <input type="text" name="payment" class="form-control @error('payment') is-invalid border border-danger @enderror" id="payment"
-                                                oninput="paymentAmount(this.id)" placeholder="0.00" autocomplete="off">
+                                            <input type="text" name="payment"
+                                                class="form-control @error('payment') is-invalid border border-danger @enderror"
+                                                id="payment" oninput="paymentAmount(this.id)" placeholder="0.00" value="0"
+                                                autocomplete="off" required>
                                         </div>
                                         @error('payment')
                                             <div class="invalid-feedback error text-red">{{ $message }}</div>
@@ -96,11 +97,11 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="previous_dues">Previous Dues</label>
+                                        <label for="previous_dues">Previous Dues <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" name="previous_dues" id="previous_dues"
-                                                class="form-control" autocomplete="off" required="" placeholder="0.00"
+                                                class="form-control" autocomplete="off" required placeholder="0.00"
                                                 readonly="">
                                         </div>
                                     </div>
@@ -108,16 +109,16 @@
                                         <label for="discount">Discount</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="discount" class="form-control" id="discount"
+                                            <input type="text" name="discount" class="form-control" id="discount" value="0"
                                                 oninput="discountAmount(this.id)" placeholder="0.00" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="dues">Dues</label>
+                                        <label for="dues">Dues <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                             <input type="text" class="form-control" name="dues" id="dues"
-                                                placeholder="0.00" autocomplete="off" readonly="">
+                                                placeholder="0.00" autocomplete="off" readonly="" required>
                                         </div>
                                     </div>
                                 </div>
@@ -134,14 +135,14 @@
                                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                                             <input type="text" name="invoice_number" id="invoice_number"
                                                 value="{{ $invoiceId }}" class="form-control" value="17110103191"
-                                                autocomplete="off" required="" readonly="">
+                                                autocomplete="off" required readonly="">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="shipping_charge">Shipping Charge</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="shipping_charge" class="form-control"
+                                            <input type="text" name="shipping_charge" class="form-control" value="0"
                                                 id="shipping_charge" oninput="shippingAmount(this.id)" placeholder="0.00"
                                                 autocomplete="off">
                                         </div>
@@ -166,17 +167,19 @@
                                 @endphp
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="datepicker">Date </label>
+                                        <label for="datepicker">Date <span style="color: red">*</span></label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="date" name="date" value="{{ $date }}" class="form-control pull-right"
-                                                id="datepicker" autocomplete="off">
+                                            <input type="date" name="date" value="{{ $date }}"
+                                                class="form-control pull-right" id="datepicker" autocomplete="off"
+                                                required>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="payment_method">Payment Method</label>
+                                        <label for="payment_method">Payment Method <span
+                                                style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
                                             <select name="payment_method" id="payment_method" class="form-control"
@@ -243,7 +246,8 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="7" style="width:660px">Total</td>
+                                                    <td colspan="7" style="width:660px">Total <span
+                                                            style="color: red">*</span></td>
                                                     <td class="center" style="width:120px">
                                                         <input type="text" class="form-control totalAmount"
                                                             id="totalAmount" name="total_amount" value="0.00"
@@ -277,9 +281,6 @@
     @includeIf('admin.purchase.partials.supplier')
 
     @includeIf('admin.purchase.partials.medicine')
-
-
-
 
     @push('js')
         <script>
@@ -701,21 +702,21 @@
                         $.ajax({
                             type: "POST",
                             data: {
-                                _token: '{{ csrf_token() }}', // CSRF token
+                                _token: '{{ csrf_token() }}',
                                 purchasesProductName: productName
                             },
                             url: '{{ route('Purchase.fetch.single.product') }}',
                             dataType: 'json',
                             success: function(response) {
-                                if (response.id) {
+                                if (response.product.id) {
                                     var alreadyListed = 0;
                                     $('#tbody .productId').each(function() {
-                                        if (this.value == response.id) {
+                                        if (this.value == response.product.id) {
                                             alreadyListed++;
                                         }
                                     });
                                     if (alreadyListed > 0) {
-                                        alert(response.medicine_name + ' - already listed.');
+                                        alert(response.product.medicine_name + ' - already listed.');
                                         return false;
                                     } else {
                                         addTableRow(response);
@@ -729,34 +730,43 @@
                         });
                     }
                 }
-
                 var rowIdx = 0;
-
                 function addTableRow(responseObject) {
+                    var rackSelect = $('<select>', {
+                        'class': 'form-control rack_id',
+                        'name': 'rack_id[]'
+                    });
+                    $.each(responseObject.racks, function(index, rack) {
+                        rackSelect.append($('<option>', {
+                            value: rack.id,
+                            text: rack.rack_name
+                        }));
+                    });
+
                     $('#tbody').append(`<tr id="R${++rowIdx}">
                         <td class="row-index text-center"><p>${rowIdx}</p></td>
-                        <td class="text-left">${responseObject.medicine_name} <br> ${responseObject.medicine_form} <br> ${responseObject.medicine_strength} <br> ${responseObject.generic_name}
-                            <input type="hidden" name="product_id[]" value="${responseObject.id}" class="productId">
+                        <td class="text-left">${responseObject.product.medicine_name} <br> ${responseObject.product.medicine_form} <br> ${responseObject.product.medicine_strength} <br> ${responseObject.product.generic_name}
+                            <input type="hidden" name="product_id[]" value="${responseObject.product.id}" class="productId">
                         </td>
                         <td class="text-center"><input type="number" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
-                        <td class="text-center"><input type="number" value="${responseObject.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
-                        <td class="text-center"><input type="number" value="${responseObject.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
-                        <td class="text-center"><input type="date" value="${responseObject.expire_date}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
-                        <td class="text-center">
-                            <select name="rack_id[]" class="form-control rack_id">
-                                <option value="${responseObject.rack_id}">${responseObject.rack_name}</option>
-                            </select>
+                        <td class="text-center"><input type="number" value="${responseObject.product.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
+                        <td class="text-center"><input type="number" value="${responseObject.product.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
+                        <td class="text-center"><input type="date" value="${responseObject.product.expire_date}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
+                        <td class="text-center"></td> <!-- Add an empty cell for rack dropdown -->
+                        <td class="text-center"><input type="number" value="${responseObject.product.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
+                            <input type="hidden" value="${responseObject.product.cost_price}" name="hiddnTotal[]" class="form-control hiddnTotal" autocomplete="off">
                         </td>
-                        <td class="text-center"><input type="text" value="${responseObject.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
-                            <input type="hidden" value="${responseObject.cost_price}" name="hiddnTotal[]" class="form-control hiddnTotal" autocomplete="off">
-                        </td>
-                        <td class="text-center"><input type="text" value="${responseObject.inStock}" name="stock[]" class="form-control inStock" readonly>
-                            <input type="hidden" value="${responseObject.preStock}" name="preStock[]" class="form-control preStock" readonly>
-                            <input type="hidden" value="${responseObject.generic_id}" name="product_code[]" class="form-control product_code" readonly>
+                        <td class="text-center"><input type="text" value="${responseObject.product.inStock}" name="stock[]" class="form-control inStock" readonly>
+                            <input type="hidden" value="${responseObject.product.preStock}" name="preStock[]" class="form-control preStock" readonly>
+                            <input type="hidden" value="${responseObject.product.generic_id}" name="product_code[]" class="form-control product_code" readonly>
                         </td>
                         <td class="text-center"><button class="btn btn-danger remove" type="button"><i class="fa fa-times"></i></button></td>
                     </tr>`);
+
+                    // Append the rack select dropdown to the table row
+                    $('#tbody tr:last td:nth-child(7)').html(rackSelect);
                 }
+
 
                 // Remove table row
                 $('#tbody').on('click', '.remove', function() {

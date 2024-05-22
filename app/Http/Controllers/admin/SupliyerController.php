@@ -28,7 +28,6 @@ class SupliyerController extends Controller
         return view('admin.contact.suplyer-list', compact('data'));
     }
 
-
     public function store(Request $request)
     {
         $validated = $request->validate([

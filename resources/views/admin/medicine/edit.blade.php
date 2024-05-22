@@ -203,14 +203,14 @@
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #2E4D62;color: #fff">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Medicine Type</h4>
+                    <h4 class="modal-title">Add Medicine Type </h4>
                 </div>
                 <div class="modal-body">
                     <form method="post" action="">
-                        <label>Medicine Type</label>
-                        <input type="text" id="medicineType" class="form-control" placeholder="Medicine Type"/>
+                        <label>Medicine Type <span style="color: red"> *</span></label>
+                        <input type="text" required id="medicineType" class="form-control" placeholder="Medicine Type"/>
                         <br />
-                        <label>Select status</label>
+                        <label>Select status <span style="color: red"> *</span></label>
                         <select id="medicineStatus" class="form-control">
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
@@ -258,7 +258,7 @@
                                 selected: true
                             }));
                             $('#add_medi_type').modal('hide');
-                            $('#add_medi_type').find('input, select').val('');
+                            $('#medicineType').val('');
                         }
                     }
                 });

@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use PHPUnit\Framework\Constraint\Count;
+use Illuminate\Support\Facades\Validator;
 
 class PurchaseController extends Controller
 {
@@ -53,15 +54,17 @@ class PurchaseController extends Controller
         ]));
     }
 
-
     public function SupplierStore(Request $request)
     {
-
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'company_name' => ['required', 'string', 'max:256'],
-            'contact_num' => ['required', 'numeric', 'digits:11', 'regex:/\+?(88)?0?1[3-9][0-9]{8}\b/'],
+            'contact_num' => ['required', 'numeric', 'regex:/\+?(88)?0?1[3456789][0-9]{8}\b/'],
             'address' => ['required', 'string'],
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $contact = Contact::create([
             'company_name' => $request->company_name,
@@ -179,30 +182,34 @@ class PurchaseController extends Controller
     public function fetchSingleProduct(Request $request)
     {
         $productName = $request->input('purchasesProductName');
-
         $product = Medicine::where('medicine_name', $productName)->first();
 
         if ($product) {
+            $racks = Rack::orderBy('id', 'asc')->get();
+
             $response = [
-                'id' => $product->id,
-                'medicine_name' => $product->medicine_name,
-                'medicine_form' => $product->medicine_form,
-                'medicine_strength' => $product->medicine_strength,
-                'generic_name' => $product->generic_name,
-                'cost_price' => $product->purchases_price,
-                'sales_price' => $product->sale_price,
-                'expire_date' => $product->expire_date,
-                'rack_id' => $product->rack_id,
-                'rack_name' => $product->rack_name,
-                'inStock' => $product->stock,
-                'preStock' => $product->min_stock,
-                'generic_id' => $product->generic_id,
+                'product' => [
+                    'id' => $product->id,
+                    'medicine_name' => $product->medicine_name,
+                    'medicine_form' => $product->medicine_form,
+                    'medicine_strength' => $product->medicine_strength,
+                    'generic_name' => $product->generic_name,
+                    'cost_price' => $product->purchases_price,
+                    'sales_price' => $product->sale_price,
+                    'expire_date' => $product->expire_date,
+                    'rack_id' => $product->rack_id,
+                    'rack_name' => $product->rack_name,
+                    'inStock' => $product->stock,
+                    'preStock' => $product->min_stock,
+                    'generic_id' => $product->generic_id,
+                ],
+                'racks' => $racks
             ];
 
             return response()->json($response);
         }
 
-        return response()->json([], 404); // Return an error if the product is not found
+        return response()->json(['error' => 'Product not found '], 404);
     }
 
 
@@ -372,7 +379,7 @@ class PurchaseController extends Controller
                 $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');
             }])
             ->get();
-            
+
         return view('admin.purchase.invoice', compact('data'));
     }
 

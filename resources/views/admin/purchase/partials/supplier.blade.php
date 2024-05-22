@@ -6,14 +6,17 @@
                     <h4 class="modal-title">Add Supplier</h4>
                 </div>
                 <div class="modal-body">
+                    <div class="error">
+
+                    </div>
                     <form method="post" action="" id="contactform">
-                        <label>Supplier Name</label>
-                        <input type="text" name="company_name" id="company_name" class="form-control"
+                        <label>Supplier Name <span style="color: red">*</span></label>
+                        <input type="text" required name="company_name" id="company_name" class="form-control"
                             placeholder="Customer Name" autocomplete="off" />
                         <br />
-                        <label>Mobile Number</label>
+                        <label>Mobile Number <span style="color: red">*</span></label>
                         <input type="text" name="contact_num" id="contact_num" class="form-control"
-                            placeholder="Mobile Number" autocomplete="off" />
+                            placeholder="Mobile Number" autocomplete="off" required />
                         <input type="hidden" name="created_by" id="created_by" value="{{auth()->user()->id}}"
                             class="form-control" autocomplete="off" />
                         <input type="hidden" name="status" id="status" value="1" class="form-control"
@@ -21,9 +24,9 @@
                         <input type="hidden" name="contact_type" id="contact_type" value="2"
                             class="form-control" autocomplete="off" />
                         <br />
-                        <label>Address</label>
+                        <label>Address <span style="color: red">*</span></label>
                         <input type="text" name="address" id="address" class="form-control"
-                            placeholder="Address" autocomplete="off" />
+                            placeholder="Address" autocomplete="off" required/>
                         <br />
                         <input type="button" value="Submit" id="addSupplier" class="btn btn-success pull-right" />
                     </form>
@@ -51,8 +54,8 @@
                 alert("Sorry unauthorized access.");
                 return false;
             }
-            if (company_name == "" || contact_num == "") {
-                alert("Sorry Company Name and Contact Number Can't be empty.");
+            if (company_name == "" || contact_num == "" || address == "") {
+                alert("Please Filled Required Field.");
                 return false;
             }
 
@@ -69,17 +72,31 @@
                     "contact_type": contact_type
                 },
                 success: function(data) {
-                    if (data.success) {
-                        alert('Save Successfully.');
-                        var option = data.option;
-                        var pre_blnc = data.pre_blnc;
-
-                        $('#supplier_id').html(option);
-                        $('#previous_dues').val(pre_blnc);
-                        $('#addContact').modal('hide');
+                    if(data.errors) {
+                        var errorsHtml = '<ul>';
+                        $.each(data.errors, function(key, value) {
+                            errorsHtml += '<li>' + value + '</li>';
+                        });
+                        errorsHtml += '</ul>';
+                        $('.error').html(errorsHtml);
+                        $('#addContact').modal('show');
                     } else {
-                        alert('Failed to save data.');
+                        if (data.success) {
+                            // alert('Save Successfully.');
+                            var option = data.option;
+                            var pre_blnc = data.pre_blnc;
+                            $('#supplier_id').html(option);
+                            $('#previous_dues').val(pre_blnc);
+                            $('#addContact').modal('hide');
+                            $('#company_name').val('');
+                            $('#contact_num').val('');
+                            $('#address').val('');
+                        } else {
+                            alert('Failed to save data.');
+                        }
                     }
+
+
                 },
                 error: function(xhr, status, error) {
                     alert('Error occurred while processing the request: ' + error);

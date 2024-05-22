@@ -15,18 +15,18 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-medkit"></i></span>
                                     <input type="text" id="medicine_name" class="form-control"
-                                        placeholder="Medicine Name" autocomplete="off" required="">
+                                        placeholder="Medicine Name" autocomplete="off" required>
                                     <input type="hidden" id="created_by" class="form-control" value="{{auth()->user()->id}}"
                                         autocomplete="off">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="medicine_form">Medicine Form</label>
+                                <label for="medicine_form">Medicine Form <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                    <select id="medicine_form" class="select2 form-control"
+                                    <select id="medicine_form" class="select2 form-control" required
                                         style="width: 100%">
-                                        <option selected disabled>Select Medicine Form</option>
+                                        <option value="" selected disabled>Select Medicine Form</option>
                                         @forelse ($mediForms as $item)
                                             <option value="{{$item->id}}">{{$item->medicine_strength}}</option>
                                         @empty
@@ -38,9 +38,9 @@
                                 <label for="company_id">Company Name <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                    <select id="company_id" class="select2 form-control"
+                                    <select id="company_id" class="select2 form-control" required
                                         style="width: 100%">
-                                        <option selected disabled>Select Company</option>
+                                        <option value="" disabled>Select Company</option>
                                         @forelse ($companies as $item)
                                             <option value="{{$item->id}}">{{$item->company_name}}</option>
                                         @empty
@@ -53,27 +53,27 @@
                                         *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                    <input type="text" id="purchases_price" class="form-control"
-                                        placeholder="Purchases Prices" autocomplete="off" required="">
+                                    <input type="text" id="purchases_price" class="form-control" value="0"
+                                        placeholder="Purchases Prices" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="min_stock">Minimum Stock</label>
+                                <label for="min_stock">Minimum Stock <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                    <input type="text" id="min_stock" class="form-control"
-                                        placeholder="Minimum Stock" autocomplete="off">
+                                    <input type="text" id="min_stock" class="form-control" value="0"
+                                        placeholder="Minimum Stock" autocomplete="off" required>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="generic_id">Generic Name </label>
+                                <label for="generic_id">Generic Name <span style="color: red"> *</span> </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                    <select id="generic_id" class="select2 form-control"
+                                    <select id="generic_id" class="select2 form-control" required
                                         style="width: 100%">
-                                        <option selected disabled>Select Generic</option>
+                                        <option value="" selected disabled>Select Generic</option>
                                         @forelse ($generics as $item)
                                             <option value="{{$item->id}}">{{$item->generic_name}}</option>
                                         @empty
@@ -82,19 +82,19 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="medicine_strength">Strength </label>
+                                <label for="medicine_strength">Strength <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                     <input type="text" id="medicine_strength" class="form-control"
-                                        placeholder="Strength" autocomplete="off">
+                                        placeholder="Strength" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="rack_id">Rack Number</label>
+                                <label for="rack_id">Rack Number <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                    <select id="rack_id" class="select2 form-control" style="width: 100%">
-                                        <option selected disabled>Select Rack</option>
+                                    <select id="rack_id" class="select2 form-control" style="width: 100%" required>
+                                        <option value="" selected disabled>Select Rack</option>
                                         @forelse ($racks as $item)
                                             <option value="{{$item->id}}">{{$item->rack_name}}</option>
                                         @empty
@@ -106,16 +106,16 @@
                                 <label for="sale_price">Sales Price <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                    <input type="text" id="sale_price" class="form-control"
-                                        placeholder=" Sales Price" autocomplete="off" required="">
+                                    <input type="text" id="sale_price" class="form-control" value="0"
+                                        placeholder=" Sales Price" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="opening_stock">Opening Stock<span style="color: red"> *</span></label>
+                                <label for="opening_stock">Opening Stock <span style="color: red"> *</span></label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                    <input type="text" id="opening_stock" class="form-control"
-                                        placeholder="Opening Stock" autocomplete="off" required="">
+                                    <input type="text" id="opening_stock" class="form-control" value="0"
+                                        placeholder="Opening Stock" autocomplete="off" required>
                                 </div>
                             </div>
                         </div>
@@ -131,102 +131,6 @@
 </div>
 
 <script>
-    // $(document).ready(function() {
-    //     $('.company_id').select2({
-    //         minimumInputLength: 2,
-    //         allowClear: true,
-    //         placeholder: 'Please Enter Name',
-    //         ajax: {
-    //             "_token": "{{ csrf_token() }}",
-    //             url: '{{route('Purchase.company.search')}}',
-    //             dataType: 'json',
-    //             delay: 250,
-    //             data: function(data) {
-    //                 return {
-    //                     searchCompany: data.term // search term
-    //                 };
-    //             },
-    //             processResults: function(response) {
-    //                 console.log(response);
-    //                 return {
-    //                     results: response
-    //                 };
-    //             },
-    //             cache: true
-    //         }
-    //     });
-    // });
-    // $(document).ready(function() {
-    //     $('.generic_id').select2({
-    //         minimumInputLength: 2,
-    //         allowClear: true,
-    //         placeholder: 'Please Enter Name',
-    //         ajax: {
-    //             url: 'ajax-response',
-    //             dataType: 'json',
-    //             delay: 250,
-    //             data: function(data) {
-    //                 return {
-    //                     searchGeneric: data.term // search term
-    //                 };
-    //             },
-    //             processResults: function(response) {
-    //                 return {
-    //                     results: response
-    //                 };
-    //             },
-    //             cache: true
-    //         }
-    //     });
-    // });
-    // $(document).ready(function() {
-    //     $('.rack_id').select2({
-    //         minimumInputLength: 2,
-    //         allowClear: true,
-    //         placeholder: 'Please Enter Name',
-    //         ajax: {
-    //             url: 'ajax-response',
-    //             dataType: 'json',
-    //             delay: 250,
-    //             data: function(data) {
-    //                 return {
-    //                     searchRack: data.term // search term
-    //                 };
-    //             },
-    //             processResults: function(response) {
-    //                 return {
-    //                     results: response
-    //                 };
-    //             },
-    //             cache: true
-    //         }
-    //     });
-    // });
-    // $(document).ready(function() {
-    //     $('.medicine_form').select2({
-    //         minimumInputLength: 2,
-    //         allowClear: true,
-    //         placeholder: 'Please Enter Name',
-    //         ajax: {
-    //             url: 'ajax-response',
-    //             dataType: 'json',
-    //             delay: 250,
-    //             data: function(data) {
-    //                 return {
-    //                     searchMedicineForm: data.term // search term
-    //                 };
-    //             },
-    //             processResults: function(response) {
-    //                 return {
-    //                     results: response
-    //                 };
-    //             },
-    //             cache: true
-    //         }
-    //     });
-    // });
-
-
     $(document).ready(function() {
         $('#saveMedicine').click(function(e) {
             e.preventDefault();
@@ -246,8 +150,8 @@
                 alert("Sorry unauthorized access.");
                 return false;
             }
-            if (medicine_name == "" || generic_id == "") {
-                alert("Sorry Medicine Name and Generic Number and Box Qty Can not be empty.");
+            if (medicine_name == "" || generic_id == "" || sale_price == "" || created_by == "" || medicine_form == "" || company_id == "" || purchases_price == "" || min_stock == "" || medicine_strength == "" || rack_id == "" || opening_stock == "") {
+                alert("Please Filled all Required Field which have Red Sign.");
                 return false;
             }
 
@@ -273,6 +177,17 @@
                     if (successData != "") {
                         alert(successData);
                         $('#addMedicine').modal('hide');
+                        $('#medicine_name').val('');
+                        $('#created_by').val('');
+                        $('#medicine_form').val('');
+                        $('#company_id').val('');
+                        $('#purchases_price').val('');
+                        $('#min_stock').val('');
+                        $('#generic_id').val('');
+                        $('#medicine_strength').val('');
+                        $('#rack_id').val('');
+                        $('#sale_price').val('');
+                        $('#opening_stock').val('');
                     }
                 }
             });

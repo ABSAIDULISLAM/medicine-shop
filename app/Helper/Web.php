@@ -115,16 +115,14 @@ function convertfloat($originalNumber)
     return str_replace(',', '', $originalNumber);
 }
 
-// convert to word from number 
+// convert to word from number
 function convertToWords($number) {
     $ones = array(
         0 => 'Zero', 1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four', 5 => 'Five', 6 => 'Six', 7 => 'Seven',
         8 => 'Eight', 9 => 'Nine', 10 => 'Ten', 11 => 'Eleven', 12 => 'Twelve', 13 => 'Thirteen', 14 => 'Fourteen',
-        15 => 'Fifteen', 16 => 'Sixteen', 17 => 'Seventeen', 18 => 'Eighteen', 19 => 'Nineteen'
-    );
-    $tens = array(
-        0 => '', 1 => '', 2 => 'Twenty', 3 => 'Thirty', 4 => 'Forty', 5 => 'Fifty', 6 => 'Sixty', 7 => 'Seventy',
-        8 => 'Eighty', 9 => 'Ninety'
+        15 => 'Fifteen', 16 => 'Sixteen', 17 => 'Seventeen', 18 => 'Eighteen', 19 => 'Nineteen',
+        20 => 'Twenty', 30 => 'Thirty', 40 => 'Forty', 50 => 'Fifty', 60 => 'Sixty', 70 => 'Seventy',
+        80 => 'Eighty', 90 => 'Ninety'
     );
     $hundreds = array(
         'Hundred', 'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion'
@@ -145,19 +143,19 @@ function convertToWords($number) {
         }
         if ($hrem > 0) {
             $words .= $words != '' ? ' ' : '';
-            if ($hrem < 20) {
+            if ($hrem < 20 || $hrem % 10 == 0) {
                 $words .= $ones[$hrem];
             } else {
-                $tunit = (int)($hrem / 10);
+                $tunit = (int)($hrem / 10) * 10;
                 $trem = $hrem % 10;
-                if ($tunit > 0) {
-                    $words .= $tens[$tunit];
-                }
+                $words .= $ones[$tunit];
                 if ($trem > 0) {
-                    $words .= $words != '' ? ' ' : '';
-                    $words .= $ones[$trem];
+                    $words .= '-' . $ones[$trem];
                 }
             }
+        }
+        if ($hrem === 0 && $hunit > 0) {
+            $words .= ' ' . $hundreds[0];
         }
         $words .= ' Taka ';
     }
