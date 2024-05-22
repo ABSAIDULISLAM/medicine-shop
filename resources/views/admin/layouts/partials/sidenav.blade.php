@@ -13,7 +13,7 @@
             <li class="{{ Request::is('admin/dashboard') ? 'active' : '' }}" style="margin-top:5px;">
                 <a href="{{ route('Admin.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
             </li>
-            <li class="treeview {{ Request::is('admin/customer/*', 'admin/supliyer/*') ? 'active menu-open' : '' }}"
+            <li class="treeview {{ Request::is('admin/customer/*', 'admin/suplyer/*') ? 'active menu-open' : '' }}"
                 style="margin-top:3px">
                 <a href="#">
                     <i class="fa fa-user-plus"></i> <span>Contact</span>
@@ -26,7 +26,7 @@
                             class=" {{ Request::is('admin/customer/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Customer List</a></li>
                     <li><a href="{{ route('Supliyer.index') }}"
-                            class=" {{ Request::is('admin/supliyer/list') ? 'activeLink' : '' }}"><i
+                            class=" {{ Request::is('admin/suplyer/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-user-circle"></i> Supplier List</a></li>
                 </ul>
             </li>

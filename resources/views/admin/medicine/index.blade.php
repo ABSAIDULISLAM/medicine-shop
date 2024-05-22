@@ -25,11 +25,16 @@
                                     New</button></a>
                         </div>
                     </div>
-
+                    <div class="row mx-5" style="margin: 10px 10px 10px 10px;">
+                        <div class="col-md-12 my-3">
+                            <input type="text" class="form-control"  id="searchInput" placeholder="Search by ID, Name, Strength, ">
+                        </div>
+                    </div>
                     <!-- /.box-header -->
+
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table id="example1" class="table table-bordered table-striped">
+                            <table id="datatable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr style="background-color: #14A586;color: #fff;">
                                         <th  style="width: 10px" class="text-center">SL</th>
@@ -46,7 +51,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($data as $item)
+                                    @forelse ($users as $item)
                                     <tr>
                                         <td style="width: 10px">{{ $loop->index+1 }}</td>
                                         <td style="width: 80px" class="text-center">{{ $item->medicine_name ?? ''}}</td>
@@ -71,9 +76,72 @@
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>
                                     </tr>
-                                    @endforeach
+                                    @empty
+                                    <tr>
+                                        <td colspan="11">No matching records found</td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
+                            <div class="d-flex justify-content-center text-right mt-4">
+                                <ul class="pagination">
+                                    <!-- Previous Page Link -->
+                                    @if ($users->onFirstPage())
+                                        <li class="page-item disabled">
+                                            <span class="page-link">&laquo; Previous</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $users->previousPageUrl() }}" rel="prev">&laquo; Previous</a>
+                                        </li>
+                                    @endif
+
+                                    <!-- Pagination Elements -->
+                                    @php
+                                        $start = max($users->currentPage() - 2, 1);
+                                        $end = min($start + 4, $users->lastPage());
+                                    @endphp
+
+                                    @if($start > 1)
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $users->url(1) }}">1</a>
+                                        </li>
+                                        @if($start > 2)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        @endif
+                                    @endif
+
+                                    @for ($i = $start; $i <= $end; $i++)
+                                        <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ $users->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endfor
+
+                                    @if($end < $users->lastPage())
+                                        @if($end < $users->lastPage() - 1)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        @endif
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $users->url($users->lastPage()) }}">{{ $users->lastPage() }}</a>
+                                        </li>
+                                    @endif
+
+                                    <!-- Next Page Link -->
+                                    @if ($users->hasMorePages())
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $users->nextPageUrl() }}" rel="next">Next &raquo;</a>
+                                        </li>
+                                    @else
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Next &raquo;</span>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,3 +153,31 @@
     </section>
 
 @endsection
+
+@push('js')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#searchInput').on('input', function(){
+            var query = $(this).val();
+            fetchFilteredData(query);
+        });
+
+        function fetchFilteredData(query) {
+            $.ajax({
+                url: "{{ route('Medicine.search') }}",
+                method: 'GET',
+                data: {
+                    query: query
+                },
+                success: function(response){
+                    $('#datatable').html(response.html);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    });
+</script>
+@endpush

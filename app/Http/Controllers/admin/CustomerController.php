@@ -13,7 +13,7 @@ class CustomerController extends Controller
     {
         $data = [];
 
-        Contact::where('contact_type', 1)->latest()->chunk(20, function ($contacts) use (&$data) {
+        Contact::where('contact_type', 1)->latest()->chunk(20, function ($contacts) use (& $data) {
             foreach ($contacts as $contact) {
                 $data[] = $contact;
             }

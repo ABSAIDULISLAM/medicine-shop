@@ -16,22 +16,29 @@ class MedicineController extends Controller
 {
     public function index()
     {
+        $users = Medicine::with('generic', 'company', 'mediform')
+                        ->orderBy('medicine_name', 'asc')
+                        ->paginate(50);
 
-        $data = collect();
-        Medicine::with('generic', 'company', 'mediform')
-            ->orderBy('medicine_name', 'asc')
-            ->chunk(20, function ($medicines) use ($data) {
-                foreach ($medicines as $medicine) {
-                    $data->push($medicine);
-                }
-            });
+        return view('admin.medicine.index', compact('users'));
+    }
 
-        // $data = Medicine::select('id', 'medicine_name', 'medicine_strength', 'purchases_price', 'sale_price', 'mrp_price', 'stock')
-        //     ->with(['generic', 'company', 'mediform'])
-        //     ->orderBy('medicine_name', 'asc')
-        //     ->get();
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
 
-        return view('admin.medicine.index', compact('data'));
+        $users = Medicine::with('generic', 'company', 'mediform')
+                    ->orWhere('medicine_name', 'like', "%$query%")
+                    ->orWhere('serial_number', 'like', "%$query%")
+                    ->orWhere('medicine_strength', 'like', "%$query%")
+                    ->orWhere('company_name', 'like', "%$query%")
+
+                    ->orderBy('medicine_name', 'asc')
+                    ->get();
+
+        $html = view('admin.medicine.search', compact('users'))->render();
+
+        return response()->json(['html' => $html]);
     }
 
     public function create()
@@ -173,7 +180,7 @@ class MedicineController extends Controller
     public function windowPopInvoice($id)
     {
         return 'ok';
-      $data = PurchasesDetail::where('common_id', $id)
+        $data = PurchasesDetail::where('common_id', $id)
             ->with(['product' => function($query) {
                 $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');
             }])

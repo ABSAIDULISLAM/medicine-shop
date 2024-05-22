@@ -53,7 +53,7 @@
                                             <td class="text-left">{{ $item->company_name }}</td>
                                             <td class="text-left">{{ $item->contact_person }}</td>
                                             <td class="text-left">{{ $item->contact_num }}</td>
-                                            <td class="text-left">{{ $item->email_address }}</td>
+                                            <td class="text-left">{{ $item->email_address?? 'null' }}</td>
                                             <td class="text-left">{{ $item->address }}</td>
                                             <td class="text-left">{{ $item->opening_balance }}</td>
                                             <td>
@@ -104,39 +104,38 @@
                     <h4 class="modal-title">Edit Customer</h4>
                 </div>
 
-
                 <div class="modal-body">
                     <form method="post" action="{{ route('Customer.update') }}" enctype="multipart/form-data">
                         @csrf
-                        <label>Company Name</label>
+                        <label>Company Name <span style="color: red"> *</span></label>
                         <input type="hidden" name="id" id="id">
                         <input type="text" name="company_name" value="Zaman" class="form-control"
-                            placeholder="Company Name" autocomplete="off" />
+                            placeholder="Company Name" autocomplete="off" required/>
                         <input type="hidden" name="id" value="1256" class="form-control" placeholder="Company Name"
                             autocomplete="off" />
                         <br />
-                        <label>Contact Person</label>
+                        <label>Contact Person <span style="color: red"> *</span></label>
                         <input type="text" name="contact_person" value="" class="form-control"
-                            placeholder="Contact Name" autocomplete="off" />
+                            placeholder="Contact Name" autocomplete="off" required/>
                         <br />
-                        <label>Mobile Number</label>
-                        <input type="text" name="contact_num" value="01727451135" class="form-control"
-                            placeholder="Mobile Number" autocomplete="off" />
+                        <label>Mobile Number <span style="color: red"> *</span></label>
+                        <input type="number" name="contact_num" value="01727451135" class="form-control"
+                            placeholder="Mobile Number" autocomplete="off" required/>
                         <br />
                         <label>Email Address</label>
-                        <input type="text" name="email_address" value="" class="form-control"
+                        <input type="email" name="email_address" value="" class="form-control"
                             placeholder="Email Address" />
                         <br />
-                        <label>Address</label>
-                        <input type="text" name="address" value="" class="form-control" placeholder="Address"
+                        <label>Address <span style="color: red"> *</span></label>
+                        <input type="text" required name="address" value="" class="form-control" placeholder="Address"
                             autocomplete="off" />
                         <br />
                         <label>Opening Balance</label>
-                        <input type="text" name="opening_balance" value="0.00" class="form-control"
+                        <input type="number" name="opening_balance" value="0.00" class="form-control"
                             placeholder="Opening Balance" autocomplete="off" />
                         <br />
-                        <label>Status</label>
-                        <select name="status" class="form-control select2" style="width: 100%">
+                        <label>Status <span style="color: red"> *</span></label>
+                        <select name="status" class="form-control select2" style="width: 100%" required>
                             <option value="1" selected>Active</option>
                             <option value="0">Inactive</option>
                         </select>
@@ -163,47 +162,47 @@
                 <div class="modal-body">
                     <form method="post" action="{{ route('Customer.store') }}" enctype="multipart/form-data">
                         @csrf
-                        <label>Contact Type</label>
-                        <select name="contact_type"
+                        <label>Contact Type <span style="color: red"> *</span></label>
+                        <select name="contact_type" required
                             class="form-control select2 @error('contact_type') is-invalid border border-danger @enderror"
                             style="width: 100%">
                             <option value="1">Customer</option>
-                            <option value="2">Supplier</option>
+                            {{-- <option value="2">Supplier</option> --}}
                             <option value="3">Supplier/Customer</option>
                         </select>
                         <br />
                         <br />
-                        <label>Company Name</label>
+                        <label>Company Name <span style="color: red"> *</span></label>
                         <input type="text" name="company_name"
                             class="form-control @error('company_name') is-invalid border border-danger @enderror"
-                            placeholder="Company Name" autocomplete="off" />
+                            placeholder="Company Name" autocomplete="off" required/>
                         <br />
-                        <label>Contact Person</label>
-                        <input type="text" name="contact_person"
+                        <label>Contact Person <span style="color: red"> *</span></label>
+                        <input type="text" name="contact_person" required
                             class="form-control @error('contact_person') is-invalid border border-danger @enderror"
                             placeholder="Contact Name" autocomplete="off" />
                         <br />
-                        <label>Mobile Number</label>
-                        <input type="text" name="contact_num"
+                        <label>Mobile Number <span style="color: red"> *</span></label>
+                        <input type="number" name="contact_num"
                             class="form-control @error('contact_num') is-invalid border border-danger @enderror"
-                            placeholder="Mobile Number" autocomplete="off" />
+                            placeholder="Mobile Number" autocomplete="off" required/>
                         <br />
                         <label>Email Address</label>
-                        <input type="text" name="email_address"
+                        <input type="email" name="email_address"
                             class="form-control @error('email_address') is-invalid border border-danger @enderror"
                             placeholder="Email Address" />
                         <br />
-                        <label>Address</label>
-                        <input type="text" name="address" class="form-control" placeholder="Address"
+                        <label>Address <span style="color: red"> *</span></label>
+                        <input type="text" required name="address" class="form-control" placeholder="Address"
                             autocomplete="off" />
                         <br />
                         <label>Opening Balance</label>
-                        <input type="text" name="opening_balance" value="0"
+                        <input type="number" name="opening_balance" value="0"
                             class="form-control @error('opening_balance') is-invalid border border-danger @enderror"
                             placeholder="Opening Balance" autocomplete="off" />
                         <br />
-                        <label>Status</label>
-                        <select name="status"
+                        <label>Status <span style="color: red"> *</span></label>
+                        <select name="status" required
                             class="form-control select2 @error('status') is-invalid border border-danger @enderror"
                             style="width: 100%">
                             <option value="1">Active</option>

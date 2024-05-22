@@ -103,28 +103,26 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Edit Suppliyer</h4>
                 </div>
-
-
                 <div class="modal-body">
                     <form method="post" action="{{ route('Supliyer.update') }}" enctype="multipart/form-data">
                         @csrf
-                        <label>Company Name</label>
+                        <label>Company Name <span style="color: red"> *</span></label>
                         <input type="hidden" name="id" id="id">
                         <input type="text" name="company_name" value="Zaman" class="form-control"
-                            placeholder="Company Name" autocomplete="off" />
+                            placeholder="Company Name" autocomplete="off" required/>
                         <input type="hidden" name="id" value="1256" class="form-control" placeholder="Company Name"
                             autocomplete="off" />
                         <br />
-                        <label>Contact Person</label>
+                        <label>Contact Person <span style="color: red"> *</span></label>
                         <input type="text" name="contact_person" value="" class="form-control"
-                            placeholder="Contact Name" autocomplete="off" />
+                            placeholder="Contact Name" autocomplete="off" required/>
                         <br />
-                        <label>Mobile Number</label>
-                        <input type="text" name="contact_num" value="01727451135" class="form-control"
+                        <label>Mobile Number <span style="color: red"> *</span></label>
+                        <input type="number" name="contact_num" value="01727451135" class="form-control"
                             placeholder="Mobile Number" autocomplete="off" />
                         <br />
                         <label>Email Address</label>
-                        <input type="text" name="email_address" value="" class="form-control"
+                        <input type="email" name="email_address" value="" class="form-control"
                             placeholder="Email Address" />
                         <br />
                         <label>Address</label>
@@ -132,11 +130,11 @@
                             autocomplete="off" />
                         <br />
                         <label>Opening Balance</label>
-                        <input type="text" name="opening_balance" value="0.00" class="form-control"
+                        <input type="number" name="opening_balance" value="0.00" class="form-control"
                             placeholder="Opening Balance" autocomplete="off" />
                         <br />
-                        <label>Status</label>
-                        <select name="status" class="form-control select2" style="width: 100%">
+                        <label>Status <span style="color: red"> *</span></label>
+                        <select name="status" class="form-control select2" style="width: 100%" required>
                             <option value="1" selected>Active</option>
                             <option value="0">Inactive</option>
                         </select>
@@ -162,39 +160,39 @@
         <div class="modal-body">
           <form method="post" action="{{route('Supliyer.store')}}" enctype="multipart/form-data">
             @csrf
-            <label>Contact Type</label>
+            <label>Contact Type <span style="color: red"> *</span></label>
             <select name="contact_type" class="form-control select2" style="width: 100%">
               <option value="2">Supplier</option>
               <option value="3">Supplier/Customer</option>
             </select>
             <br />
             <br />
-            <label>Company Name</label>
+            <label>Company Name <span style="color: red"> *</span></label>
             <input type="text" name="company_name" class="form-control" placeholder="Company Name"
-              autocomplete="off" />
+              autocomplete="off" required/>
             <input type="hidden" name="created_by" value="17" class="form-control" placeholder="Company Name"
               autocomplete="off" />
             <br />
-            <label>Contact Person</label>
+            <label>Contact Person <span style="color: red"> *</span></label>
             <input type="text" name="contact_person" class="form-control" placeholder="Contact Name"
-              autocomplete="off" />
+              autocomplete="off" required/>
             <br />
-            <label>Mobile Number</label>
-            <input type="text" name="contact_num" class="form-control" placeholder="Mobile Number"
-              autocomplete="off" />
+            <label>Mobile Number <span style="color: red"> *</span></label>
+            <input type="number" name="contact_num" class="form-control" placeholder="Mobile Number"
+              autocomplete="off" required/>
             <br />
             <label>Email Address</label>
-            <input type="text" name="email_address" class="form-control" placeholder="Email Address" />
+            <input type="email" name="email_address" class="form-control" placeholder="Email Address" />
             <br />
-            <label>Address</label>
-            <input type="text" name="address" class="form-control" placeholder="Address" autocomplete="off" />
+            <label>Address <span style="color: red"> *</span></label>
+            <input type="text" name="address" class="form-control" required placeholder="Address" autocomplete="off" />
             <br />
             <label>Opening Balance</label>
-            <input type="text" name="opening_balance" class="form-control" placeholder="Opening Balance"
+            <input type="number" name="opening_balance" class="form-control" value="0" placeholder="Opening Balance"
               autocomplete="off" />
             <br />
-            <label>Status</label>
-            <select name="status" class="form-control select2" style="width: 100%">
+            <label>Status <span style="color: red"> *</span></label>
+            <select name="status" class="form-control select2" style="width: 100%" required>
               <option value="1">Active</option>
               <option value="0">Inactive</option>
             </select>

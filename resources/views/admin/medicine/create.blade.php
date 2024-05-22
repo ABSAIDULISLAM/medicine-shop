@@ -54,7 +54,7 @@
                                                 *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="purchases_price" id="purchases_price"
+                                            <input type="number" name="purchases_price" id="purchases_price"
                                                 class="form-control" placeholder="Purchases Prices" autocomplete="off"  value="{{old('purchases_price')}}"
                                                 required="">
                                         </div>
@@ -101,7 +101,7 @@
                                         <label for="sale_price">Sales Price <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="sale_price" id="sale_price" class="form-control"
+                                            <input type="number" name="sale_price" id="sale_price" class="form-control"
                                                 placeholder=" Sales Price" autocomplete="off" value="{{old('sale_price')}}" required="">
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@
                                         <label for="min_stock">Minimum Stock <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="min_stock" id="min_stock" class="form-control"
+                                            <input type="number" name="min_stock" id="min_stock" class="form-control"
                                                 placeholder="Minimum Stock" value="0" autocomplete="off" required>
                                         </div>
                                     </div>

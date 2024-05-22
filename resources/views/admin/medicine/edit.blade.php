@@ -48,7 +48,7 @@
                                         <label for="purchases_price">Purchases Prices <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="purchases_price" id="purchases_price" class="form-control" value="{{$data->purchases_price}}" placeholder="Purchases Prices" autocomplete="off" required>
+                                            <input type="number" name="purchases_price" id="purchases_price" class="form-control" value="{{$data->purchases_price}}" placeholder="Purchases Prices" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -68,7 +68,7 @@
                                         <label for="box_qty">Pack Size </label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="box_qty" id="box_qty" class="form-control" placeholder="Pack Size" value="{{$data->box_qty}}" autocomplete="off">
+                                            <input type="number" name="box_qty" id="box_qty" class="form-control" placeholder="Pack Size" value="{{$data->box_qty}}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -107,7 +107,7 @@
                                         <label for="sale_price">Sales Price <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="sale_price" id="sale_price" class="form-control" value="{{$data->sale_price}}" placeholder=" Sales Price" autocomplete="off" required>
+                                            <input type="number" name="sale_price" id="sale_price" class="form-control" value="{{$data->sale_price}}" placeholder=" Sales Price" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -127,7 +127,7 @@
                                         <label for="min_stock">Minimum Stock <span style="color: red"> *</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="min_stock" class="form-control" value="{{$data->min_stock}}" placeholder="Minimum Stock" autocomplete="off" required>
+                                            <input type="number" name="min_stock" class="form-control" value="{{$data->min_stock}}" placeholder="Minimum Stock" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -144,7 +144,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="medicine_form" id="medicine_form" class="select2 form-control" required >
-                                                <option value="" disabled selected>Select Rack Name</option>
+                                                <option value="" disabled selected>Select Medicine Form</option>
                                                 @forelse ($mediForms as $item)
                                                     <option value="{{$item->id}}" {{$data->medicine_form == $item->id ? 'selected' : ''}} >{{$item->medicine_strength}}</option>
                                                 @empty
@@ -157,14 +157,14 @@
                                         <label for="mrp_price">MRP Price</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="mrp_price" id="mrp_price" class="form-control" value="{{$data->mrp_price}}" placeholder="MRP Price" autocomplete="off">
+                                            <input type="number" name="mrp_price" id="mrp_price" class="form-control" value="{{$data->mrp_price}}" placeholder="MRP Price" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="trade_price">Trade Price</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="trade_price" id="trade_price" class="form-control" value="{{$data->trade_price}}" placeholder="Trade Price" autocomplete="off">
+                                            <input type="number" name="trade_price" id="trade_price" class="form-control" value="{{$data->trade_price}}" placeholder="Trade Price" autocomplete="off">
                                         </div>
                                     </div>
                                    <div class="form-group">
@@ -178,7 +178,7 @@
                                         <label for="opening_stock">Opening Stock</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="opening_stock" id="opening_stock" class="form-control" value="{{$data->opening_stock}}" placeholder="Opening Stock" autocomplete="off">
+                                            <input type="number" name="opening_stock" id="opening_stock" class="form-control" value="{{$data->opening_stock}}" placeholder="Opening Stock" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -250,14 +250,15 @@
                     },
                     success: function (data) {
                         if (data != "") {
-                            alert('Saved Successfully.');
+                            // alert('Saved Successfully.');
                             // Update select options
                             $('#med_type').append($('<option>', {
                                 value: data.id,
                                 text: data.medicine_type,
-                                selected: true // Select newly added option
+                                selected: true
                             }));
                             $('#add_medi_type').modal('hide');
+                            $('#add_medi_type').find('input, select').val('');
                         }
                     }
                 });
