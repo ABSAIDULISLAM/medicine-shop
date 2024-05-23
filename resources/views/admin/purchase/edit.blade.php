@@ -253,8 +253,8 @@
                                                             <input type="hidden" name="product_id[]" value="{{ $item->product_id }}" class="productId">
                                                             <input type="hidden" name="purchaseetailsId[]" value="{{ $item->id }}" class="productId">
                                                         </td>
-                                                        <td class="text-center"><input type="number" value="{{ $item->quantity }}" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
-                                                        <td class="text-center"><input type="number" value="{{ $item->cost_price }}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
+                                                        <td class="text-center"><input type="number" id="qty{{$item->id}}" value="{{ $item->quantity }}" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
+                                                        <td class="text-center"><input type="number" id="unitPrice{{$item->id}}" value="{{ $item->cost_price }}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
                                                         <td class="text-center"><input type="number" value="{{ $item->sales_price }}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
                                                         <td class="text-center"><input type="date" value="{{ $item->expire_date }}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
                                                         <td class="text-center" style="width: 80px;">
@@ -267,7 +267,7 @@
                                                                 @endforelse
                                                             </select>
                                                         </td>
-                                                        <td class="text-center"><input type="number" value="{{ $item->sub_total }}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
+                                                        <td class="text-center"><input type="number" id="subTotal{{$item->id}}" value="{{ $item->sub_total }}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
                                                             <input type="hidden" value="{{ $item->sub_total }}" name="hiddnTotal[]" class="form-control hiddnTotal" autocomplete="off">
                                                         </td>
                                                         <td class="text-center"><input type="text" value="{{ $item->inStock }}" name="stock[]" class="form-control inStock" readonly>
@@ -875,6 +875,7 @@
                 }
             });
 
+            
 
             function roundToTwo(num) {
                 return num.toFixed(2);
@@ -891,7 +892,36 @@
                 }
             });
         </script>
+
+        <script>
+            function calculatePurchaseDetailsData(){
+                $(document).on('keyup', '.cl_qty, .unitPrice', function() {
+                    let totalAmount = 0;
+                    $('tbody tr').each(function() {
+                        const quantity = parseFloat($(this).find('.cl_qty').val()) || 0;
+                        const costPrice = parseFloat($(this).find('.unitPrice').val()) || 0;
+                        const subTotal = quantity * costPrice;
+                        $(this).find('.proPrice').val(subTotal.toFixed(2));
+                        $(this).find('.inStock').val(quantity);
+                        totalAmount += subTotal;
+                    });
+                    $('#totalAmount').val(totalAmount.toFixed(2));
+                    $('#invoice_amount').val(totalAmount.toFixed(2));
+                    $('#hiddenTotalAmount').val(totalAmount.toFixed(2));
+                    calculateTotalAmount();
+                });
+            }
+            calculatePurchaseDetailsData()
+            // Remove table row
+            $(document).on('click', '.remove', function() {
+                $(this).closest('tr').remove();
+                calculateTotalAmount();
+                calculatePurchaseDetailsData()
+            });
+        </script>
     @endpush
 
 
 @endsection
+
+

@@ -323,12 +323,11 @@ class PurchaseController extends Controller
 
     public function update(ProductPurchaseRequest $request)
     {
-        // Find the purchase record by ID
         $purchase = Purchases::find($request->purchaseId);
         if (!$purchase) {
             return redirect()->back()->with('error', 'Purchase record not found.');
         }
-        // Update purchase details
+
         $purchase->supplier_id = $request->supplier_id;
         $purchase->previous_dues = $request->previous_dues ?? 0;
         $purchase->date = $request->date;
@@ -357,30 +356,26 @@ class PurchaseController extends Controller
         $purchase->updated_at = Carbon::now();
         $purchase->save();
 
-        // Update each purchase detail
-        foreach ($request->quantity as $key => $value) {
-            $purchaseDetailId = $request->purchaseetailsId[$key];
-            $purchaseDetail = PurchasesDetail::find($purchaseDetailId);
+        PurchasesDetail::where('common_id', $request->purchaseId)->delete();
 
-            if ($purchaseDetail) {
-                $purchaseDetail->product_id = $request->product_id[$key];
-                $purchaseDetail->generic_id = 0;
-                $purchaseDetail->company_id = 0;
-                $purchaseDetail->quantity = $value;
-                $purchaseDetail->cost_price = $request->cost_price[$key];
-                $purchaseDetail->sales_price = $request->sales_price[$key];
-                $purchaseDetail->expire_date = $request->expire_date[$key];
-                $purchaseDetail->sub_total = $request->sub_total[$key];
-                $purchaseDetail->rack_id = $request->rack_id[$key];
-                $purchaseDetail->inStock = $request->stock[$key];
-                $purchaseDetail->supplier_id = $request->supplier_id;
-                $purchaseDetail->date = $request->date;
-                $purchaseDetail->created_by = Auth::id();
-                $purchaseDetail->update_by = Auth::id();
-                $purchaseDetail->save();
-            } else {
-                return redirect()->back()->with('error', 'Purchase detail not found for ID ' . $purchaseDetailId);
-            }
+        foreach ($request->quantity as $key => $value) {
+            $purchaseDetail = new PurchasesDetail();
+            $purchaseDetail->product_id =$request->product_id[$key];
+            $purchaseDetail->generic_id = 0;
+            $purchaseDetail->company_id = 0;
+            $purchaseDetail->quantity = $value;
+            $purchaseDetail->cost_price = $request->cost_price[$key];
+            $purchaseDetail->sales_price = $request->sales_price[$key];
+            $purchaseDetail->expire_date = $request->expire_date[$key];
+            $purchaseDetail->rack_id = $request->rack_id[$key];
+            $purchaseDetail->sub_total = $request->sub_total[$key];
+            $purchaseDetail->inStock = $request->stock[$key];
+            $purchaseDetail->common_id = $purchase->id;
+            $purchaseDetail->supplier_id = $request->supplier_id;
+            $purchaseDetail->date = $request->date;
+            $purchaseDetail->created_by = Auth::id();
+            $purchaseDetail->update_by = Auth::id();
+            $purchaseDetail->save();
         }
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Updated Successfully');
