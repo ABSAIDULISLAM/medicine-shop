@@ -356,27 +356,31 @@ class PurchaseController extends Controller
         $purchase->updated_at = Carbon::now();
         $purchase->save();
 
-        PurchasesDetail::where('common_id', $request->purchaseId)->delete();
-
-        foreach ($request->quantity as $key => $value) {
-            $purchaseDetail = new PurchasesDetail();
-            $purchaseDetail->product_id =$request->product_id[$key];
-            $purchaseDetail->generic_id = 0;
-            $purchaseDetail->company_id = 0;
-            $purchaseDetail->quantity = $value;
-            $purchaseDetail->cost_price = $request->cost_price[$key];
-            $purchaseDetail->sales_price = $request->sales_price[$key];
-            $purchaseDetail->expire_date = $request->expire_date[$key];
-            $purchaseDetail->rack_id = $request->rack_id[$key];
-            $purchaseDetail->sub_total = $request->sub_total[$key];
-            $purchaseDetail->inStock = $request->stock[$key];
-            $purchaseDetail->common_id = $purchase->id;
-            $purchaseDetail->supplier_id = $request->supplier_id;
-            $purchaseDetail->date = $request->date;
-            $purchaseDetail->created_by = Auth::id();
-            $purchaseDetail->update_by = Auth::id();
-            $purchaseDetail->save();
+        if($request->quantity > 0){
+            PurchasesDetail::where('common_id', $request->purchaseId)->delete();
+            foreach ($request->quantity as $key => $value) {
+                $purchaseDetail = new PurchasesDetail();
+                $purchaseDetail->product_id =$request->product_id[$key];
+                $purchaseDetail->generic_id = 0;
+                $purchaseDetail->company_id = 0;
+                $purchaseDetail->quantity = $value;
+                $purchaseDetail->cost_price = $request->cost_price[$key];
+                $purchaseDetail->sales_price = $request->sales_price[$key];
+                $purchaseDetail->expire_date = $request->expire_date[$key];
+                $purchaseDetail->rack_id = $request->rack_id[$key];
+                $purchaseDetail->sub_total = $request->sub_total[$key];
+                $purchaseDetail->inStock = $request->stock[$key];
+                $purchaseDetail->common_id = $purchase->id;
+                $purchaseDetail->supplier_id = $request->supplier_id;
+                $purchaseDetail->date = $request->date;
+                $purchaseDetail->created_by = Auth::id();
+                $purchaseDetail->update_by = Auth::id();
+                $purchaseDetail->save();
+            }
+        }else{
+            return redirect()->back()->with('error', 'Product Details Data Can not be Empty');
         }
+        
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Updated Successfully');
     }
