@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
-
+    // Route::get('test', [App\Http\Controllers\backend\HomeController::class, 'test'])->name('test');
     Route::get('dashboard', [App\Http\Controllers\backend\HomeController::class, 'index'])->name('Admin.dashboard');
 
     Route::controller(App\Http\Controllers\Admin\CustomerController::class)->prefix('customer/')->as('Customer.')->group(function(){
