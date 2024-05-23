@@ -52,12 +52,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('medicine/store', 'medicineStore')->name('medicine.store');
         Route::post('product/search', 'searchProduct')->name('product.search');
         Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
+        Route::get('filter', 'filter')->name('filter');
     });
 
     Route::controller(App\Http\Controllers\Admin\SalesController::class)->prefix('sales/')->as('Sales.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::get('create', 'create')->name('create');
-        Route::get('edit', 'edit')->name('edit');
+        Route::post('store', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::get('windowPop/invoice/{invno}', 'windowPopInvoice')->name('windowPop.invoice');
+        Route::post('customer/store', 'CustomerStore')->name('customer.store');
+        Route::post('supplier-info', 'SupplierInfo')->name('customer.info');
+        Route::post('company_id', 'companySearch')->name('company.search');
+        Route::post('medicine/store', 'medicineStore')->name('medicine.store');
+        Route::post('product/search', 'searchProduct')->name('product.search');
+        Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
+        Route::get('filter', 'filter')->name('filter');
 
         Route::prefix('return/')->group(function(){
             Route::get('list', 'SalesReturnList')->name('return.list');

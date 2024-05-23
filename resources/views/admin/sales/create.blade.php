@@ -1,9 +1,6 @@
 @extends('admin.layouts.master')
-
 @section('title', 'Create-Sales')
-
 @section('content')
-
     <section class="content-header">
         <h1>
             Sales
@@ -33,6 +30,7 @@
                     <!-- /.box-header -->
                     <!-- form start -->
                     <form method="POST" action="" onsubmit="return checkFormReady()" id="addSaleForm">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-3">
@@ -42,6 +40,11 @@
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                             <select name="customer_id" id="customer_id"
                                                 class="customer_id form-control select2" required="">
+                                                <option value="" disabled selected>Select Or Create Customer </option>
+                                                @forelse ($customer as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->company_name }}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                             <span class="input-group-btn">
                                                 <button type="button" style="padding: 8px;height: 34px" data-toggle="modal"
@@ -55,7 +58,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="mobile_number">Mobile Number</label>
+                                        <label for="mobile_number">Mobile Number <span style="color: red">*</span></label>
                                         <input type="text" name="mobile_number" id="mobile_number" class="form-control"
                                             autocomplete="off" required="" placeholder="Mobile">
                                     </div>
@@ -67,7 +70,7 @@
                                                 <label for="previous_dues">Previous Dues</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                                    <input type="text" name="previous_dues" id="previous_due"
+                                                    <input type="text" name="previous_dues" id="previous_dues"
                                                         class="form-control" autocomplete="off" required=""
                                                         placeholder="0.00" readonly="">
                                                     <input type="hidden" name="created_by" id="created_by"
@@ -93,13 +96,13 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="datepicker">Date </label>
+                                        <label for="datepicker">Date <span style="color: red">*</span></label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
                                             <input type="text" name="date" class="form-control pull-right"
-                                                id="datepicker" autocomplete="off">
+                                                id="datepicker" autocomplete="off" required>
                                         </div>
                                     </div>
                                 </div>
@@ -141,7 +144,7 @@
                                                             style="width: 100%;color: red;font-weight:bold;text-align: center"
                                                             readonly>
                                                         <input type="hidden" class="form-control hiddenTotalAmount"
-                                                            id="hiddenTotalAmount" readonly>
+                                                            id="hiddenTotalAmount" readonly required>
                                                     </td>
                                                     <td style='width: 70px;'></td>
                                                     <td style='width: 70px;'></td>
@@ -181,7 +184,7 @@
                                                     <label style="font-size: 14px;">Total Amount<span
                                                             style="color: red">*</span></label><br>
                                                     <input type="text" name="grand_total" id="grand_total"
-                                                        class="form-control" readonly=""
+                                                        class="form-control" readonly="" required
                                                         style="color: #14ba32;font-weight: bold;font-size: 20px">
                                                 </td>
                                             </tr>
@@ -301,44 +304,8 @@
     <!-- /.content -->
     </div>
 
-    <div id="addContact" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: #2E4D62;color: #fff">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Customer</h4>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="" id="contactform">
-                        <label>Customer Name</label>
-                        <input type="text" name="company_name" id="company_name" class="form-control"
-                            placeholder="Customer Name" autocomplete="off" />
-                        <br />
-                        <label>Mobile Number</label>
-                        <input type="text" name="contact_num" id="contact_num" class="form-control"
-                            placeholder="Mobile Number" autocomplete="off" />
-                        <input type="hidden" name="created_by" id="created_by" value="17" class="form-control"
-                            placeholder="Company Name" autocomplete="off" />
-                        <input type="hidden" name="status" id="status" value="1" class="form-control"
-                            placeholder="Company Name" autocomplete="off" />
-                        <input type="hidden" name="contact_type" id="contact_type" value="1" class="form-control"
-                            autocomplete="off" />
-                        <br />
-                        <label>Address</label>
-                        <input type="text" name="address" id="address" class="form-control" placeholder="Address"
-                            autocomplete="off" />
-                        <br />
-                        <input type="button" value="Submit" id="addCustomer" class="btn btn-success pull-right" />
-                    </form>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-            </div>
-        </div>
-
-
-
+    {{-- <div id="addContact" class="modal fade"> --}}
+        @includeIf('admin.sales.partials.create-customer')
 
         @push('js')
             <script>
@@ -548,7 +515,7 @@
                 function ShowTime() {
                     var dt = new Date();
                     document.getElementById("lblTime").innerHTML = dt.toLocaleTimeString();
-                    window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec  
+                    window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec
                 }
 
 
@@ -567,7 +534,7 @@
 
                     var chart = new CanvasJS.Chart("chartContainer", {
                         theme: "light1", // "light2", "dark1", "dark2"
-                        animationEnabled: false, // change to true		
+                        animationEnabled: false, // change to true
                         title: {
                             text: "Monthly Sales History"
                         },
@@ -655,141 +622,26 @@
             </script>
 
             <script>
-                var formReady = false;
-
-                function makeFormReady() {
-                    var customer_id = $('#customer_id').val();
-                    if (customer_id == "") {
-                        alert("Customer name can't be empty.");
-                        return false;
-                    } else {
-                        formReady = true;
-                        setTimeout(function() {
-                            $('#addSaleForm').submit();
-                        }, 50);
-                    }
-                }
-
-                function checkFormReady() {
-                    console.log(formReady)
-                    return formReady;
-                }
 
                 $(document).ready(function() {
-                    $('#addCustomer').click(function(e) {
-
-                        e.preventDefault();
-                        var company_name = $('#company_name').val();
-                        var contact_num = $('#contact_num').val();
-                        var address = $('#address').val();
-                        var created_by = $('#created_by').val();
-                        var status = $('#status').val();
-                        var contact_type = $('#contact_type').val();
-
-                        if (created_by == '') {
-                            alert("Sorry unauthorized access.");
-                            return false;
-                        }
-                        if (company_name == "" || contact_num == "") {
-                            alert("Sorry Company Name and Contact Number Can't be empty.");
-                            return false;
-                        }
-
-                        $.ajax({
-                            type: "POST",
-                            url: "addCustomer",
-                            data: {
-                                "company_name": company_name,
-                                "contact_num": contact_num,
-                                "address": address,
-                                "created_by": created_by,
-                                "status": status,
-                                "contact_type": contact_type
-                            },
-                            success: function(data) {
-                                if (data != "") {
-                                    alert('Save Successfully.');
-
-                                    var customerinfo = data.split('##');
-
-                                    var option = customerinfo[0];
-                                    var pre_blnc = customerinfo[1];
-
-                                    $('#customer_id').children().remove();
-                                    $('#customer_id').append(option);
-                                    $('#previous_due').val(pre_blnc);
-                                    $('#addContact').modal('hide');
-                                }
-
-                            }
-                        });
-                    });
-                });
-
-                $(document).ready(function() {
-                    $('.customer_id').select2({
-                        minimumInputLength: 2,
-                        allowClear: true,
-                        placeholder: 'Please Enter Name',
-                        ajax: {
-                            url: 'ajax-response',
-                            dataType: 'json',
-                            delay: 250,
-                            data: function(data) {
-                                return {
-                                    searchCustomer: data.term // search term
-                                };
-                            },
-                            processResults: function(response) {
-                                return {
-                                    results: response
-                                };
-                            },
-                            cache: true
-                        }
-                    });
-                });
-
-                $(document).ready(function() {
-
                     $('#customer_id').change(function() {
                         var id = $(this).val();
+                        alert(id);
                         $.ajax({
                             type: 'POST',
-                            url: 'ajax-response',
+                            url: '{{ route('Sales.customer.info') }}',
                             data: {
                                 'customer_id': id
                             },
-                            success: function(data) {
-
-                                $('#mobile_number').val('');
-                                $('#previous_due').val('');
-
-                                var custInfo = data.split('##');
-
-                                var due = custInfo[0];
-                                var contact = custInfo[1];
-
-                                $('#previous_due').val(due);
-                                $('#mobile_number').val(contact);
-                            }
-                        });
-                    });
-                    $('#bank_id').change(function() {
-                        var id = $(this).val();
-                        $.ajax({
-                            type: 'POST',
-                            url: 'ajax-response',
-                            data: {
-                                'bank_id': id
-                            },
-                            success: function(html) {
-                                console.log(html);
-                                $('#bankPreviousAmount').val(html);
+                            success: function(response) {
+                                console.log(response);
+                                $('#contact_number').val(response.contact_number);
+                                $('#previous_dues').val(value);
                             }
                         });
                     });
                 });
+
 
                 function calculatePayment(id) {
                     var grand_total = $('#grand_total').val();
@@ -945,7 +797,7 @@
                     <input type="hidden" value="` + responseObject.sales_price + `" name="sell_price[]" class="form-control hiddnUniPrice" style="width:100%;text-align: center">
                 </td>
                 <td class="text-left" style="width: 80px;">
-                            <button type="button" data-toggle="modal" data-target="#costShow` + responseObject.id + `" class="btn btn-default btn-flat"><i class="fa fa-eye text-primary fa-lg" aria-hidden="true"></i></button> 
+                            <button type="button" data-toggle="modal" data-target="#costShow` + responseObject.id + `" class="btn btn-default btn-flat"><i class="fa fa-eye text-primary fa-lg" aria-hidden="true"></i></button>
                             <input type="hidden" value="` + responseObject.cost_price + `" name="cost_price[]" class="form-control cost_price" style="width:100%;text-align: center" autocomplete="off" readonly="">
                  <div id="costShow` + responseObject.id + `" class="modal fade">
                     <div class="modal-dialog">
@@ -962,7 +814,7 @@
                             </div>
                         </div>
                     </div>
-                  </div> 
+                  </div>
                 </td>
                 <td class="text-center" style="width: 50px;">
                     <button class="btn btn-danger remove" tabindex="1" type="button"><i class="fa fa-times" aria-hidden="true"></i></button>
@@ -1041,7 +893,7 @@
                     });
                     //###--Payment Calculation Function Start--###
 
-                    //###--Payment Calculation Function Start--###    
+                    //###--Payment Calculation Function Start--###
                     function calculateTotalAmount() {
                         var sum = 0;
 

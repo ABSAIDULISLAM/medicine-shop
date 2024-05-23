@@ -34,6 +34,28 @@ class PurchaseController extends Controller
         return view('admin.purchase.index', compact('purchases'));
     }
 
+    public function filter(Request $request)
+    {
+        $fromDate = Carbon::parse($request->input('from_date'))->startOfDay();
+        $toDate = Carbon::parse($request->input('to_date'))->endOfDay();
+        $supplierId = $request->input('supplier_id');
+
+        $purchases = Purchases::query()
+            ->whereBetween('created_at', [$fromDate, $toDate]);
+
+        if ($supplierId != 0) {
+            $purchases->orWhere('supplier_id', $supplierId);
+        }
+
+        $filteredData = $purchases->with(['suplyer'=>function($query){
+            $query->select('id', 'company_name');
+        }])->get();
+
+        return view('admin.purchase.index', compact('filteredData','fromDate','toDate'));
+    }
+
+
+
     public function create()
     {
         $suplyer = Contact::where('contact_type', 2)->select('id', 'company_name')->get();
@@ -375,7 +397,7 @@ class PurchaseController extends Controller
 
     public function windowPopInvoice($id)
     {
-        return 'ok';
+        // return 'ok';
       $data = PurchasesDetail::where('common_id', $id)
             ->with(['product' => function($query) {
                 $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');

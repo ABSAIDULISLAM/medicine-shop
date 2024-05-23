@@ -26,20 +26,35 @@
                         </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
-                        <form method="post" action="">
+                        <form method="get" action="{{route('Purchase.filter')}}">
+                            @csrf
                             From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date"
                                 value="2024-03-01">
                             &nbsp;To : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date"
                                 value="2024-03-21">
-                            &nbsp;<select name="supplier_id" id="supplier_id" class="form-control select2"
+                            &nbsp;
+                            <select name="supplier_id" id="supplier_id" class="form-control select2"
                                 style="width: 200PX;">
-                                <option value="0">ALL</option>
-
-                                <option value="715">Zuellig Pharma Bangladesh LTD.</option>
+                                <option value="">ALL</option>
+                                @forelse (App\Models\Contact::where('contact_type', 2)->select('id', 'company_name')->get() as $item)
+                                <option value="{{$item->id}}">{{$item->company_name}}</option>
+                                @empty
+                                @endforelse
                             </select>
-                            <input type="submit" name="search_btn" value="Search">
+                            <input type="submit" value="Search">
                         </form>
                     </div>
+                    @isset($fromDate, $toDate)
+                        <div class="card" >
+                            {{-- <div class="card-header">Result From</div> --}}
+                            <div class="card-body">
+                                From : <input style="height: 27px;margin-top: 2px;" type="date" value="{{ date('Y-m-d', strtotime($fromDate)) }}">
+                                &nbsp;
+                                To : <input style="height: 27px;margin-top: 2px;" type="date" value="{{ date('Y-m-d', strtotime($toDate)) }}">
+                            </div>
+                        </div>
+                    @endisset
+
                     <!-- /.box-header -->
                     <div class="box-body">
                         <div class="table-responsive">
@@ -56,6 +71,50 @@
                                         <th style="width: 100px" class="text-center">Action</th>
                                     </tr>
                                 </thead>
+                                {{-- filter funtion fetched data show --}}
+                                @if (isset($filteredData))
+                                    <tbody>
+                                        @php
+                                        $totalAmount = 0;
+                                        $payment = 0;
+                                        $dues = 0;
+                                        @endphp
+                                        @forelse ($filteredData as $index => $purchase)
+                                        <tr>
+                                            <td style="width: 10px">{{ $index + 1 }}</td>
+                                            <td style="width: 80px" class="text-center">{{ $purchase->date }}</td>
+                                            <td style="width: 120px">{{ $purchase->suplyer->company_name }}</td>
+                                            <td class="text-center" style="width: 80px"><a href="{{ route('Purchase.windowPop.invoice', ['invno' => $purchase->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $purchase->invoice_number }}</a></td>
+                                            <td style="width: 100px" class="text-center">{{ $purchase->total_amount }}</td>
+                                            <td style="width: 100px" class="text-center">{{ $purchase->payment }}</td>
+                                            <td style="width: 100px" class="text-center">{{ $purchase->dues }}</td>
+                                            <td class="text-center" style="width: 120px">
+                                                <a href="{{ route('Purchase.edit', ['id' => Crypt::encrypt($purchase->id)]) }}"><button class="btn red-meadow" style="background-color: #006666"><i class="fa fa-pencil" style="color: #fff"></i></button></a>
+                                                <a href="{{ route('Purchase.delete', ['id' => Crypt::encrypt($purchase->id)]) }}" onclick="return checkDelete();"><button class="btn red-meadow" style="background-color: red"><i class="fa fa-trash-o" style="color: #fff"></i></button></a>
+                                            </td>
+                                        </tr>
+                                        @php
+                                        $totalAmount += $purchase->total_amount;
+                                        $payment += $purchase->payment;
+                                        $dues += $purchase->dues;
+                                        @endphp
+                                        @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center">No data available</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="4" style="width: 300px">Total</th>
+                                            <th style="width: 100px" class="text-center">{{ $totalAmount }}</th>
+                                            <th style="width: 100px" class="text-center">{{ $payment }}</th>
+                                            <th style="width: 100px" class="text-center">{{ $dues }}</th>
+                                            <th style="width: 120px"></th>
+                                        </tr>
+                                    </tfoot>
+
+                                @else
                                 <tbody>
                                     @php
                                     $totalAmount = 0;
@@ -96,6 +155,11 @@
                                         <th style="width: 120px"></th>
                                     </tr>
                                 </tfoot>
+
+                                @endif
+
+                                {{-- index funtion fetched data show --}}
+
                             </table>
 
                         </div>

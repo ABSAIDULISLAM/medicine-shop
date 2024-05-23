@@ -12,7 +12,7 @@
                     <form method="post" action="" id="contactform">
                         <label>Supplier Name <span style="color: red">*</span></label>
                         <input type="text" required name="company_name" id="company_name" class="form-control"
-                            placeholder="Customer Name" autocomplete="off" />
+                            placeholder="Supplier Name" autocomplete="off" />
                         <br />
                         <label>Mobile Number <span style="color: red">*</span></label>
                         <input type="text" name="contact_num" id="contact_num" class="form-control"
