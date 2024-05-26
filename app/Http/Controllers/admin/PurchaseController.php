@@ -14,6 +14,7 @@ use App\Models\MedicineType;
 use App\Models\Purchases;
 use App\Models\PurchasesDetail;
 use App\Models\Rack;
+use App\Models\SupplierLedger;
 use App\Services\admin\ProductPerchaseService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -53,8 +54,6 @@ class PurchaseController extends Controller
 
         return view('admin.purchase.index', compact('filteredData','fromDate','toDate'));
     }
-
-
 
     public function create()
     {
@@ -114,7 +113,7 @@ class PurchaseController extends Controller
     {
         $supplierId = $request->input('supplier_id');
 
-        $previousDue = Purchases::where('supplier_id', $supplierId)->value('previous_dues');
+        $previousDue = SupplierLedger::where('supplier_id', $supplierId)->value('previous_due');
 
         if (!is_null($previousDue)) {
             return response()->json($previousDue);
@@ -123,27 +122,6 @@ class PurchaseController extends Controller
         }
     }
 
-    // public function companySearch(Request $request)
-    // {
-    //     $request->validate([
-    //         'searchCompany' => 'required|string|min:2',
-    //     ]);
-
-    //     $searchCompany = $request->input('searchCompany');
-
-    //     $companies = Company::where('name', 'like', '%' . $searchCompany . '%')
-    //                         ->select('id', 'name')
-    //                         ->get();
-    //     $data = [];
-    //     foreach ($companies as $company) {
-    //         $data[] = [
-    //             'id' => $company->id,
-    //             'text' => $company->company_name,
-    //         ];
-    //     }
-
-    //     return response()->json($data);
-    // }
 
     public function medicineStore(Request $request)
     {
@@ -237,57 +215,61 @@ class PurchaseController extends Controller
 
     public function store(ProductPurchaseRequest $request)
     {
-        // return $request->all();
-        $purchase = new Purchases();
-        $purchase->supplier_id = $request->supplier_id;
-        $purchase->previous_dues = $request->previous_dues ?? 0;
-        $purchase->invoice_number = $request->invoice_number;
-        $purchase->date = $request->date;
-        $purchase->total_cost_amount = $request->total_coast;
-        $purchase->total_amount = $request->total_amount;
-        $purchase->grand_trade_amount = 0;
-        $purchase->grand_vat_amount = 0;
-        $purchase->discount = $request->discount ?? 0;
-        $purchase->shipping_charge = $request->shipping_charge ?? 0;
-        $purchase->final_amount = $request->final_amount;
-        $purchase->payment = $request->payment ?? 0;
-        $purchase->dues = $request->dues ?? 0;
-        if ($request->payment_method == '1') {
-            $purchase->bank_id = $request->bank_id;
-            $purchase->cheque_no = $request->cheque_no;
-        } else {
-            $purchase->payment_method = $request->payment_method;
-            $purchase->bank_id = 0;
-            $purchase->cheque_no = 0;
-        }
-        $purchase->cheque_appr_date = Carbon::now();
-        $purchase->created_by = Auth::id();
-        $purchase->update_by = Auth::id();
-        $purchase->updated_at = Carbon::now();
-        $purchase->save();
+        if($request->quantity > 0){
+            $purchase = new Purchases();
+            $purchase->supplier_id = $request->supplier_id;
+            $purchase->previous_dues = $request->previous_dues ?? 0;
+            $purchase->invoice_number = $request->invoice_number;
+            $purchase->date = $request->date;
+            $purchase->total_cost_amount = $request->total_coast;
+            $purchase->total_amount = $request->total_amount;
+            $purchase->grand_trade_amount = 0;
+            $purchase->grand_vat_amount = 0;
+            $purchase->discount = $request->discount ?? 0;
+            $purchase->shipping_charge = $request->shipping_charge ?? 0;
+            $purchase->final_amount = $request->final_amount;
+            $purchase->payment = $request->payment ?? 0;
+            $purchase->dues = $request->dues ?? 0;
+            if ($request->payment_method == '1') {
+                $purchase->payment_method = $request->payment_method;
+                $purchase->bank_id = $request->bank_id;
+                $purchase->cheque_no = $request->cheque_no;
+            } else {
+                $purchase->payment_method = $request->payment_method;
+                $purchase->bank_id = 0;
+                $purchase->cheque_no = 0;
+            }
+            $purchase->cheque_appr_date = Carbon::now();
+            $purchase->created_by = Auth::id();
+            $purchase->update_by = Auth::id();
+            $purchase->updated_at = Carbon::now();
+            $purchase->save();
 
-        foreach ($request->quantity as $key => $value) {
-            $purchaseDetail = new PurchasesDetail();
-            $purchaseDetail->product_id =$request->product_id[$key];
-            $purchaseDetail->generic_id = 0;
-            $purchaseDetail->company_id = 0;
-            $purchaseDetail->quantity = $value;
-            $purchaseDetail->cost_price = $request->cost_price[$key];
-            $purchaseDetail->sales_price = $request->sales_price[$key];
-            $purchaseDetail->expire_date = $request->expire_date[$key];
-            $purchaseDetail->rack_id = $request->rack_id[$key];
-            $purchaseDetail->sub_total = $request->sub_total[$key];
-            $purchaseDetail->inStock = $request->stock[$key];
-            $purchaseDetail->common_id = $purchase->id;
-            $purchaseDetail->supplier_id = $request->supplier_id;
-            $purchaseDetail->date = $request->date;
-            $purchaseDetail->created_by = Auth::id();
-            $purchaseDetail->update_by = Auth::id();
-            $purchaseDetail->save();
+            foreach ($request->quantity as $key => $value) {
+                $purchaseDetail = new PurchasesDetail();
+                $purchaseDetail->product_id =$request->product_id[$key];
+                $purchaseDetail->generic_id = 0;
+                $purchaseDetail->company_id = 0;
+                $purchaseDetail->quantity = $value;
+                $purchaseDetail->cost_price = $request->cost_price[$key];
+                $purchaseDetail->sales_price = $request->sales_price[$key];
+                $purchaseDetail->expire_date = $request->expire_date[$key];
+                $purchaseDetail->rack_id = $request->rack_id[$key];
+                $purchaseDetail->sub_total = $request->sub_total[$key];
+                $purchaseDetail->inStock = $request->stock[$key];
+                $purchaseDetail->common_id = $purchase->id;
+                $purchaseDetail->supplier_id = $request->supplier_id;
+                $purchaseDetail->date = $request->date;
+                $purchaseDetail->created_by = Auth::id();
+                $purchaseDetail->update_by = Auth::id();
+                $purchaseDetail->save();
+            }
         }
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Inserted Successfully');
     }
+
+
 
     public function edit($id)
     {
@@ -300,10 +282,6 @@ class PurchaseController extends Controller
         $racks = Rack::orderBy('id', 'asc')->get();
 
         return view('admin.purchase.edit', compact([
-            // 'generics',
-            // 'mediForms',
-            // 'mediType',
-            // 'companies',
             'racks',
             'bank',
             'data',
@@ -320,43 +298,41 @@ class PurchaseController extends Controller
         return response()->json($medicineType);
     }
 
-
     public function update(ProductPurchaseRequest $request)
     {
-        $purchase = Purchases::find($request->purchaseId);
-        if (!$purchase) {
-            return redirect()->back()->with('error', 'Purchase record not found.');
-        }
-
-        $purchase->supplier_id = $request->supplier_id;
-        $purchase->previous_dues = $request->previous_dues ?? 0;
-        $purchase->date = $request->date;
-        $purchase->total_cost_amount = $request->total_coast;
-        $purchase->total_amount = $request->total_amount;
-        $purchase->grand_trade_amount = 0;
-        $purchase->grand_vat_amount = 0;
-        $purchase->discount = $request->discount ?? 0;
-        $purchase->shipping_charge = $request->shipping_charge ?? 0;
-        $purchase->final_amount = $request->final_amount;
-        $purchase->payment = $request->payment ?? 0;
-        $purchase->dues = $request->dues ?? 0;
-
-        if ($request->payment_method == '1') {
-            $purchase->bank_id = $request->bank_id;
-            $purchase->cheque_no = $request->cheque_no;
-        } else {
-            $purchase->payment_method = $request->payment_method;
-            $purchase->bank_id = 0;
-            $purchase->cheque_no = 0;
-        }
-
-        $purchase->cheque_appr_date = Carbon::now();
-        $purchase->created_by = Auth::id();
-        $purchase->update_by = Auth::id();
-        $purchase->updated_at = Carbon::now();
-        $purchase->save();
-
         if($request->quantity > 0){
+            $purchase = Purchases::find($request->purchaseId);
+            if (!$purchase) {
+                return redirect()->back()->with('error', 'Purchase record not found.');
+            }
+            $purchase->supplier_id = $request->supplier_id;
+            $purchase->previous_dues = $request->previous_dues ?? 0;
+            $purchase->date = $request->date;
+            $purchase->total_cost_amount = $request->total_coast;
+            $purchase->total_amount = $request->total_amount;
+            $purchase->grand_trade_amount = 0;
+            $purchase->grand_vat_amount = 0;
+            $purchase->discount = $request->discount ?? 0;
+            $purchase->shipping_charge = $request->shipping_charge ?? 0;
+            $purchase->final_amount = $request->final_amount;
+            $purchase->payment = $request->payment ?? 0;
+            $purchase->dues = $request->dues ?? 0;
+
+            if ($request->payment_method == '1') {
+                $purchase->bank_id = $request->bank_id;
+                $purchase->cheque_no = $request->cheque_no;
+            } else {
+                $purchase->payment_method = $request->payment_method;
+                $purchase->bank_id = 0;
+                $purchase->cheque_no = 0;
+            }
+
+            $purchase->cheque_appr_date = Carbon::now();
+            $purchase->created_by = Auth::id();
+            $purchase->update_by = Auth::id();
+            $purchase->updated_at = Carbon::now();
+            $purchase->save();
+
             PurchasesDetail::where('common_id', $request->purchaseId)->delete();
             foreach ($request->quantity as $key => $value) {
                 $purchaseDetail = new PurchasesDetail();
@@ -377,10 +353,10 @@ class PurchaseController extends Controller
                 $purchaseDetail->update_by = Auth::id();
                 $purchaseDetail->save();
             }
+
         }else{
             return redirect()->back()->with('error', 'Product Details Data Can not be Empty');
         }
-        
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Updated Successfully');
     }
@@ -392,7 +368,6 @@ class PurchaseController extends Controller
         Purchases::find($id)->delete();
         return redirect()->back()->with('success', 'Purchase Deleted Successfully');
     }
-
 
     public function windowPopInvoice($id)
     {

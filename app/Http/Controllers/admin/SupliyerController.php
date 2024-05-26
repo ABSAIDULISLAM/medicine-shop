@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\SupplierLedger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Cache;
 
@@ -41,7 +44,7 @@ class SupliyerController extends Controller
             'status' => ['required'],
         ]);
 
-        Contact::create([
+        $supplier = Contact::create([
             'contact_type' => $request->contact_type,
             'company_name' => $request->company_name,
             'contact_person' => $request->contact_person,
@@ -52,7 +55,23 @@ class SupliyerController extends Controller
             'opening_balance' => $request->opening_balance,
             'status' => $request->status,
         ]);
+
+        SupplierLedger::create([
+            'supplier_id' => $supplier->id,
+            'description' => 'Opening Balance',
+            'previous_due' => 0,
+            'debit' => $supplier->opening_balance,
+            'credit' => 0,
+            'discount' => 0,
+            'balance' => $supplier->opening_balance,
+            'insert_status' => 1,
+            'insert_id' => $supplier->id,
+            'date' => Carbon::now(),
+            'created_by' => Auth::id(),
+        ]);
+
         Cache::forget('supplier_list_cache');
+        
         return redirect()->back()->with('success', 'Supplier Created Successfully');
     }
 

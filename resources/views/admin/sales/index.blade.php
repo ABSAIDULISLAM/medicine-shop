@@ -23,7 +23,8 @@
                     <div class="box-header with-border">
                         <h3 class="box-title"> Sales List</h3>
                         <div class="box-tools pull-right">
-                            <a href="{{route('Sales.create')}}"><button type="button" class="btn bg-navy btn-flat">Add New</button></a>
+                            <a href="{{ route('Sales.create') }}"><button type="button" class="btn bg-navy btn-flat">Add
+                                    New</button></a>
                         </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
@@ -39,6 +40,9 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
+                        <div id="loadingSpinner" style="display: none;" class="text-center m-auto">
+                            <img src="{{ asset('backend/assets/spinner.gif') }}" alt="Loading...">
+                        </div>
                         <div class="table-responsive">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
@@ -54,6 +58,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $total = 0;
+                                        $total = 0;
+                                        $total = 0;
+                                    @endphp
+                                    @forelse ($data as $item)
+                                        <tr>
+                                            <td>{{$loop->index+1}}</td>
+                                            <td>{{$item->customer->company_name}}</td>
+                                            <td ><a href="{{route('Sales.invoice.print', ['id' => Crypt::encrypt($item->id)])}}">{{$item->invoice_number}}</a></td>
+                                            <td>{{$item->date}}</td>
+                                            <td class="text-right">{{$item->total_amount}}</td>
+                                            <td class="text-right">{{$item->cash_paid}}</td>
+                                            <td class="text-right">{{$item->due_amount}}</td>
+                                            <td>
+                                                <a href=""  class="btn btn-primary btn-sm"><i class="fa fa-print" style="color: #fff"></i></a>
+                                                <a href="{{ route('Sales.edit', ['id' => Crypt::encrypt($item->id)]) }}"  class="btn btn-success btn-sm"><i class="fa fa-pencil" style="color: #fff"></i></a>
+                                                <a href=""  class="btn btn-danger btn-sm"><i class="fa fa-trash-o" style="color: #fff"></i></a>
+                                                <a href=""  class="btn btn-warning btn-sm"><i class="fa fa-upload" style="color: #fff"></i></a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8">No Record Found</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -65,11 +95,13 @@
                                     </tr>
                                 </tfoot>
                             </table>
+
                         </div>
                     </div>
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
+
             </div>
             <!-- /.col -->
         </div>
@@ -78,6 +110,57 @@
     <!-- /.content -->
 
     @push('js')
+        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                fetchSalesData();
+
+
+                function fetchSalesData() {
+                    $('#loadingSpinner').show();
+                    $.ajax({
+                        url: "{{ route('Sales.data') }}",
+                        method: "GET",
+                        success: function(data) {
+                            // console.log(data)
+                            let tableBody = '';
+                            let totalAmount = 0;
+                            let totalCashReceived = 0;
+                            let totalDue = 0;
+
+                            data.forEach((sale, index) => {
+                                tableBody += `
+                                <tr>
+                                    <td class="text-center">${index + 1}</td>
+                                    <td class="text-left">${sale.customer.company_name}</td>
+                                    <td class="text-left"><a href="">${sale.invoice_number}</a></td>
+                                    <td class="text-center">${sale.date}</td>
+                                    <td class="text-left">${sale.total_amount}</td>
+                                    <td class="text-center">${sale.cash_paid}</td>
+                                    <td class="text-center">${sale.due_amount}</td>
+                                    <td class="text-center" style="width: 120px">
+                                        <a class="btn btn-primary btn-sm" href=""><i class="fa fa-print" style="color: #fff"></i></a>
+                                        <a class="btn btn-success btn-sm" href="{{route('Sales.edit',['id' => Crypt::encrypt(${sale.id})])}}"><i class="fa fa-pencil" style="color: #fff"></i></a>
+                                        <a class="btn btn-danger btn-sm" href=""><i class="fa fa-trash-o" style="color: #fff"></i></a>
+                                    </td>
+                                </tr>
+                            `;
+                                totalAmount += parseFloat(sale.total_amount);
+                                totalCashReceived += parseFloat(sale.cash_paid);
+                                totalDue += parseFloat(sale.due_amount);
+                            });
+
+                            $('#example1 tbody').html(tableBody);
+                            $('#example1 tfoot th:nth-child(2)').text(totalAmount.toFixed(2));
+                            $('#example1 tfoot th:nth-child(3)').text(totalCashReceived.toFixed(2));
+                            $('#example1 tfoot th:nth-child(4)').text(totalDue.toFixed(2));
+                            $('#loadingSpinner').hide();
+                        }
+                    });
+                }
+            });
+        </script> --}}
+
         <script>
             window.onload = function() {
 
@@ -271,7 +354,7 @@
                 $('#example2').DataTable({
                     'paging': true,
                     'lengthChange': false,
-                    'searching': false,
+                    'searching': true,
                     'ordering': true,
                     'info': true,
                     'autoWidth': false
@@ -285,7 +368,7 @@
             function ShowTime() {
                 var dt = new Date();
                 document.getElementById("lblTime").innerHTML = dt.toLocaleTimeString();
-                window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec  
+                window.setTimeout("ShowTime()", 1000); // Here 1000(milliseconds) means one 1 Sec
             }
 
 
@@ -297,14 +380,9 @@
 
             window.onload = function() {
 
-
-
-
-
-
                 var chart = new CanvasJS.Chart("chartContainer", {
                     theme: "light1", // "light2", "dark1", "dark2"
-                    animationEnabled: false, // change to true		
+                    animationEnabled: false, // change to true
                     title: {
                         text: "Monthly Sales History"
                     },

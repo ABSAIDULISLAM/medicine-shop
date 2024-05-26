@@ -16,4 +16,14 @@ class Sales extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+
+    public function salesDetails()
+    {
+        return $this->hasMany(SalesDetail::class, 'common_id');
+    }
+    public function customer()
+    {
+        return $this->belongsTo(Contact::class, 'customer_id', 'id');
+    }
 }

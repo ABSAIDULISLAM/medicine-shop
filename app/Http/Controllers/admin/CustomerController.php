@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\CustomerLedger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class CustomerController extends Controller
@@ -35,7 +38,7 @@ class CustomerController extends Controller
             'status' => ['required'],
         ]);
 
-        Contact::create([
+        $customer = Contact::create([
             'contact_type' => $request->contact_type,
             'company_name' => $request->company_name,
             'contact_person' => $request->contact_person,
@@ -46,6 +49,22 @@ class CustomerController extends Controller
             'opening_balance' => $request->opening_balance,
             'status' => $request->status,
         ]);
+
+        CustomerLedger::create([
+            'customer_id' => $customer->id,
+            'description' => 'Opening Balance',
+            'previous_due' => 0,
+            'debit' => 0,
+            'credit' => $customer->opening_balance,
+            'discount' => 0,
+            'balance' => $customer->opening_balance,
+            'insert_status' => 1,
+            'insert_id' => $customer->id,
+            'date' => Carbon::now(),
+            'created_by' => Auth::id(),
+        ]);
+
+
         return redirect()->back()->with('success', 'Customer Created Successfully');
     }
 
