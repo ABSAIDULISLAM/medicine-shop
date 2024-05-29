@@ -1,15 +1,15 @@
 @extends('admin.layouts.master')
-@section('title', 'Edit-Sales')
+@section('title', 'Return-Sales')
 @section('content')
     <section class="content-header">
         <h1>
-            Edit Sales
-            <small>Edit Invoice</small>
+            Return Sales
+            <small>Return Invoice</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Sales</a></li>
-            <li class="active">Edit Invoice</li>
+            <li><a href="{{route('Sales.index')}}">Sales Return</a></li>
+            <li class="active">Return Invoice</li>
         </ol>
     </section>
     <!-- Main content -->
@@ -20,7 +20,7 @@
                 <!-- general form elements -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Edit Invoice</h3>
+                        <h3 class="box-title">Return Invoice</h3>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
                                     class="fa fa-minus"></i></button>
@@ -30,7 +30,7 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="{{route('Sales.update')}}" >
+                    <form method="POST" action="{{route('Sales.return.update')}}">
                         @csrf
                         <div class="box-body">
                             <div class="row">
@@ -358,7 +358,7 @@
                         <!-- /.box-body -->
                         <div class="box-footer text-center">
                             <button type="submit"
-                                class="btn btn-primary">Update</button>
+                                class="btn btn-primary">Submit</button>
                             <button type="reset" class="btn btn-danger">Cancel</button>
                         </div>
                     </form>
@@ -571,232 +571,7 @@
                     'width=850,height=500,top=100,left=250');
                 return false;
             }
-
         </script>
-
-        {{-- <script>
-            $(document).ready(function() {
-                $('#customer_id').change(function() {
-                    var id = $(this).val();
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ route('Sales.customer.info') }}',
-                        data: { 'customer_id': id },
-                        success: function(response) {
-                            $('#mobile_number').val(response.contactNum);
-                            $('#previous_dues').val(response.prevdue);
-                        }
-                    });
-                });
-
-                function calculatePayment() {
-                    var grandTotal = parseFloat($('#grand_total').val()) || 0;
-                    var cashPaid = parseFloat($('#cash_paid').val()) || 0;
-
-                    var currDues = grandTotal - cashPaid;
-                    if (currDues > 0) {
-                        $('#due_amount').val(currDues.toFixed(2));
-                        $('#change').val('0.00');
-                    } else {
-                        $('#change').val(Math.abs(currDues).toFixed(2));
-                        $('#due_amount').val('0.00');
-                    }
-                }
-
-                function calculateTotalAmount() {
-                    var sum = 0;
-                    $('.sub_total').each(function() {
-                        sum += parseFloat(this.value) || 0;
-                    });
-
-                    var lessAmount = parseFloat($('#less_amount').val()) || 0;
-                    var netAmount = sum - lessAmount;
-
-                    $('#totalAmount, #hiddenTotalAmount, #grand_total, #due_amount, #hiddenDue').val(netAmount.toFixed(2));
-                }
-
-                function discountAmount() {
-                    var hiddenTotalAmount = parseFloat($('#hiddenTotalAmount').val()) || 0;
-                    var discount = parseFloat($('#discount').val()) || 0;
-                    var lessAmount = parseFloat($('#less_amount').val()) || 0;
-
-                    var discountAmount = hiddenTotalAmount * (discount / 100);
-                    var totalAmount = hiddenTotalAmount - discountAmount - lessAmount;
-
-                    $('#grand_total, #due_amount, #hiddenDue').val(totalAmount.toFixed(2));
-                }
-
-                function addItemDetailsAsTableRow(productName) {
-                    if (productName != '') {
-                        $.ajax({
-                            type: "POST",
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                purchasesProductName: productName
-                            },
-                            url: '{{ route('Sales.fetch.single.product') }}',
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.product.id) {
-                                    var alreadyListed = false;
-                                    $('#tbody .productId').each(function() {
-                                        if (this.value == response.product.id) {
-                                            alreadyListed = true;
-                                            return false;
-                                        }
-                                    });
-                                    if (alreadyListed) {
-                                        alert(response.product.medicine_name + ' - already listed.');
-                                    } else {
-                                        addTableRow(response);
-                                        $('#tags').val('');
-                                        calculateTotalAmount();
-                                    }
-                                } else {
-                                    alert('Product not found.');
-                                }
-                            }
-                        });
-                    }
-                }
-
-                function addTableRow(responseObject) {
-                    var rowIdx = $('#tbody tr').length + 1;
-                    $('#tbody').append(`
-                        <tr id="R${rowIdx}">
-                            <td class="row-index text-center"><p>${rowIdx}</p></td>
-                            <td class="text-left">
-                                ${responseObject.product.medicine_name}<br>
-                                ${responseObject.product.medicine_form}<br>
-                                ${responseObject.product.medicine_strength}<br>
-                                ${responseObject.product.company_name}
-                                <input type="hidden" name="salesDetailId[]" value="${responseObject.product.id}" class="productId">
-                                <input type="hidden" name="medicine_id[]" value="${responseObject.product.medicine_id}" class="productId">
-                                <input type="hidden" name="generic_id[]" value="${responseObject.product.generic_id}">
-                                <input type="hidden" name="company_id[]" value="${responseObject.product.company_id}">
-                            </td>
-                            <td class="text-center"><input type="number" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
-                            <td class="text-center"><input type="number" value="${responseObject.product.sales_price}" name="unit_price[]" class="form-control unitPrice" autocomplete="off" readonly></td>
-                            <td class="text-center">
-                                <input type="number" value="0" name="uni_disc[]" class="form-control uni_disc" autocomplete="off">
-                                <input type="hidden" value="${responseObject.product.sales_price}" name="hiddenPrice[]" class="form-control hiddenPrice" autocomplete="off">
-                            </td>
-                            <td class="text-center">
-                                <input type="number" value="${responseObject.product.sales_price}" name="sub_total[]" class="form-control sub_total" autocomplete="off" readonly>
-                                <input type="hidden" value="${responseObject.product.sales_price}" name="sell_price[]" class="form-control hiddnUniPrice" autocomplete="off">
-                            </td>
-                            <td class="text-left">
-                                <button type="button" data-toggle="modal" data-target="#costShow${responseObject.product.id}" class="btn btn-default btn-flat"><i class="fa fa-eye text-primary fa-lg"></i></button>
-                                <input type="hidden" value="${responseObject.product.cost_price}" name="cost_price[]" class="form-control cost_price" autocomplete="off" readonly>
-                                <div id="costShow${responseObject.product.id}" class="modal fade">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="background-color: #2E4D62;color: #fff">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Show Cost Price</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label>Cost Price</label>
-                                                <input type="number" class="form-control" value="${responseObject.product.cost_price}" autocomplete="off" readonly>
-                                                <label>MRP Price</label>
-                                                <input type="number" class="form-control" value="${responseObject.product.mrp_price}" autocomplete="off" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-center"><button class="btn btn-danger remove" type="button"><i class="fa fa-times"></i></button></td>
-                        </tr>`);
-                }
-
-                $("#tags").autocomplete({
-                    minLength: 2,
-                    source: function(req, resp) {
-                        $('#loadingSpinner').show();
-                        $.ajax({
-                            type: "POST",
-                            url: '{{ route('Purchase.product.search') }}',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                pursearchQuery: req.term
-                            },
-                            success: function(data) {
-                                if (data.length === 1) {
-                                    addItemDetailsAsTableRow(data[0].value);
-                                } else {
-                                    resp(data);
-                                }
-                            },
-                            complete: function() {
-                                $('#loadingSpinner').hide();
-                            }
-                        });
-                    },
-                    select: function(event, ui) {
-                        if (ui.item) {
-                            addItemDetailsAsTableRow(ui.item.value);
-                        }
-                        return true;
-                    }
-                });
-
-                $("#tags").keypress(function(event) {
-                    if (event.keyCode == 13) {
-                        addItemDetailsAsTableRow($(this).val());
-                    }
-                });
-
-                $('#tbody').on('click', '.remove', function() {
-                    $(this).closest('tr').remove();
-                    calculateTotalAmount();
-                });
-
-                $(document).on('keyup', '.cl_qty, .unitPrice, .uni_disc', function() {
-                    var row = $(this).closest('tr');
-                    var quantity = parseFloat(row.find('.cl_qty').val()) || 0;
-                    var unitPrice = parseFloat(row.find('.unitPrice').val()) || 0;
-                    var discount = parseFloat(row.find('.uni_disc').val()) || 0;
-
-                    var discountedPrice = unitPrice - (unitPrice * (discount / 100));
-                    var subTotal = quantity * discountedPrice;
-
-                    row.find('.unitPrice').val(discountedPrice.toFixed(2));
-                    row.find('.sub_total').val(subTotal.toFixed(2));
-
-                    calculateTotalAmount();
-                });
-
-                $('#less_amount, #discount').on('input', function() {
-                    discountAmount();
-                    calculatePayment();
-                });
-
-                $('#cash_paid').on('input', function() {
-                    calculatePayment();
-                });
-
-                $("#payment_method").change(function() {
-                    var method = $(this).val();
-                    var chequeFields = ["#chequePaid", "#chequePaid2", "#chequePaid3", "#chequePaid4"];
-                    var cardFields = ["#cardNo"];
-                    var mobileFields = ["#mobNo"];
-
-                    $(chequeFields.join(', ')).hide();
-                    $(cardFields.join(', ')).hide();
-                    $(mobileFields.join(', ')).hide();
-
-                    if (method == "1") {
-                        $(chequeFields.join(', ')).show();
-                    } else if (method == "2") {
-                        $(cardFields.join(', ')).show();
-                    } else if (method == "3") {
-                        $(mobileFields.join(', ')).show();
-                    }
-                });
-
-                calculateTotalAmount();
-            });
-        </script> --}}
         <script>
             $(document).ready(function() {
                 // Handle customer selection change

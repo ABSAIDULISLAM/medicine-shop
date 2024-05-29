@@ -82,7 +82,7 @@
                                         </div>
                                         @php
                                             $latesinvoice = App\Models\Sales::latest()->first();
-                                            $invoiceId = $latesinvoice ? intval($latesinvoice->invoice_number) + 1 : 100001;
+                                            $invoiceId = $latesinvoice ? intval($latesinvoice->invoice_number) + 1 : 100021;
                                             $invoiceId = str_pad($invoiceId, 5, '0', STR_PAD_LEFT);
                                         @endphp
                                         <div class="col-md-6">
@@ -139,6 +139,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="tbody">
+                                                <div id="loadingSpinner" style="display: none;" class="text-center m-auto">
+                                                    <img src="{{ asset('backend/assets/spinner.gif') }}" alt="Loading...">
+                                                </div>
 
                                             </tbody>
                                             <tfoot>
@@ -189,9 +192,9 @@
                                                 <td>
                                                     <label style="font-size: 14px;">Total Amount<span
                                                             style="color: red">*</span></label><br>
-                                                    <input type="text" name="grand_total" id="grand_total" 
+                                                    <input type="text" name="grand_total" id="grand_total"
                                                         class="form-control" readonly="" required
-                                                        style="color: #14ba32;font-weight: bold;font-size: 20px"> 
+                                                        style="color: #14ba32;font-weight: bold;font-size: 20px">
                                                 </td>
                                             </tr>
                                             <tr>
@@ -589,6 +592,7 @@
                 $("#tags").autocomplete({
                     minLength: 2,
                     source: function(req, resp) {
+                        $('#loadingSpinner').show();
                         $.ajax({
                             type: "POST",
                             url: '{{ route('Purchase.product.search') }}',
@@ -602,6 +606,9 @@
                                 } else {
                                     resp(data);
                                 }
+                            },
+                            complete: function() {
+                                $('#loadingSpinner').hide();
                             }
                         });
                     },
@@ -677,7 +684,7 @@
                         <input type="hidden" value="` + responseObject.product.sales_price + `" name="hiddenPrice[]" class="form-control hiddenPrice" style="width:100%;text-align: center" autocomplete="off">
                         </td>
                         <td class="text-center" style="width: 100px;">
-                            <input type="number" value="` + responseObject.product.sales_price + `" name="sub_total[]" class="form-control sub_total" style="width:100%;text-align: center">
+                            <input type="text" value="` + responseObject.product.sales_price + `" name="sub_total[]" class="form-control sub_total" style="width:100%;text-align: center">
                             <input type="hidden" value="` + responseObject.product.sales_price + `" name="sell_price[]" class="form-control hiddnUniPrice" style="width:100%;text-align: center">
                         </td>
                         <td class="text-left" style="width: 80px;">

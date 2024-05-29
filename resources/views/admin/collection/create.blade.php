@@ -1,9 +1,6 @@
 @extends('admin.layouts.master')
-
 @section('title', 'create-collection')
-
 @section('content')
-
     <section class="content-header">
         <h1>
             Add Collection
@@ -36,152 +33,155 @@
                     <form method="POST" action="">
                         <div class="box-body">
                             <div class="row">
+                                <!-- Customer Selection -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="cus_id">Customer Name</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                            <select name="customer_id" id="cus_id" class="form-control select2"
-                                                style="width: 100%;">
-                                                <option value="">Select Customer</option>
-                                                <option value="1213"></option>
-                                                <option value="1209">a</option>
-
-                                                <option value="1256">Zaman</option>
+                                            <select name="customer_id" id="cus_id" class="form-control select2" style="width: 100%;">
+                                                <option value="" disabled selected>Select Customer</option>
+                                                @forelse ($customer as $item)
+                                                <option value="{{$item->id}}">{{$item->company_name}}</option>
+                                                @empty
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
+
+                                    <!-- Total Dues -->
                                     <div class="form-group">
                                         <label for="totalDuesAmount">Total Dues</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="totalDues" id="totalDuesAmount" class="form-control"
-                                                readonly="">
+                                            <input type="text" name="totalDues" id="totalDuesAmount" class="form-control" readonly="">
                                         </div>
                                     </div>
+
+                                    <!-- Remarks -->
                                     <div class="form-group">
                                         <label for="remarks">Remarks</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <input type="text" name="remarks" id="remarks" class="form-control"
-                                                placeholder="Remarks" autocomplete="off">
+                                            <input type="text" name="remarks" id="remarks" class="form-control" placeholder="Remarks" autocomplete="off">
                                         </div>
                                     </div>
+
+                                    <!-- Bank Name (Card Paid) -->
                                     <div class="form-group" id="card_paid" style="display: none">
                                         <label for="bank_id">Bank Name</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-bank"></i></span>
-                                            <select name="bank_id" id="bank_id" class="form-control select2"
-                                                style="width: 100%;">
+                                            <select name="bank_id" id="bank_id" class="form-control select2" style="width: 100%;">
                                                 <option value="">Select Bank</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Address and Date -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="address">Address</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="address" id="address" class="form-control"
-                                                placeholder=" Address" readonly="">
+                                            <input type="text" name="address" id="address" class="form-control" placeholder="Address" readonly="">
                                         </div>
                                     </div>
+
                                     <div class="form-group">
                                         <label for="datepicker">Date </label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <input type="text" name="date" class="form-control pull-right"
-                                                id="datepicker" autocomplete="off">
+                                                <i class="fa fa-calendar"></i></div>
+                                            <input type="text" name="date" class="form-control pull-right" id="datepicker" autocomplete="off">
                                         </div>
-                                        <!-- /.input group -->
                                     </div>
+
+                                    <!-- Today Paid -->
                                     <div class="form-group">
                                         <label for="paid">Today Paid</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="paid" id="paid" onkeyup="sum();"
-                                                class="form-control" autocomplete="off">
+                                            <input type="text" name="paid" id="paid" onkeyup="sum();" class="form-control" autocomplete="off">
                                         </div>
                                     </div>
+
+                                    <!-- Cheque Number (Cheque Paid) -->
                                     <div class="form-group" id="card_paid3" style="display: none">
                                         <label for="chequeNum">Cheque Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="chequeNum" id="chequeNum" class="form-control"
-                                                placeholder=" Cheque Number">
-                                            <input type="hidden" id="bankPreviousAmount" class="form-control"
-                                                placeholder="0.00" readonly="">
+                                            <input type="text" name="chequeNum" id="chequeNum" class="form-control" placeholder="Cheque Number">
+                                            <input type="hidden" id="bankPreviousAmount" class="form-control" placeholder="0.00" readonly="">
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Payment Method and Final Dues -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="money_receipt">Money Receipt</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="money_reset" class="form-control" value="MR-6"
-                                                required="">
+                                            <input type="text" name="money_reset" class="form-control" value="MR-6" required="">
                                         </div>
                                     </div>
+
                                     <div class="form-group">
                                         <label for="show">Payment Method</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="payment_method" class="form-control" id="show"
-                                                onchange="change()" style="width: 100%;">
+                                            <select name="payment_method" class="form-control" id="show" onchange="change()" style="width: 100%;">
                                                 <option value="0">Cash in Hand</option>
                                                 <option value="1">Cheque Paid</option>
                                                 <option value="2">Card Paid</option>
                                             </select>
                                         </div>
                                     </div>
+
+                                    <!-- Discount -->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="discount">Discount</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                                    <input type="text" name="discount" id="discount"
-                                                        oninput="discountAmount(this.id)" class="form-control"
-                                                        autocomplete="off">
+                                                    <input type="text" name="discount" id="discount" oninput="discountAmount(this.id)" class="form-control" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Final Dues -->
                                         <div class="form-group">
                                             <label for="currDues">Final Dues</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                                <input type="text" name="currDues" id="currdue"
-                                                    class="form-control" placeholder="0.00" readonly="">
-                                                <input type="hidden" id="hiddendue" class="form-control"
-                                                    readonly="">
+                                                <input type="text" name="currDues" id="currdue" class="form-control" placeholder="0.00" readonly="">
+                                                <input type="hidden" id="hiddendue" class="form-control" readonly="">
                                             </div>
                                         </div>
                                     </div>
 
+                                    <!-- Cheque Approval Date (Cheque Paid) -->
                                     <div class="form-group" id="card_paid5" style="display: none">
                                         <label for="datepicker2">Cheque Approval Date </label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <input type="text" name="chuque_app_date" class="form-control pull-right"
-                                                id="datepicker2" autocomplete="off">
+                                                <i class="fa fa-calendar"></i></div>
+                                            <input type="text" name="chuque_app_date" class="form-control pull-right" id="datepicker2" autocomplete="off">
                                         </div>
-                                        <!-- /.input group -->
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- /.box-body -->
+
                         <div class="box-footer text-center">
                             <button type="submit" name="btn" class="btn btn-primary">Submit</button>
                             <button type="reset" class="btn btn-danger">Cancel</button>
                         </div>
                     </form>
+
                 </div>
                 <!-- /.box -->
             </div>
@@ -189,7 +189,6 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-
 
     @push('js')
         <script>
@@ -227,29 +226,62 @@
                     var id = $(this).val();
                     $.ajax({
                         type: 'POST',
-                        url: 'ajax-response',
+                        url: '{{ route('Collection.customer.info') }}',
                         data: {
+                            '_token': '{{ csrf_token() }}',
                             'cus_id': id
                         },
-                        success: function(data) {
+                        success: function(response) {
+                            // Clear existing values
                             $('#address').val('');
                             $('#contact_num').val('');
                             $('#totalDuesAmount').val(0);
                             $('#hiddenDue').val(0);
 
-                            var supplierinfo = data.split('##');
+                            // Update values with response data
+                            var customerData = response.data;
+                            var previousDue = response.previousDue;
+                            var address = customerData.address + " ( " + customerData.contact_num + " )";
 
-                            var add = supplierinfo[0];
-                            var contact = supplierinfo[1];
-                            var preDue = Number(supplierinfo[2]);
-                            var address = add + " ( " + contact + " )";
                             $('#address').val(address);
-                            $('#totalDuesAmount').val(preDue);
-                            $('#hiddenDue').val(preDue);
+                            $('#totalDuesAmount').val(previousDue);
+                            $('#hiddenDue').val(previousDue);
                         }
                     });
                 });
+
+                // Show/hide fields based on payment method selection
+                $("#show").change(function() {
+                    var method = $(this).val();
+                    if (method == "1") {
+                        $("#card_paid3").show();
+                        $("#card_paid").hide();
+                        $("#card_paid5").show();
+                    } else if (method == "2") {
+                        $("#card_paid").show();
+                        $("#card_paid3").hide();
+                        $("#card_paid5").hide();
+                    } else {
+                        $("#card_paid, #card_paid3, #card_paid5").hide();
+                    }
+                });
+
+                // Calculate final dues when paid amount or discount changes
+                function calculateFinalDues() {
+                    var totalDues = parseFloat($('#totalDuesAmount').val()) || 0;
+                    var paidAmount = parseFloat($('#paid').val()) || 0;
+                    var discount = parseFloat($('#discount').val()) || 0;
+                    var finalDues = totalDues - paidAmount - discount;
+
+                    $('#currdue').val(finalDues.toFixed(2));
+                    $('#hiddendue').val(finalDues.toFixed(2));
+                }
+
+                $('#paid, #discount').on('input', function() {
+                    calculateFinalDues();
+                });
             });
+
 
             $(document).ready(function() {
                 $('#bank_id').change(function() {
@@ -281,8 +313,6 @@
                     $("#card_paid5").hide();
                 }
             });
-
-
 
             function roundToTwo(num) {
                 return num.toFixed(2);

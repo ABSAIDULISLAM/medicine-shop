@@ -16,4 +16,9 @@ class SalesReturn extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function customer()
+    {
+        return $this->belongsTo(Contact::class, 'customer_id', 'id');
+    }
 }

@@ -16,4 +16,9 @@ class SalesDetail extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function medicine()
+    {
+        return $this->belongsTo(Medicine::class, 'medicine_id', 'id');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductPurchaseRequest;
 use App\Models\BankSetup;
+use App\Models\CashStatement;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Generic;
@@ -264,6 +265,15 @@ class PurchaseController extends Controller
                 $purchaseDetail->update_by = Auth::id();
                 $purchaseDetail->save();
             }
+
+            CashStatement::create([
+                'date' => $request->date,
+                'remarks' => $request->invoice_number,
+                'debit' => $request->payment ?? 0,
+                'credit' => 0,
+                'insert_status' => 4,
+                'insert_id' => $request->supplier_id,
+            ]);
         }
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Inserted Successfully');

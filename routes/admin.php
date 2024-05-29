@@ -63,6 +63,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('invoice/print/{id}', 'invoicePrint')->name('invoice.print');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
+        Route::get('return/form/{id}', 'salesReturnForm')->name('return.form');
+        Route::post('return/update', 'ReturnUpdate')->name('return.update');
         Route::get('delete/{id}', 'delete')->name('delete');
         Route::get('windowPop/invoice/{invno}', 'windowPopInvoice')->name('windowPop.invoice');
         Route::post('customer/store', 'CustomerStore')->name('customer.store');
@@ -73,6 +75,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
         Route::get('filter', 'filter')->name('filter');
 
+
+        // Route::get('return/list', 'SalesReturnList')->name('return.list');
+
         Route::prefix('return/')->group(function(){
             Route::get('list', 'SalesReturnList')->name('return.list');
         });
@@ -80,6 +85,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
 
     Route::controller(App\Http\Controllers\Admin\CollectionController::class)->prefix('collection/')->as('Collection.')->group(function(){
         Route::get('list', 'index')->name('index');
+        Route::post('customer/info', 'CustomerInfo')->name('customer.info');
         Route::get('create', 'create')->name('create');
         Route::get('edit', 'edit')->name('edit');
     });

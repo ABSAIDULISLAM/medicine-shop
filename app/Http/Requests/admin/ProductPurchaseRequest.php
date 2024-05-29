@@ -44,7 +44,7 @@ class ProductPurchaseRequest extends FormRequest
             'hiddnTotal.*' => ['nullable', 'numeric'],
             'stock.*' => ['nullable', 'numeric'],
             'preStock.*' => ['nullable', 'numeric'],
-            'product_code.*' => ['nullable', 'numeric'],
+            'product_code.*' => ['nullable'],
             'total_amount' => ['nullable', 'numeric'],
             'total_coast' => ['nullable', 'numeric'],
         ];

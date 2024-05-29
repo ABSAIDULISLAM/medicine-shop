@@ -60,23 +60,40 @@
                                 <tbody>
                                     @php
                                         $total = 0;
-                                        $total = 0;
-                                        $total = 0;
+                                        $totalDue = 0;
+                                        $totalCash = 0;
                                     @endphp
                                     @forelse ($data as $item)
+                                        @php
+                                            $total += $item->total_amount;
+                                            $totalCash += $item->cash_paid;
+                                            $totalDue += $item->due_amount;
+                                        @endphp
                                         <tr>
-                                            <td>{{$loop->index+1}}</td>
+                                            <td>{{$loop->index + 1}}</td>
                                             <td>{{$item->customer->company_name}}</td>
-                                            <td ><a href="{{route('Sales.invoice.print', ['id' => Crypt::encrypt($item->id)])}}">{{$item->invoice_number}}</a></td>
+                                            <td>
+                                                <a href="{{route('Sales.invoice.print', ['id' => Crypt::encrypt($item->id)])}}">
+                                                    {{$item->invoice_number}}
+                                                </a>
+                                            </td>
                                             <td>{{$item->date}}</td>
                                             <td class="text-right">{{$item->total_amount}}</td>
                                             <td class="text-right">{{$item->cash_paid}}</td>
                                             <td class="text-right">{{$item->due_amount}}</td>
                                             <td>
-                                                <a href=""  class="btn btn-primary btn-sm"><i class="fa fa-print" style="color: #fff"></i></a>
-                                                <a href="{{ route('Sales.edit', ['id' => Crypt::encrypt($item->id)]) }}"  class="btn btn-success btn-sm"><i class="fa fa-pencil" style="color: #fff"></i></a>
-                                                <a href=""  class="btn btn-danger btn-sm"><i class="fa fa-trash-o" style="color: #fff"></i></a>
-                                                <a href=""  class="btn btn-warning btn-sm"><i class="fa fa-upload" style="color: #fff"></i></a>
+                                                <a href="{{ route('Sales.invoice.print', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-primary btn-sm">
+                                                    <i class="fa fa-print" style="color: #fff"></i>
+                                                </a>
+                                                <a href="{{ route('Sales.edit', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-success btn-sm">
+                                                    <i class="fa fa-pencil" style="color: #fff"></i>
+                                                </a>
+                                                <a href="{{ route('Sales.delete', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-trash-o" style="color: #fff"></i>
+                                                </a>
+                                                <a href="{{ route('Sales.return.form', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-warning btn-sm">
+                                                    <i class="fa fa-upload" style="color: #fff"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @empty
@@ -88,9 +105,9 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="4">Total</th>
-                                        <th class="text-right">0.00</th>
-                                        <th class="text-right">0.00</th>
-                                        <th class="text-right">0.00</th>
+                                        <th class="text-right">{{$total}}</th>
+                                        <th class="text-right">{{$totalCash}}</th>
+                                        <th class="text-right">{{$totalDue}}</th>
                                         <th></th>
                                     </tr>
                                 </tfoot>
@@ -110,56 +127,6 @@
     <!-- /.content -->
 
     @push('js')
-        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                fetchSalesData();
-
-
-                function fetchSalesData() {
-                    $('#loadingSpinner').show();
-                    $.ajax({
-                        url: "{{ route('Sales.data') }}",
-                        method: "GET",
-                        success: function(data) {
-                            // console.log(data)
-                            let tableBody = '';
-                            let totalAmount = 0;
-                            let totalCashReceived = 0;
-                            let totalDue = 0;
-
-                            data.forEach((sale, index) => {
-                                tableBody += `
-                                <tr>
-                                    <td class="text-center">${index + 1}</td>
-                                    <td class="text-left">${sale.customer.company_name}</td>
-                                    <td class="text-left"><a href="">${sale.invoice_number}</a></td>
-                                    <td class="text-center">${sale.date}</td>
-                                    <td class="text-left">${sale.total_amount}</td>
-                                    <td class="text-center">${sale.cash_paid}</td>
-                                    <td class="text-center">${sale.due_amount}</td>
-                                    <td class="text-center" style="width: 120px">
-                                        <a class="btn btn-primary btn-sm" href=""><i class="fa fa-print" style="color: #fff"></i></a>
-                                        <a class="btn btn-success btn-sm" href="{{route('Sales.edit',['id' => Crypt::encrypt(${sale.id})])}}"><i class="fa fa-pencil" style="color: #fff"></i></a>
-                                        <a class="btn btn-danger btn-sm" href=""><i class="fa fa-trash-o" style="color: #fff"></i></a>
-                                    </td>
-                                </tr>
-                            `;
-                                totalAmount += parseFloat(sale.total_amount);
-                                totalCashReceived += parseFloat(sale.cash_paid);
-                                totalDue += parseFloat(sale.due_amount);
-                            });
-
-                            $('#example1 tbody').html(tableBody);
-                            $('#example1 tfoot th:nth-child(2)').text(totalAmount.toFixed(2));
-                            $('#example1 tfoot th:nth-child(3)').text(totalCashReceived.toFixed(2));
-                            $('#example1 tfoot th:nth-child(4)').text(totalDue.toFixed(2));
-                            $('#loadingSpinner').hide();
-                        }
-                    });
-                }
-            });
-        </script> --}}
 
         <script>
             window.onload = function() {
