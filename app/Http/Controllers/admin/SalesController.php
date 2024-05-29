@@ -372,7 +372,7 @@ class SalesController extends Controller
         $customer = Contact::where('contact_type', 1)->select('id', 'company_name')->get();
         $bank = BankSetup::orderBy('id', 'asc')->select('id', 'bank_name')->get();
 
-         $data = Sales::with(['salesdetails', 'salesdetails.medicine'])->find($id);
+        $data = Sales::with(['salesdetails', 'salesdetails.medicine'])->find($id);
 
         return view('admin.sales.edit', compact([
             'data',
@@ -413,7 +413,7 @@ class SalesController extends Controller
             $sales->save();
 
 
-            foreach ($request->product_id as $key => $medicineId) {
+            foreach ($request->medicine_id as $key => $medicineId) {
                 $medicine = Medicine::find($medicineId);
                 $oldQuantity = SalesDetail::where('common_id', $request->id)
                                             ->where('medicine_id', $medicineId)

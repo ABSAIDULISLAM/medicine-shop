@@ -261,7 +261,7 @@
                                                         <td class="text-left">
                                                             {{ $item->product->medicine_name ?? '' }}{{ $item->product->medicine_form ?? '' }}{{ $item->product->medicine_strength ?? '' }}
                                                             {{ $item->product->company_name ?? '' }}
-                                                            <input type="hidden" name="product_id[]" value="{{ $item->product_id }}" class="productId">
+                                                            <input type="hidden" name="medicine_id[]" value="{{ $item->medicine_id }}" class="productId">
                                                             <input type="hidden" name="purchaseetailsId[]" value="{{ $item->id }}" class="productId">
                                                         </td>
                                                         <td class="text-center"><input type="text" id="qty{{$item->id}}" value="{{ $item->quantity }}" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
