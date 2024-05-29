@@ -82,7 +82,7 @@
                                         </div>
                                         @php
                                             $latesinvoice = App\Models\Sales::latest()->first();
-                                            $invoiceId = $latesinvoice ? intval($latesinvoice->invoice_number) + 1 : 100021;
+                                            $invoiceId = $latesinvoice ? intval($latesinvoice->invoice_number) + 1 : 100001;
                                             $invoiceId = str_pad($invoiceId, 5, '0', STR_PAD_LEFT);
                                         @endphp
                                         <div class="col-md-6">
@@ -140,7 +140,7 @@
                                             </thead>
                                             <tbody id="tbody">
                                                 <div id="loadingSpinner" style="display: none;" class="text-center m-auto">
-                                                    <img src="{{ asset('backend/assets/spinner.gif') }}" alt="Loading...">
+                                                    <img src="{{ asset('backend/assets/spinner.gif') }}" alt="Loading..." height="100px" width="100px">
                                                 </div>
 
                                             </tbody>
@@ -640,20 +640,26 @@
                             dataType: 'json',
                             success: function(response) {
                                 if (response.product.id) {
-                                    var alreadyListed = 0;
-                                    $('#tbody .productId').each(function() {
-                                        if (this.value == response.product.id) {
-                                            alreadyListed++;
+                                    // if(response.product.stock > 0){
+                                        var alreadyListed = 0;
+                                        $('#tbody .productId').each(function() {
+                                            if (this.value == response.product.id) {
+                                                alreadyListed++;
+                                            }
+                                        });
+                                        if (alreadyListed > 0) {
+                                            alert(response.product.medicine_name + ' - already listed.');
+                                            return false;
+                                        } else {
+                                            addTableRow(response);
+                                            $('#tags').val('');
+                                            calculateTotalAmount();
                                         }
-                                    });
-                                    if (alreadyListed > 0) {
-                                        alert(response.product.medicine_name + ' - already listed.');
-                                        return false;
-                                    } else {
-                                        addTableRow(response);
-                                        $('#tags').val('');
-                                        calculateTotalAmount();
-                                    }
+                                    // }else{
+                                    //     alert('This Product Already Stock Out.');
+                                    // }
+
+
                                 } else {
                                     alert('Product not found.');
                                 }

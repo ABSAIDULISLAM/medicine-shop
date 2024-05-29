@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title', 'add-Purchase')
+@section('title', 'Purchase-Update')
 
 @section('content')
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -19,7 +19,7 @@
         </h1>
         <ol class="breadcrumb">
             <li><a href="{{ route('Admin.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Purchases</a></li>
+            <li><a href="{{ route('Purchase.index') }}">Purchases</a></li>
             <li class="active">Update Purchases</li>
         </ol>
     </section>
@@ -231,19 +231,30 @@
                                             <thead>
                                                 <tr style="background-color:#2E4D62 ;color: #fff;">
                                                     <th class="text-center" style='width: 10px;'>SL</th>
-                                                    <th class="text-center" style='width: 150px;'>Product Name</th>
-                                                    <th class="text-center" style='width: 100px;'>Quantity</th>
-                                                    <th class="text-center" style='width: 100px;'>Cost Price</th>
-                                                    <th class="text-center" style='width: 100px;'>Sales Price</th>
-                                                    <th class="text-center" style='width: 100px;'>Expire Date</th>
-                                                    <th class="text-center" style='width: 100px;'>Rack No</th>
-                                                    <th class="text-center" style='width: 120px;'>Sub Total</th>
-                                                    <th class="text-center" style='width: 80px;'>Stock</th>
+                                                    <th class="text-center" style='width: 150px;'>Product Name <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Quantity <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Cost Price <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Sales Price <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Expire Date <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Rack No <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 120px;'>Sub Total <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 80px;'>Stock <span
+                                                        style="color: red">*</span></th>
                                                     <th class="text-center" style='width: 70px;'>Action</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody id="tbody">
+                                                <div id="loadingSpinner" style="display: none;" class="text-center m-auto">
+                                                    <img src="{{ asset('backend/assets/spinner.gif') }}" alt="Loading..." height="100px" width="100px">
+                                                </div>
                                                 @forelse ($data->purchasedetails as $item)
                                                     <tr>
                                                         <td class="row-index text-center"><p>{{ $loop->index + 1 }}</p></td>
@@ -253,9 +264,9 @@
                                                             <input type="hidden" name="product_id[]" value="{{ $item->product_id }}" class="productId">
                                                             <input type="hidden" name="purchaseetailsId[]" value="{{ $item->id }}" class="productId">
                                                         </td>
-                                                        <td class="text-center"><input type="number" id="qty{{$item->id}}" value="{{ $item->quantity }}" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
-                                                        <td class="text-center"><input type="number" id="unitPrice{{$item->id}}" value="{{ $item->cost_price }}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
-                                                        <td class="text-center"><input type="number" value="{{ $item->sales_price }}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
+                                                        <td class="text-center"><input type="text" id="qty{{$item->id}}" value="{{ $item->quantity }}" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
+                                                        <td class="text-center"><input type="text" id="unitPrice{{$item->id}}" value="{{ $item->cost_price }}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
+                                                        <td class="text-center"><input type="text" value="{{ $item->sales_price }}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
                                                         <td class="text-center"><input type="date" value="{{ $item->expire_date }}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
                                                         <td class="text-center" style="width: 80px;">
                                                             <select name="rack_id[]" class="form-control rack_id"
@@ -696,6 +707,7 @@
                 $("#tags").autocomplete({
                     minLength: 2,
                     source: function(req, resp) {
+                        $('#loadingSpinner').show();
                         $.ajax({
                             type: "POST",
                             url: '{{ route('Purchase.product.search') }}',
@@ -709,6 +721,9 @@
                                 } else {
                                     resp(data);
                                 }
+                            },
+                            complete: function() {
+                                $('#loadingSpinner').hide();
                             }
                         });
                     },
@@ -780,12 +795,12 @@
                         <td class="text-left">${responseObject.product.medicine_name} <br> ${responseObject.product.medicine_form} <br> ${responseObject.product.medicine_strength} <br> ${responseObject.product.generic_name}
                             <input type="hidden" name="product_id[]" value="${responseObject.product.id}" class="productId">
                         </td>
-                        <td class="text-center"><input type="number" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
-                        <td class="text-center"><input type="number" value="${responseObject.product.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
-                        <td class="text-center"><input type="number" value="${responseObject.product.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
+                        <td class="text-center"><input type="text" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
+                        <td class="text-center"><input type="text" value="${responseObject.product.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
+                        <td class="text-center"><input type="text" value="${responseObject.product.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
                         <td class="text-center"><input type="date" value="${responseObject.product.expire_date}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
                         <td class="text-center"></td> <!-- Add an empty cell for rack dropdown -->
-                        <td class="text-center"><input type="number" value="${responseObject.product.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
+                        <td class="text-center"><input type="text" value="${responseObject.product.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
                             <input type="hidden" value="${responseObject.product.cost_price}" name="hiddnTotal[]" class="form-control hiddnTotal" autocomplete="off">
                         </td>
                         <td class="text-center"><input type="text" value="${responseObject.product.inStock}" name="stock[]" class="form-control inStock" readonly>
@@ -875,7 +890,7 @@
                 }
             });
 
-            
+
 
             function roundToTwo(num) {
                 return num.toFixed(2);

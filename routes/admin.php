@@ -75,7 +75,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
         Route::get('filter', 'filter')->name('filter');
 
-
         // Route::get('return/list', 'SalesReturnList')->name('return.list');
 
         Route::prefix('return/')->group(function(){

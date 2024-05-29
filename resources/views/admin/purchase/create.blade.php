@@ -230,18 +230,29 @@
                                             <thead>
                                                 <tr style="background-color:#2E4D62 ;color: #fff;">
                                                     <th class="text-center" style='width: 10px;'>SL</th>
-                                                    <th class="text-center" style='width: 150px;'>Product Name</th>
-                                                    <th class="text-center" style='width: 100px;'>Quantity</th>
-                                                    <th class="text-center" style='width: 100px;'>Cost Price</th>
-                                                    <th class="text-center" style='width: 100px;'>Sales Price</th>
-                                                    <th class="text-center" style='width: 100px;'>Expire Date</th>
-                                                    <th class="text-center" style='width: 100px;'>Rack No</th>
-                                                    <th class="text-center" style='width: 120px;'>Sub Total</th>
-                                                    <th class="text-center" style='width: 80px;'>Stock</th>
+                                                    <th class="text-center" style='width: 150px;'>Product Name <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Quantity <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Cost Price <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Sales Price <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Expire Date <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 100px;'>Rack No <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 120px;'>Sub Total <span
+                                                        style="color: red">*</span></th>
+                                                    <th class="text-center" style='width: 80px;'>Stock <span
+                                                        style="color: red">*</span></th>
                                                     <th class="text-center" style='width: 70px;'>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tbody">
+                                                <div id="loadingSpinner" style="display: none;" class="text-center m-auto">
+                                                    <img src="{{ asset('backend/assets/spinner.gif') }}" alt="Loading..." height="100px" width="100px">
+                                                </div>
 
                                             </tbody>
                                             <tfoot>
@@ -661,10 +672,10 @@
 
             // ###--product add secation ---###
             $(document).ready(function() {
-                // Autocomplete setup with modified source function to directly add item if only one result is found
                 $("#tags").autocomplete({
                     minLength: 2,
                     source: function(req, resp) {
+                        $('#loadingSpinner').show();
                         $.ajax({
                             type: "POST",
                             url: '{{ route('Purchase.product.search') }}',
@@ -678,6 +689,9 @@
                                 } else {
                                     resp(data);
                                 }
+                            },
+                            complete: function() {
+                                $('#loadingSpinner').hide();
                             }
                         });
                     },
@@ -748,12 +762,12 @@
                         <td class="text-left">${responseObject.product.medicine_name} <br> ${responseObject.product.medicine_form} <br> ${responseObject.product.medicine_strength} <br> ${responseObject.product.generic_name}
                             <input type="hidden" name="product_id[]" value="${responseObject.product.id}" class="productId">
                         </td>
-                        <td class="text-center"><input type="number" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
-                        <td class="text-center"><input type="number" value="${responseObject.product.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
-                        <td class="text-center"><input type="number" value="${responseObject.product.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
+                        <td class="text-center"><input type="text" value="1" name="quantity[]" class="form-control cl_qty" autocomplete="off"></td>
+                        <td class="text-center"><input type="text" value="${responseObject.product.cost_price}" name="cost_price[]" class="form-control unitPrice" autocomplete="off"></td>
+                        <td class="text-center"><input type="text" value="${responseObject.product.sales_price}" name="sales_price[]" class="form-control sales_price" autocomplete="off"></td>
                         <td class="text-center"><input type="date" value="${responseObject.product.expire_date}" name="expire_date[]" class="form-control exp_date" autocomplete="off"></td>
                         <td class="text-center"></td> <!-- Add an empty cell for rack dropdown -->
-                        <td class="text-center"><input type="number" value="${responseObject.product.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
+                        <td class="text-center"><input type="text" value="${responseObject.product.cost_price}" name="sub_total[]" class="form-control proPrice" autocomplete="off">
                             <input type="hidden" value="${responseObject.product.cost_price}" name="hiddnTotal[]" class="form-control hiddnTotal" autocomplete="off">
                         </td>
                         <td class="text-center"><input type="text" value="${responseObject.product.inStock}" name="stock[]" class="form-control inStock" readonly>
@@ -783,7 +797,6 @@
                     calculateTotalAmount();
                 });
 
-                // Update stock and price when quantity changes
                 $(document).on('keyup', '.cl_qty', function() {
                     var tID = $(this).closest('tr').attr('id');
                     var cl_qty = parseFloat($(this).val()) || 0;
@@ -797,10 +810,10 @@
                     $('#' + tID + ' .inStock').val(currStock);
                     $('#' + tID + ' .proPrice').val(roundToTwo(line_total));
                     $('#' + tID + ' .hiddnTotal').val(roundToTwo(line_total));
+
                     calculateTotalAmount();
                 });
 
-                // Update line total when unit price changes
                 $(document).on('keyup', '.unitPrice', function() {
                     var tID = $(this).closest('tr').attr('id');
                     var unit_price = parseFloat($(this).val()) || 0;
@@ -813,7 +826,6 @@
                     calculateTotalAmount();
                 });
 
-                // Update unit price when line total changes
                 $(document).on('keyup', '.proPrice', function() {
                     var tID = $(this).closest('tr').attr('id');
                     var proPrice = parseFloat($(this).val()) || 0;
@@ -843,6 +855,8 @@
                 function roundToTwo(num) {
                     return num.toFixed(2);
                 }
+
+
             });
 
             function roundToTwo(num) {

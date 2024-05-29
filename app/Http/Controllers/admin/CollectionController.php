@@ -12,9 +12,9 @@ class CollectionController extends Controller
 {
     public function index()
     {
-       return Income::orderBy('id', 'desc')->get();
+       $data = Income::orderBy('id', 'desc')->get();
 
-        return view('admin.collection.index');
+        return view('admin.collection.index',compact('data'));
     }
 
 

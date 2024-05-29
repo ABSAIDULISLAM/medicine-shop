@@ -10,10 +10,13 @@ use App\Models\Contact;
 use App\Models\CustomerLedger;
 use App\Models\Generic;
 use App\Models\Medicine;
+use App\Models\Purchases;
+use App\Models\PurchasesDetail;
 use App\Models\Sales;
 use App\Models\SalesDetail;
 use App\Models\SalesReturn;
 use App\Models\SalesReturnDetail;
+use App\Models\StockLedger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +27,10 @@ class SalesController extends Controller
 {
     public function index()
     {
+        // Sales::truncate();
+        // SalesDetail::truncate();
+        // // CustomerLedger::truncate();
+
         $data = Sales::with(['customer' => function($queey){
             $queey->select('id','company_name');
         }])
@@ -40,25 +47,25 @@ class SalesController extends Controller
     }
 
 
-    public function filter(Request $request)
-    {
-        $fromDate = Carbon::parse($request->input('from_date'))->startOfDay();
-        $toDate = Carbon::parse($request->input('to_date'))->endOfDay();
-        $supplierId = $request->input('supplier_id');
+    // public function filter(Request $request)
+    // {
+    //     $fromDate = Carbon::parse($request->input('from_date'))->startOfDay();
+    //     $toDate = Carbon::parse($request->input('to_date'))->endOfDay();
+    //     $supplierId = $request->input('supplier_id');
 
-        $purchases = Purchases::query()
-            ->whereBetween('created_at', [$fromDate, $toDate]);
+    //     $purchases = Purchases::query()
+    //         ->whereBetween('created_at', [$fromDate, $toDate]);
 
-        if ($supplierId != 0) {
-            $purchases->orWhere('supplier_id', $supplierId);
-        }
+    //     if ($supplierId != 0) {
+    //         $purchases->orWhere('supplier_id', $supplierId);
+    //     }
 
-        $filteredData = $purchases->with(['suplyer'=>function($query){
-            $query->select('id', 'company_name');
-        }])->get();
+    //     $filteredData = $purchases->with(['suplyer'=>function($query){
+    //         $query->select('id', 'company_name');
+    //     }])->get();
 
-        return view('admin.purchase.index', compact('filteredData','fromDate','toDate'));
-    }
+    //     return view('admin.purchase.index', compact('filteredData','fromDate','toDate'));
+    // }
 
     public function create()
     {
@@ -158,14 +165,109 @@ class SalesController extends Controller
         return response()->json(['error' => 'Product not found '], 404);
     }
 
+    // public function store(SalesRequest $request)
+    // {
+    //     if($request->quantity && count($request->quantity) > 0) {
+    //         $sales = new Sales();
+    //         $sales->customer_id = $request->customer_id;
+    //         $sales->mobile_number = $request->mobile_number;
+    //         $sales->previous_dues = $request->previous_dues;
+    //         $sales->invoice_number  = $request->invoice_number;
+    //         $sales->date = $request->date;
+    //         $sales->total_amount = $request->total_amount;
+    //         $sales->discount_amount = $request->discount_amount ?? 0;
+    //         $sales->shipping_charge = 0;
+    //         $sales->less_amount = $request->less_amount ?? 0;
+    //         $sales->final_total = $request->grand_total;
+    //         $sales->cash_paid = $request->cash_paid ?? 0;
+    //         $sales->due_amount = $request->due_amount ?? 0;
+    //         $sales->advance = $request->advance ?? 0;
+    //         $sales->current_dues = $request->dues ?? 0;
+    //         $sales->payment_method = $request->payment_method;
+    //         $sales->bank_id = 0;
+    //         $sales->cheque_number = 0;
+    //         $sales->cheque_app_date = 0;
+    //         $sales->payment_card_number = 0;
+    //         $sales->payment_mobile_number = 0;
+    //         $sales->created_by = Auth::id();
+    //         $sales->created_at = Carbon::now();
+    //         $sales->save();
+
+    //         foreach ($request->quantity as $key => $value) {
+    //             $medicineId = $request->medicine_id[$key];
+    //             $medicine = Medicine::find($medicineId);
+    //             if ($medicine) {
+    //                 $medicine->stock -= $value;
+    //                 $medicine->save();
+
+    //                 $saleDetails = new SalesDetail();
+    //                 $saleDetails->medicine_id = $request->medicine_id[$key];
+    //                 $saleDetails->generic_id = $request->generic_id[$key];
+    //                 $saleDetails->company_id = $request->company_id[$key];
+    //                 $saleDetails->quantity = $value;
+    //                 $saleDetails->sell_price = $request->unit_price[$key];
+    //                 $saleDetails->product_discount = $request->uni_disc[$key] ?? 0;
+    //                 $saleDetails->unit_price = $request->unit_price[$key];
+    //                 $saleDetails->hidden_unit_price = $request->unit_price[$key];
+    //                 $saleDetails->sub_total = $request->sub_total[$key];
+    //                 $saleDetails->netCost_price = 0;
+    //                 $saleDetails->inStock = $medicine->stock;
+    //                 $saleDetails->date = $request->date[$key];
+    //                 $saleDetails->customer_id = $request->customer_id;
+    //                 $saleDetails->common_id = $sales->id;
+    //                 $saleDetails->creator_id = Auth::id();
+    //                 $saleDetails->save();
+    //             }
+
+    //             StockLedger::create([
+    //                 'medicine_id' => $medicineId,
+    //                 'generic_id' => 0,
+    //                 'date' => $request->date,
+    //                 'debit_qty' => 0,
+    //                 'credit_qty' => $value,
+    //                 'consumer' => $request->customer_id,
+    //                 'insert_status' => 3, // 3 = Sales data
+    //                 'insert_id' => $sales->id,
+    //                 'created_by' => Auth::id(),
+    //             ]);
+    //         }
+
+    //         $customerLedger = new CustomerLedger();
+    //         $customerLedger->customer_id = $request->customer_id;
+    //         $customerLedger->description = $request->invoice_number;
+    //         $customerLedger->previous_due = $request->previous_dues ?? 0;
+    //         $customerLedger->debit = 0;
+    //         $customerLedger->credit = $request->cash_paid ?? 0;
+    //         $customerLedger->discount = $request->discount ?? 0;
+    //         $customerLedger->balance +=  $request->cash_paid ?? 0;
+    //         $customerLedger->insert_status = 3; //  // 3 == Sales
+    //         $customerLedger->insert_id = $sales->id;
+    //         $customerLedger->date = $request->date;
+    //         $customerLedger->created_by = Auth::id();
+    //         $customerLedger->save();
+
+    //         CashStatement::create([
+    //             'date' => $request->date,
+    //             'remarks' => $request->invoice_number,
+    //             'debit' => 0,
+    //             'credit' => $request->cash_paid ?? 0,
+    //             'insert_status' => 1,
+    //             'insert_id' => $sales->id,
+    //         ]);
+
+    //     }
+
+    //     return redirect()->route('Sales.invoice.print', ['id' => Crypt::encrypt($sales->id)])->with('success', 'Sales Invoice Created Successfully');
+    // }
+
     public function store(SalesRequest $request)
     {
-        if($request->quantity > 0){
+        if($request->quantity && count($request->quantity) > 0) {
             $sales = new Sales();
             $sales->customer_id = $request->customer_id;
             $sales->mobile_number = $request->mobile_number;
             $sales->previous_dues = $request->previous_dues;
-            $sales->invoice_number  = $request->invoice_number;
+            $sales->invoice_number = $request->invoice_number;
             $sales->date = $request->date;
             $sales->total_amount = $request->total_amount;
             $sales->discount_amount = $request->discount_amount ?? 0;
@@ -184,63 +286,76 @@ class SalesController extends Controller
             $sales->payment_mobile_number = 0;
             $sales->created_by = Auth::id();
             $sales->created_at = Carbon::now();
-            $sales->updated_by = Auth::id();
-            $sales->updated_at = Carbon::now();
             $sales->save();
 
-            foreach ($request->quantity as $key => $value) {
+            foreach ($request->quantity as $key => $quantity) {
                 $medicineId = $request->medicine_id[$key];
                 $medicine = Medicine::find($medicineId);
                 if ($medicine) {
-                    $stock = $medicine->stock;
-                    $instock = $stock - $value;
-                    $medicine->stock = $instock;
+                    $medicine->stock -= $quantity;
                     $medicine->save();
 
                     $saleDetails = new SalesDetail();
-                    $saleDetails->medicine_id = $request->medicine_id[$key];
+                    $saleDetails->medicine_id = $medicineId;
                     $saleDetails->generic_id = $request->generic_id[$key];
                     $saleDetails->company_id = $request->company_id[$key];
-                    $saleDetails->quantity = $value;
+                    $saleDetails->quantity = $quantity;
                     $saleDetails->sell_price = $request->unit_price[$key];
                     $saleDetails->product_discount = $request->uni_disc[$key] ?? 0;
                     $saleDetails->unit_price = $request->unit_price[$key];
                     $saleDetails->hidden_unit_price = $request->unit_price[$key];
                     $saleDetails->sub_total = $request->sub_total[$key];
                     $saleDetails->netCost_price = 0;
-                    $saleDetails->inStock = $instock;
+                    $saleDetails->inStock = $medicine->stock;
                     $saleDetails->date = $request->date;
                     $saleDetails->customer_id = $request->customer_id;
                     $saleDetails->common_id = $sales->id;
                     $saleDetails->creator_id = Auth::id();
                     $saleDetails->save();
-                 }
+                }
+
+                StockLedger::create([
+                    'medicine_id' => $medicineId,
+                    'generic_id' => 0,
+                    'date' => $request->date,
+                    'debit_qty' => 0,
+                    'credit_qty' => $quantity,
+                    'consumer' => $request->customer_id,
+                    'insert_status' => $sales->id,
+                    'insert_id' => 3,  // 3 = Sales data
+                    'created_by' => Auth::id(),
+                ]);
             }
-            CustomerLedger::create([
-                'customer_id' => $request->customer_id,
-                'description' => $request->invoice_number,
-                'previous_due' => $request->previous_dues,
-                'debit' => 0,
-                'credit' => $request->cash_paid,
-                'discount' => $request->discount_amount ?? 0,
-                'balance' => 0,
-                'insert_status' => 1,
-                'insert_id' => $request->invoice_number,
-                'date' => $request->date,
-                'created_by' => Auth::id(),
-            ]);
+
+            $customerLedger = new CustomerLedger();
+            $customerLedger->customer_id = $request->customer_id;
+            $customerLedger->description = $request->invoice_number;
+            $customerLedger->previous_due = $request->previous_dues ?? 0;
+            $customerLedger->debit = 0;
+            $customerLedger->credit = $request->cash_paid ?? 0;
+            $customerLedger->discount = $request->discount ?? 0;
+            $customerLedger->balance += $request->cash_paid ?? 0;
+            $customerLedger->insert_status = 3; // 3 = Sales
+            $customerLedger->insert_id = $sales->id;
+            $customerLedger->date = $request->date;
+            $customerLedger->created_by = Auth::id();
+            $customerLedger->save();
+
             CashStatement::create([
                 'date' => $request->date,
                 'remarks' => $request->invoice_number,
                 'debit' => 0,
                 'credit' => $request->cash_paid ?? 0,
                 'insert_status' => 1,
-                'insert_id' => $request->customer_id,
+                'insert_id' => $sales->id,
             ]);
+
+            return redirect()->route('Sales.invoice.print', ['id' => Crypt::encrypt($sales->id)])->with('success', 'Sales Invoice Created Successfully');
         }
 
-        return redirect()->route('Sales.invoice.print', ['id' => Crypt::encrypt($sales->id)])->with('success', 'Sales Invoice Created Successfully');
+        return back()->with('error', 'No quantity provided for the sale.');
     }
+
 
     public function invoicePrint($id)
     {
@@ -276,7 +391,7 @@ class SalesController extends Controller
             $sales->customer_id = $request->customer_id;
             $sales->mobile_number = $request->mobile_number;
             $sales->previous_dues = $request->previous_dues;
-            $sales->invoice_number  = $request->invoice_number;
+            $sales->invoice_number = $request->invoice_number;
             $sales->date = $request->date;
             $sales->total_amount = $request->total_amount;
             $sales->discount_amount = $request->discount_amount ?? 0;
@@ -295,12 +410,22 @@ class SalesController extends Controller
             $sales->payment_mobile_number = 0;
             $sales->created_by = Auth::id();
             $sales->created_at = Carbon::now();
-            $sales->updated_by = Auth::id();
-            $sales->updated_at = Carbon::now();
             $sales->save();
 
+
+            foreach ($request->product_id as $key => $medicineId) {
+                $medicine = Medicine::find($medicineId);
+                $oldQuantity = SalesDetail::where('common_id', $request->id)
+                                            ->where('medicine_id', $medicineId)
+                                            ->first()
+                                            ->quantity ?? 0;
+                $medicine->stock += $oldQuantity;
+                $medicine->save();
+            }
             // Delete previous sale details
             SalesDetail::where('common_id', $request->id)->delete();
+            // Delete previous Stock ledger data by this id
+            StockLedger::where('insert_status', $request->id)->delete();
 
             // Add new sale details
             foreach ($request->quantity as $key => $value) {
@@ -330,23 +455,43 @@ class SalesController extends Controller
                     $saleDetails->creator_id = Auth::id();
                     $saleDetails->save();
                 }
+
+                StockLedger::create([
+                    'medicine_id' => $medicineId,
+                    'generic_id' => 0,
+                    'date' => $request->date,
+                    'debit_qty' => 0,
+                    'credit_qty' => $value,
+                    'consumer' => $request->customer_id,
+                    'insert_status' => $sales->id,
+                    'insert_id' => 3,  // 3 = Sales data
+                    'created_by' => Auth::id(),
+                ]);
             }
 
-            $customerLedger = CustomerLedger::where('insert_id', $request->invoice_number)->first();
-
+            $customerLedger = CustomerLedger::where('insert_id', $request->id)->first();
             $customerLedger->customer_id = $request->customer_id;
             $customerLedger->description = $request->invoice_number;
-            $customerLedger->previous_due = $request->previous_dues;
+            $customerLedger->previous_due = $request->previous_dues ?? 0;
             $customerLedger->debit = 0;
-            $customerLedger->credit = $request->cash_paid;
-            $customerLedger->discount = $request->discount_amount ?? 0;
-            $customerLedger->balance = 0;
-            $customerLedger->insert_status = 1;
-            $customerLedger->insert_id = $request->invoice_number;
+            $customerLedger->credit = $request->cash_paid ?? 0;
+            $customerLedger->discount = $request->discount ?? 0;
+            $customerLedger->balance += $request->cash_paid ?? 0;
+            $customerLedger->insert_status = 3; // 3 = Sales
+            $customerLedger->insert_id = $sales->id;
             $customerLedger->date = $request->date;
             $customerLedger->created_by = Auth::id();
             $customerLedger->save();
         }
+
+        CashStatement::where('insert_id', $request->id)->update([
+            'date' => $request->date,
+            'remarks' => $request->invoice_number,
+            'debit' => $request->payment ?? 0,
+            'credit' => 0,
+            'insert_status' => 1, // 1 = Sale
+            'insert_id' => $sales->id,
+        ]);
 
         return redirect()->route('Sales.index')->with('success', 'Sales Invoice Updated Successfully');
     }
@@ -468,16 +613,5 @@ class SalesController extends Controller
         return view('admin.sales.return-list', compact('data'));
     }
 
-    public function windowPopInvoice($id)
-    {
-        // return 'ok';
-      $data = PurchasesDetail::where('common_id', $id)
-            ->with(['product' => function($query) {
-                $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');
-            }])
-            ->get();
-
-        return view('admin.purchase.invoice', compact('data'));
-    }
 
 }
