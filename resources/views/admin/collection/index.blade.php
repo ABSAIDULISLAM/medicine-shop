@@ -61,12 +61,42 @@
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
+                                    @php
+                                        $total = 0
+                                    @endphp
                                 <tbody>
+                                    @forelse ($data as $item)
+                                        @php
+                                            $total += $item->paid;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $loop->index + 1 }}</td>
+                                            <td>{{ optional($item->customer)->company_name }}</td>
+                                            <td>{{ optional($item->customer)->address }}</td>
+                                            <td>{{ $item->collection_date }}</td>
+                                            <td> <a href="{{ route('Collection.money.recipt', ['id' => $item->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $item->money_reset }}</a></td>
+                                            <td>{{ $item->totalDues }}</td>
+                                            <td>{{ $item->paid }}</td>
+                                            <td>{{ $item->currDues }}</td>
+                                            <td>{{ $item->remarks }}</td>
+                                            <td>
+                                                <a class="btn btn-sm btn-danger" href="{{ route('Collection.delete', ['id' => Crypt::encrypt($item->id)]) }}" onclick="return confirm('Are Your sure to Delete this item ??');">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                    @empty
+                                        <tr>
+                                            <td colspan="10" class="text-center">No Record Found</td>
+                                        </tr>
+                                    @endforelse
+
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th colspan="6">Total</th>
-                                        <th>0.00</th>
+                                        <th>{{$total}}</th>
                                         <th></th>
                                         <th></th>
                                         <th></th>
@@ -85,5 +115,12 @@
     </section>
     <!-- /.content -->
 
+    <script>
+        function PopWindow(url, win) {
+                var ptr = window.open(url, win,
+                    'width=850,height=500,top=100,left=250');
+                return false;
+            }
+    </script>
 
 @endsection

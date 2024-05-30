@@ -24,7 +24,7 @@
             @includeIf('errors.error')
             <div class="login-box-body mx-3">
                 <div class="text-center" style="margin-bottom: 30px">
-                    <img src="{{asset('backend/assets/logo.jpg')}}" style="height: 170px;width: 200px"/>
+                    <img src="{{asset('backend/assets/logo.png')}}" style="height: 100px;width: 220px"/>
                 </div>
                 <form method="post" action="{{route('login.store')}}">
                     @csrf

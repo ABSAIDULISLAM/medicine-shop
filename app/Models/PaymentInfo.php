@@ -16,4 +16,8 @@ class PaymentInfo extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+    public function customer()
+    {
+        return $this->belongsTo(Contact::class, 'supplier_id', 'id');
+    }
 }

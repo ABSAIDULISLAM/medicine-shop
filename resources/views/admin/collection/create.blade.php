@@ -30,16 +30,17 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="">
+                    <form method="POST" action="{{route('Collection.store')}}" id="paymentForm">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <!-- Customer Selection -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="cus_id">Customer Name</label>
+                                        <label for="cus_id">Customer Name <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                            <select name="customer_id" id="cus_id" class="form-control select2" style="width: 100%;">
+                                            <select required name="customer_id" id="cus_id" class="form-control select2" style="width: 100%;">
                                                 <option value="" disabled selected>Select Customer</option>
                                                 @forelse ($customer as $item)
                                                 <option value="{{$item->id}}">{{$item->company_name}}</option>
@@ -51,10 +52,11 @@
 
                                     <!-- Total Dues -->
                                     <div class="form-group">
-                                        <label for="totalDuesAmount">Total Dues</label>
+                                        <label for="totalDuesAmount">Total Dues <span style="color: red">*</span></label>
                                         <div class="input-group">
+                                            <input type="hidden" name="contact_number" id="contact">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="totalDues" id="totalDuesAmount" class="form-control" readonly="">
+                                            <input type="text" name="totalDues" requried id="totalDuesAmount" class="form-control" readonly="">
                                         </div>
                                     </div>
 
@@ -82,28 +84,28 @@
                                 <!-- Address and Date -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="address">Address</label>
+                                        <label for="address">Address <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
-                                            <input type="text" name="address" id="address" class="form-control" placeholder="Address" readonly="">
+                                            <input required type="text" name="address" id="address" class="form-control" placeholder="Address" readonly="">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="datepicker">Date </label>
+                                        <label for="datepicker">Date <span style="color: red">*</span></label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i></div>
-                                            <input type="text" name="date" class="form-control pull-right" id="datepicker" autocomplete="off">
+                                            <input type="date" value="{{date('Y-m-d')}}" required name="date" class="form-control pull-right" id="datepicker" autocomplete="off">
                                         </div>
                                     </div>
 
                                     <!-- Today Paid -->
                                     <div class="form-group">
-                                        <label for="paid">Today Paid</label>
+                                        <label for="paid">Today Paid <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="paid" id="paid" onkeyup="sum();" class="form-control" autocomplete="off">
+                                            <input type="text" required name="paid" id="paid" onkeyup="sum();" class="form-control" autocomplete="off">
                                         </div>
                                     </div>
 
@@ -119,20 +121,25 @@
                                 </div>
 
                                 <!-- Payment Method and Final Dues -->
+                                    @php
+                                        $latesinvoice = App\Models\CollectionInfo::orderBy('id', 'desc')->first();
+                                        $invoiceId = $latesinvoice ? intval($latesinvoice->money_reset) + 1 : 100001;
+                                        $invoiceId = str_pad($invoiceId, 5, '0', STR_PAD_LEFT);
+                                    @endphp
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="money_receipt">Money Receipt</label>
+                                        <label for="money_receipt">Money Receipt <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="money_reset" class="form-control" value="MR-6" required="">
+                                            <input type="text" name="money_reset" class="form-control" value="{{$invoiceId}}" required="">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="show">Payment Method</label>
+                                        <label for="show">Payment Method <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
-                                            <select name="payment_method" class="form-control" id="show" onchange="change()" style="width: 100%;">
+                                            <select name="payment_method" class="form-control" required id="show" onchange="change()" style="width: 100%;">
                                                 <option value="0">Cash in Hand</option>
                                                 <option value="1">Cheque Paid</option>
                                                 <option value="2">Card Paid</option>
@@ -144,7 +151,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="discount">Discount</label>
+                                                <label for="discount">Discount </label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                                     <input type="text" name="discount" id="discount" oninput="discountAmount(this.id)" class="form-control" autocomplete="off">
@@ -177,7 +184,7 @@
                         </div>
 
                         <div class="box-footer text-center">
-                            <button type="submit" name="btn" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
                             <button type="reset" class="btn btn-danger">Cancel</button>
                         </div>
                     </form>
@@ -232,7 +239,6 @@
                             'cus_id': id
                         },
                         success: function(response) {
-                            // Clear existing values
                             $('#address').val('');
                             $('#contact_num').val('');
                             $('#totalDuesAmount').val(0);
@@ -246,6 +252,7 @@
                             $('#address').val(address);
                             $('#totalDuesAmount').val(previousDue);
                             $('#hiddenDue').val(previousDue);
+                            $('#contact').val(response.data.contact_num);
                         }
                     });
                 });
@@ -283,22 +290,22 @@
             });
 
 
-            $(document).ready(function() {
-                $('#bank_id').change(function() {
-                    var id = $(this).val();
-                    $.ajax({
-                        type: 'POST',
-                        url: 'ajax-response',
-                        data: {
-                            'bank_id': id
-                        },
-                        success: function(html) {
-                            console.log(html);
-                            $('#bankPreviousAmount').val(html);
-                        }
-                    });
-                });
-            });
+            // $(document).ready(function() {
+            //     $('#bank_id').change(function() {
+            //         var id = $(this).val();
+            //         $.ajax({
+            //             type: 'POST',
+            //             url: 'ajax-response',
+            //             data: {
+            //                 'bank_id': id
+            //             },
+            //             success: function(html) {
+            //                 console.log(html);
+            //                 $('#bankPreviousAmount').val(html);
+            //             }
+            //         });
+            //     });
+            // });
             ///###--Payment Calculation Function End--###
             $("#show").change(function() {
                 if ($(this).val() == "1") {
@@ -318,6 +325,34 @@
                 return num.toFixed(2);
             }
         </script>
+
+
+        <script>
+            $(document).ready(function() {
+                $('#paymentForm').on('submit', function(event) {
+                    var totalDues = parseFloat($('#totalDuesAmount').val()) || 0;
+                    var paid = parseFloat($('#paid').val()) || 0;
+
+                    if (paid > totalDues) {
+                        alert('The paid amount cannot exceed the total dues.');
+                        event.preventDefault(); // Prevent the form from being submitted
+                    }
+                });
+
+                $('#paid').on('keyup', function() {
+                    var totalDues = parseFloat($('#totalDuesAmount').val()) || 0;
+                    var paid = parseFloat($(this).val()) || 0;
+
+                    if (paid > totalDues) {
+                        $(this).get(0).setCustomValidity('The paid amount cannot gratter then total dues.');
+                    } else {
+                        $(this).get(0).setCustomValidity('');
+                    }
+                });
+            });
+
+        </script>
     @endpush
+
 
 @endsection

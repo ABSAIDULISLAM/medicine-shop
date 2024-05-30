@@ -19,10 +19,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('delete/{id}', 'delete')->name('delete');
     });
 
-    Route::controller(App\Http\Controllers\Admin\SupliyerPaymentController::class)->prefix('supliyer-payment/')->as('Supliyer-payment.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\SupliyerPaymentController::class)
+        ->prefix('supliyer-payment/')->as('Supliyer-payment.')
+        ->group(function(){
         Route::get('list', 'index')->name('index');
+        Route::get('money-recipt/{id}', 'MoneyRecipt')->name('money.recipt');
         Route::get('create', 'create')->name('create');
-        Route::get('edit', 'edit')->name('edit');
+        Route::post('supplier/infos', 'SupplierInfo')->name('supplier.info');
+        Route::post('store', 'store')->name('store');
+        Route::get('delete/{id}', 'delete')->name('delete');
     });
 
     Route::controller(App\Http\Controllers\Admin\MedicineController::class)->prefix('medicine/')->as('Medicine.')->group(function(){
@@ -84,9 +89,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
 
     Route::controller(App\Http\Controllers\Admin\CollectionController::class)->prefix('collection/')->as('Collection.')->group(function(){
         Route::get('list', 'index')->name('index');
+        Route::get('money-recipt/{id}', 'MoneyRecipt')->name('money.recipt');
         Route::post('customer/info', 'CustomerInfo')->name('customer.info');
         Route::get('create', 'create')->name('create');
-        Route::get('edit', 'edit')->name('edit');
+        Route::post('store', 'store')->name('store');
+        Route::get('delete/{id}', 'delete')->name('delete');
     });
 
 

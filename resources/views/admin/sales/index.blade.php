@@ -88,7 +88,7 @@
                                                 <a href="{{ route('Sales.edit', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-success btn-sm">
                                                     <i class="fa fa-pencil" style="color: #fff"></i>
                                                 </a>
-                                                <a href="{{ route('Sales.delete', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-danger btn-sm">
+                                                <a href="{{ route('Sales.delete', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-danger btn-sm" onclick="return confirm('are you sure to delete this item ? before delete this item think one more time again')">
                                                     <i class="fa fa-trash-o" style="color: #fff"></i>
                                                 </a>
                                                 <a href="{{ route('Sales.return.form', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-warning btn-sm">

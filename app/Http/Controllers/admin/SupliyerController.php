@@ -71,7 +71,7 @@ class SupliyerController extends Controller
         ]);
 
         Cache::forget('supplier_list_cache');
-        
+
         return redirect()->back()->with('success', 'Supplier Created Successfully');
     }
 
@@ -99,13 +99,27 @@ class SupliyerController extends Controller
                 'opening_balance' => $request->opening_balance,
                 'status' => $request->status,
             ]);
+
+            SupplierLedger::find($request->id)->update([
+                'supplier_id' => $request->id,
+                'description' => 'Opening Balance',
+                'previous_due' => 0,
+                'debit' => $request->opening_balance,
+                'credit' => 0,
+                'discount' => 0,
+                'balance' => $request->opening_balance,
+                'insert_status' => 1,
+                'insert_id' => $request->id,
+                'date' => Carbon::now(),
+                'created_by' => Auth::id(),
+            ]);
+
             Cache::forget('supplier_list_cache');
             return redirect()->back()->with('success', 'Supplier Updated Successfully');
         } else {
             return redirect()->back()->with('error', 'No Item Found');
         }
     }
-
 
 
     public function delete($id)

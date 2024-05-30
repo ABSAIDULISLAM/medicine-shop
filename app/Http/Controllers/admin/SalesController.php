@@ -101,6 +101,21 @@ class SalesController extends Controller
             'opening_balance' => 0,
         ]);
 
+        CustomerLedger::create([
+            'customer_id' => $contact->id,
+            'description' => 'Opening Balance',
+            'previous_due' => 0,
+            'debit' => 0,
+            'credit' => $contact->opening_balance,
+            'discount' => 0,
+            'balance' => $contact->opening_balance,
+            'insert_status' => 1,
+            'insert_id' => $contact->id,
+            'date' => Carbon::now(),
+            'created_by' => Auth::id(),
+        ]);
+
+
         // Prepare response data
         $option = '<option value="' . $contact->id . '">' . $contact->company_name . '</option>';
         $pre_blnc = 0;
@@ -327,6 +342,18 @@ class SalesController extends Controller
                 ]);
             }
 
+            $latestData = CustomerLedger::where('customer_id', $request->customer_id)->orderBy('id', 'desc')->first();
+            $due = 0;
+
+            if ($latestData) {
+                if ($latestData->balance >= $request->cash_paid) {
+                    $due = $latestData->balance - $request->cash_paid;
+                } else {
+                    $due = 0;
+                }
+            } else {
+                $due = ($request->previous_dues ?? 0) - ($request->cash_paid ?? 0);
+            }
             $customerLedger = new CustomerLedger();
             $customerLedger->customer_id = $request->customer_id;
             $customerLedger->description = $request->invoice_number;
@@ -334,7 +361,7 @@ class SalesController extends Controller
             $customerLedger->debit = 0;
             $customerLedger->credit = $request->cash_paid ?? 0;
             $customerLedger->discount = $request->discount ?? 0;
-            $customerLedger->balance += $request->cash_paid ?? 0;
+            $customerLedger->balance = $due;
             $customerLedger->insert_status = 3; // 3 = Sales
             $customerLedger->insert_id = $sales->id;
             $customerLedger->date = $request->date;
@@ -346,7 +373,7 @@ class SalesController extends Controller
                 'remarks' => $request->invoice_number,
                 'debit' => 0,
                 'credit' => $request->cash_paid ?? 0,
-                'insert_status' => 1,
+                'insert_status' => 1, // 1=collection
                 'insert_id' => $sales->id,
             ]);
 
@@ -469,6 +496,18 @@ class SalesController extends Controller
                 ]);
             }
 
+            $latestData = CustomerLedger::where('customer_id', $request->customer_id)->orderBy('id', 'desc')->first();
+            $due = 0;
+
+            if ($latestData) {
+                if ($latestData->balance >= $request->cash_paid) {
+                    $due = $latestData->balance - $request->cash_paid;
+                } else {
+                    $due = 0;
+                }
+            } else {
+                $due = ($request->previous_dues ?? 0) - ($request->cash_paid ?? 0);
+            }
             $customerLedger = CustomerLedger::where('insert_id', $request->id)->first();
             $customerLedger->customer_id = $request->customer_id;
             $customerLedger->description = $request->invoice_number;
@@ -476,7 +515,7 @@ class SalesController extends Controller
             $customerLedger->debit = 0;
             $customerLedger->credit = $request->cash_paid ?? 0;
             $customerLedger->discount = $request->discount ?? 0;
-            $customerLedger->balance += $request->cash_paid ?? 0;
+            $customerLedger->balance = $due;
             $customerLedger->insert_status = 3; // 3 = Sales
             $customerLedger->insert_id = $sales->id;
             $customerLedger->date = $request->date;
@@ -514,12 +553,12 @@ class SalesController extends Controller
 
     public function ReturnUpdate(SalesRequest $request)
     {
-        Sales::find($request->id)->delete();
+        // Sales::find($request->id)->delete();
 
         if($request->quantity > 0){
+
             $sales = new SalesReturn();
             $sales->customer_id = $request->customer_id;
-            // $sales->mobile_number = $request->mobile_number;
             $sales->previous_dues = $request->previous_dues;
             $sales->invoice_number  = $request->invoice_number;
             $sales->date = $request->date;
@@ -536,17 +575,14 @@ class SalesController extends Controller
             $sales->bank_id = 0;
             $sales->cheque_number = 0;
             $sales->chuque_app_date = 0;
-            // $sales->payment_card_number = 0;
-            // $sales->payment_mobile_number = 0;
             $sales->created_by = Auth::id();
             $sales->created_at = Carbon::now();
-            $sales->update_by = Auth::id();
-            $sales->updated_at = Carbon::now();
             $sales->save();
 
-            SalesDetail::where('common_id', $request->id)->delete();
+            // SalesDetail::where('common_id', $request->id)->delete();
 
             foreach ($request->quantity as $key => $value) {
+
                 $medicineId = $request->medicine_id[$key];
                 $medicine = Medicine::find($medicineId);
                 if ($medicine) {
@@ -572,24 +608,59 @@ class SalesController extends Controller
                     $saleDetails->common_id = $sales->id;
                     $saleDetails->creator_id = Auth::id();
                     $saleDetails->save();
-                 }
+                }
+
+                StockLedger::create([
+                    'medicine_id' => $medicineId,
+                    'generic_id' => 0,
+                    'date' => $request->date,
+                    'debit_qty' => 0,
+                    'credit_qty' => $value,
+                    'consumer' => $request->customer_id,
+                    'insert_status' => $sales->id,
+                    'insert_id' => 4,  // 4 = sales return
+                    'created_by' => Auth::id(),
+                ]);
+
             }
 
-            CustomerLedger::where('insert_id', $request->invoice_number)->delete();
+            $latestData = CustomerLedger::where('customer_id', $request->customer_id)->orderBy('id', 'desc')->first();
+            $due = 0; // Initialize due to zero to avoid undefined variable issues
 
-            CustomerLedger::create([
-                'customer_id' => $request->customer_id,
-                'description' => $request->invoice_number,
-                'previous_due' => $request->previous_dues,
-                'debit' => 0,
-                'credit' => $request->cash_paid,
-                'discount' => $request->discount_amount ?? 0,
-                'balance' => 0,
-                'insert_status' => 3,
-                'insert_id' => $request->invoice_number,
+            if ($latestData) {
+                if ($latestData->balance >= $request->cash_paid) {
+                    $due = $latestData->balance - $request->cash_paid;
+                } else {
+                    $due = 0;
+                }
+            } else {
+                $due = ($request->previous_dues ?? 0) - ($request->cash_paid ?? 0);
+            }
+
+            $customerLedger = new CustomerLedger();
+            $customerLedger->customer_id = $request->customer_id;
+            $customerLedger->description = $request->invoice_number;
+            $customerLedger->previous_due = $request->previous_dues ?? 0;
+            $customerLedger->debit = 0;
+            $customerLedger->credit = $request->cash_paid ?? 0;
+            $customerLedger->discount = $request->discount ?? 0;
+            $customerLedger->balance = $due;
+            $customerLedger->insert_status = 3; // 3 = Sales
+            $customerLedger->insert_id = $sales->id;
+            $customerLedger->date = $request->date;
+            $customerLedger->created_by = Auth::id();
+            $customerLedger->save();
+
+
+            CashStatement::create([
                 'date' => $request->date,
-                'created_by' => Auth::id(),
+                'remarks' => $request->invoice_number,
+                'debit' => 0,
+                'credit' => $request->cash_paid ?? 0,
+                'insert_status' => 1,
+                'insert_id' => $sales->id,
             ]);
+
         }
 
         return redirect()->route('Sales.return.list')->with('success', 'Sales Return Created Successfully');

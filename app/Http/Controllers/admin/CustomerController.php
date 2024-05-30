@@ -91,6 +91,20 @@ class CustomerController extends Controller
             'status' => $request->status,
         ]);
 
+        CustomerLedger::find($request->id)->update([
+            'customer_id' => $request->id,
+            'description' => 'Opening Balance',
+            'previous_due' => 0,
+            'debit' => 0,
+            'credit' => $request->opening_balance,
+            'discount' => 0,
+            'balance' => $request->opening_balance,
+            'insert_status' => 1,
+            'insert_id' => $request->id,
+            'date' => Carbon::now(),
+            'created_by' => Auth::id(),
+        ]);
+
         return redirect()->back()->with('success', 'Customer Updated Successfully');
     }
 

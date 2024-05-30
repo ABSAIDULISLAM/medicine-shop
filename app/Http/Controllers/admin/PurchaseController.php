@@ -100,9 +100,24 @@ class PurchaseController extends Controller
             'opening_balance' => 0,
         ]);
 
+        SupplierLedger::create([
+            'supplier_id' => $contact->id,
+            'description' => 'Opening Balance',
+            'previous_due' => 0,
+            'debit' => $contact->opening_balance,
+            'credit' => 0,
+            'discount' => 0,
+            'balance' => $contact->opening_balance,
+            'insert_status' => 1,
+            'insert_id' => $contact->id,
+            'date' => Carbon::now(),
+            'created_by' => Auth::id(),
+        ]);
+
+
         // Prepare response data
         $option = '<option value="' . $contact->id . '">' . $contact->company_name . '</option>';
-        $pre_blnc = 0; // You can fetch previous balance here if needed
+        $pre_blnc = 0;
 
         return response()->json([
             'success' => true,
@@ -290,6 +305,19 @@ class PurchaseController extends Controller
                 'insert_id' => $purchase->id,
             ]);
 
+            $latestData = SupplierLedger::where('supplier_id', $request->supplier_id)->orderBy('id', 'desc')->first();
+            $due = 0;
+
+            if ($latestData) {
+                if ($latestData->balance >= $request->payment) {
+                    $due = $latestData->balance - $request->payment;
+                } else {
+                    $due = 0;
+                }
+            } else {
+                $due = ($request->previous_dues ?? 0) - ($request->payment ?? 0);
+            }
+
             $supplierLedger = new SupplierLedger();
             $supplierLedger->supplier_id = $request->supplier_id;
             $supplierLedger->description = $request->invoice_number;
@@ -297,7 +325,7 @@ class PurchaseController extends Controller
             $supplierLedger->debit = $request->payment ?? 0;
             $supplierLedger->credit = 0;
             $supplierLedger->discount = $request->discount ?? 0;
-            $supplierLedger->balance +=  $request->payment ?? 0;
+            $supplierLedger->balance = $due;
             $supplierLedger->insert_status = 1; // 1 = purchase
             $supplierLedger->insert_id = $purchase->id;
             $supplierLedger->date = $request->date;
@@ -533,7 +561,18 @@ class PurchaseController extends Controller
                 'insert_id' => $purchase->id,
             ]);
 
-            // Update supplier ledger
+            $latestData = SupplierLedger::where('supplier_id', $request->supplier_id)->orderBy('id', 'desc')->first();
+            $due = 0;
+
+            if ($latestData) {
+                if ($latestData->balance >= $request->payment) {
+                    $due = $latestData->balance - $request->payment;
+                } else {
+                    $due = 0;
+                }
+            } else {
+                $due = ($request->previous_dues ?? 0) - ($request->payment ?? 0);
+            }
             $supplierLedger = SupplierLedger::where('insert_id', $request->purchaseId)->first();
             if ($supplierLedger) {
                 $supplierLedger->supplier_id = $request->supplier_id;
@@ -542,7 +581,7 @@ class PurchaseController extends Controller
                 $supplierLedger->debit = $request->payment ?? 0;
                 $supplierLedger->credit = 0;
                 $supplierLedger->discount = $request->discount ?? 0;
-                $supplierLedger->balance = ($supplierLedger->previous_due - $supplierLedger->debit) + $request->total_amount;
+                $supplierLedger->balance = $due;
                 $supplierLedger->insert_status = 1; // 1 = purchase
                 $supplierLedger->insert_id = $purchase->id;
                 $supplierLedger->date = $request->date;
