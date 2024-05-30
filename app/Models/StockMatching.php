@@ -16,4 +16,9 @@ class StockMatching extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function stockmetcingdetails()
+    {
+        return $this->hasMany(StockMatchingDetail::class, 'common_id', 'id');
+    }
 }

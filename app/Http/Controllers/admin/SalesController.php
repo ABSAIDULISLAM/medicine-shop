@@ -669,8 +669,14 @@ class SalesController extends Controller
     public function delete($id)
     {
         $id = Crypt::decrypt($id);
-        Sales::find($id)->delete();
-        return redirect()->back()->with('success', 'Sales Deleted Successfully');
+        $sales = Sales::find($id);
+
+        if ($sales) {
+            $sales->delete();
+            return redirect()->back()->with('success', 'Sales Deleted Successfully');
+        } else {
+            return redirect()->back()->with('error', 'Sales not found');
+        }
     }
 
     public function SalesReturnList()
@@ -684,5 +690,17 @@ class SalesController extends Controller
         return view('admin.sales.return-list', compact('data'));
     }
 
+    public function SalesReturndelete($id)
+    {
+        $id = Crypt::decrypt($id);
+        $sales = SalesReturn::find($id);
+
+        if ($sales) {
+            $sales->delete();
+            return redirect()->back()->with('success', 'Sales Return Deleted Successfully');
+        } else {
+            return redirect()->back()->with('error', 'Sales Return id not found');
+        }
+    }
 
 }

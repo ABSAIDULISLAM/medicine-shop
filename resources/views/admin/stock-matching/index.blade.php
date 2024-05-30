@@ -24,16 +24,19 @@
                         <h3 class="box-title"> Stock Matching List</h3>
                         <div class="box-tools pull-right">
 
-                            <a href="{{route('Stock-matching.create')}}"><button type="button" class="btn bg-navy btn-flat">Add New</button></a>
+                            <a href="{{ route('Stock-matching.create') }}"><button type="button"
+                                    class="btn bg-navy btn-flat">Add New</button></a>
                         </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
-                            <form method="post" action="bill-list">
-                                From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date" value="2024-03-21">
-                                &nbsp;To  : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date" value="2024-03-21">
-                               <input type="submit" name="search_btn" value="Search">
-                            </form>
-                        </div>
+                        <form method="post" action="bill-list">
+                            From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date"
+                                value="2024-03-21">
+                            &nbsp;To : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date"
+                                value="2024-03-21">
+                            <input type="submit" name="search_btn" value="Search">
+                        </form>
+                    </div>
                     <!-- /.box-header -->
                     <div class="box-body">
 
@@ -43,13 +46,32 @@
                                     <tr style="background-color: #14A586;color: #fff;">
                                         <th>SL</th>
                                         <th>Date</th>
-                                         <th>Invoice No</th>
+                                        <th>Invoice No</th>
                                         <th class="text-center">Remarks</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                                                    </tbody>
+                                    @forelse ($data as $item)
+                                        <tr>
+                                            <td>{{$loop->index+1}}</td>
+                                            <td>{{$item->date}}</td>
+                                            <td>
+                                                <a href="{{ route('Stock-matching.invoice.view', ['id' => $item->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $item->invoice_number }}</a>
+                                            </td>
+                                            <td class="text-center">{{$item->remarks}}</td>
+                                            <td class="text-center">
+                                                <a class="btn btn-sm btn-danger" href="{{ route('Stock-matching.delete', ['id' => Crypt::encrypt($item->id)]) }}" onclick="return confirm('Are Your sure to Delete this item ??');">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center">No Record Found</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
 
                             </table>
                         </div>
@@ -63,5 +85,11 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-
+    <script>
+        function PopWindow(url, win) {
+                var ptr = window.open(url, win,
+                    'width=850,height=500,top=100,left=250');
+                return false;
+            }
+    </script>
 @endsection

@@ -76,7 +76,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('customer-info', 'CustomerInfo')->name('customer.info');
         Route::post('company_id', 'companySearch')->name('company.search');
         Route::post('medicine/store', 'medicineStore')->name('medicine.store');
-        Route::post('product/search', 'searchProduct')->name('product.search');
+        // Route::post('product/search', 'searchProduct')->name('product.search');
         Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
         Route::get('filter', 'filter')->name('filter');
 
@@ -84,6 +84,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
 
         Route::prefix('return/')->group(function(){
             Route::get('list', 'SalesReturnList')->name('return.list');
+            Route::get('sales-return/delete/{id}', 'SalesReturndelete')->name('return.delete');
         });
     });
 
@@ -136,14 +137,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
     });
 
     // HR-Module
-    Route::controller(App\Http\Controllers\Admin\HR\EmployeeTypeController::class)->prefix('hr/employee/type/')->as('HR.employee.type.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\HR\EmployeeTypeController::class)
+    ->prefix('hr/employee/type/')->as('HR.employee.type.')->group(function(){
         Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit/{id}', 'edit')->name('edit');
-        Route::get('update', 'edit')->name('update');
+        Route::post('store', 'store')->name('store');
+        Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
     });
-    Route::controller(App\Http\Controllers\Admin\HR\EmployeeController::class)->prefix('hr/employee/')->as('HR.employee.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\HR\EmployeeController::class)
+    ->prefix('hr/employee/')->as('HR.employee.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::get('create', 'create')->name('create');
         Route::get('edit', 'edit')->name('edit');
@@ -151,13 +153,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('delete/{id}', 'delete')->name('delete');
         Route::get('statement', 'statement')->name('statement');
     });
-    Route::controller(App\Http\Controllers\Admin\HR\DesignationController::class)->prefix('hr/employee/designation/')->as('HR.employee.designation.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\HR\DesignationController::class)
+    ->prefix('hr/employee/designation/')->as('HR.employee.designation.')->group(function(){
         Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit', 'edit')->name('edit');
-        Route::get('update', 'edit')->name('update');
+        Route::post('store', 'store')->name('store');
+        Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
-        Route::get('statement', 'statement')->name('statement');
     });
     Route::controller(App\Http\Controllers\Admin\HR\DesignationController::class)->prefix('hr/employee/salary')->as('HR.employee.salary.')->group(function(){
         Route::get('list', 'index')->name('list');
@@ -181,13 +182,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('ledger', 'ledger')->name('ledger');
 
     });
-    Route::controller(App\Http\Controllers\Admin\StockController::class)->prefix('stock-matching/')->as('Stock-matching.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\StockController::class)
+    ->prefix('stock-matching/')->as('Stock-matching.')->group(function(){
         Route::get('index', 'index')->name('index');
+        Route::get('invoice/view/{id}', 'invoiceView')->name('invoice.view');
         Route::get('create', 'create')->name('create');
+        Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
+        Route::post('store', 'store')->name('store');
+        Route::get('delete/{id}', 'delete')->name('delete');
     });
 
 
-    Route::controller(App\Http\Controllers\Admin\ReportController::class)->prefix('report/')->as('Report.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\ReportController::class)
+    ->prefix('report/')->as('Report.')->group(function(){
         Route::prefix('employee')->group(function(){
             Route::get('cash-statement', 'CashStatement')->name('cash.statement');
             Route::get('expired-medicine-report', 'ExpiredMedicineReport')->name('expired.medicine.report');

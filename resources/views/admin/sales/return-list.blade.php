@@ -72,17 +72,18 @@
                                         <tr>
                                             <td>{{$loop->index + 1}}</td>
                                             <td>{{$item->customer->company_name}}</td>
-                                            <td>
+                                            <td> {{$item->invoice_number}}</td>
+                                            {{-- <td>
                                                 <a href="{{route('Sales.invoice.print', ['id' => Crypt::encrypt($item->id)])}}">
                                                     {{$item->invoice_number}}
                                                 </a>
-                                            </td>
+                                            </td> --}}
                                             <td>{{$item->date}}</td>
                                             <td class="text-right">{{$item->total_amount}}</td>
                                             <td class="text-right">{{$item->cash_paid}}</td>
                                             <td class="text-right">{{$item->due_amount}}</td>
-                                            <td>
-                                                <a href="{{ route('Sales.delete', ['id' => Crypt::encrypt($item->id)]) }}" class="btn btn-danger btn-sm">
+                                            <td class="text-center">
+                                                <a href="{{ route('Sales.return.delete', ['id' => Crypt::encrypt($item->id)]) }}" onclick="return confirm('Are you sure to delete this item ??')" class="btn btn-danger btn-sm">
                                                     <i class="fa fa-trash-o" style="color: #fff"></i>
                                                 </a>
                                             </td>

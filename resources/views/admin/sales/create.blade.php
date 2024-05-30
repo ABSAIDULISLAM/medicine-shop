@@ -317,7 +317,7 @@
     @includeIf('admin.sales.partials.create-customer')
 
     @push('js')
-        <script>
+        {{-- <script>
             window.onload = function() {
 
                 document.getElementById('loader_container').style.display = 'block';
@@ -516,7 +516,7 @@
                 return false;
             }
 
-        </script>
+        </script> --}}
 
         <script>
             $(document).ready(function() {

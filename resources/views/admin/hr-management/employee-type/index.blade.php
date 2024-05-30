@@ -41,25 +41,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @forelse ($data as $item)
                                     <tr>
-                                        <td>1</td>
-                                        <td class="text-left"><a href="{{route('HR.employee.list')}}">Administration
-                                                Department</a></td>
+                                        <td>{{$loop->index+1}}</td>
+                                        <td class="text-left"><a href="{{route('HR.employee.list')}}">{{$item->employee_type}}</a></td>
                                         <td>
+                                            <span class="label label-{{$item->status==1? 'success':'danger'}}" style="font-size: 14px;">{{$item->status==1? 'Active':'Deactive'}}</span>
 
-                                            <span class="label label-success" style="font-size: 14px;">Active</span>
-
-                                            <span class="label label-info" style="font-size: 14px;">1</span>
+                                            {{-- <span class="label label-info" style="font-size: 14px;">1</span> --}}
                                         </td>
                                         <td class="text-center">
-                                            <button data-toggle="modal" data-target="#edit1" class="btn red-meadow"
-                                                style="background-color : #006666"><i class="fa fa-pencil"
-                                                    style="color : #fff"></i></button>
-                                            <a href="?name=delete&id=1" onclick=" return checkDelete();"><button
+                                            <button
+                                                onclick="editModal('{{ $item->id }}', '{{ $item->employee_type }}','{{ $item->status }}' )"
+                                                class="btn red-meadow" style="background-color: #006666">
+                                                <i class="fa fa-pencil" style="color: #fff"></i>
+                                            </button>
+                                            <a href="{{route('HR.employee.type.delete', ['id'=>$item->id])}}" onclick=" return checkDelete();"><button
                                                     class="btn red-meadow" style="background-color : red"><i
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>
                                     </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center">No Record Found</td>
+                                        </tr>
+                                    @endforelse
+
                                     <div id="edit1" class="modal fade">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -69,10 +76,11 @@
                                                     <h4 class="modal-title">Edit Employee Type</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form method="post" action="">
+                                                    <form method="post" action="{{route('HR.employee.type.update')}}">
+                                                        @csrf
                                                         <label>Employee Type</label>
                                                         <input type="text" name="employee_type" class="form-control"
-                                                            value="Administration Department" />
+                                                           />
                                                         <input type="hidden" name="id" class="form-control"
                                                             value="1" />
                                                         <br />
@@ -82,7 +90,7 @@
                                                             <option value="0">Inactive</option>
                                                         </select>
                                                         <br />
-                                                        <input type="submit" name="edit_cat" value="Update"
+                                                        <input type="submit" value="Update"
                                                             class="btn btn-success pull-right" />
                                                     </form>
                                                 </div>
@@ -107,6 +115,16 @@
         <!-- /.row -->
     </section>
 
+    <script>
+        function editModal(id, name, status ) {
+            // alert(id);
+            $('#edit1').modal('show');
+            $('#edit1').find('input[name="id"]').val(id);
+            $('#edit1').find('input[name="employee_type"]').val(name);
+            $('#edit1').find('input[name="status"]').val(status);
+        }
+    </script>
+
     <div id="add" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -115,12 +133,13 @@
                     <h4 class="modal-title">Add Employee Type</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="">
-                        <label>Employee Type</label>
-                        <input type="text" name="employee_type" class="form-control" placeholder="Employee Type" />
+                    <form method="post" action="{{route('HR.employee.type.store')}}">
+                        @csrf
+                        <label>Employee Type <span style="color: red">*</span></label>
+                        <input type="text" name="employee_type" required class="form-control" placeholder="Employee Type" />
                         <br />
-                        <label>Select status</label>
-                        <select name="status" id="gender" class="form-control">
+                        <label>Select status <span style="color: red">*</span></label>
+                        <select name="status" id="gender" class="form-control" required>
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
                         </select>

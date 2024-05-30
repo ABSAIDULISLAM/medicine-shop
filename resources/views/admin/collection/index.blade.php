@@ -74,7 +74,9 @@
                                             <td>{{ optional($item->customer)->company_name }}</td>
                                             <td>{{ optional($item->customer)->address }}</td>
                                             <td>{{ $item->collection_date }}</td>
-                                            <td> <a href="{{ route('Collection.money.recipt', ['id' => $item->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $item->money_reset }}</a></td>
+                                            <td>
+                                                <a href="{{ route('Collection.money.recipt', ['id' => $item->id]) }}" onclick="return PopWindow(this.href, this.target);">{{ $item->money_reset }}</a>
+                                            </td>
                                             <td>{{ $item->totalDues }}</td>
                                             <td>{{ $item->paid }}</td>
                                             <td>{{ $item->currDues }}</td>
