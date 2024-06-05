@@ -45,8 +45,6 @@
                                         <td class="text-left">{{$item->designation}}</td>
                                         <td>
                                             <span class="label label-{{$item->status==1? 'success':'danger'}}" style="font-size: 14px;">{{$item->status==1? 'Active':'Deactive'}}</span>
-
-                                            {{-- <span class="label label-info" style="font-size: 14px;">1</span> --}}
                                         </td>
                                         <td class="text-center">
                                             <button

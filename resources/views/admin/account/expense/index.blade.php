@@ -67,16 +67,16 @@
                                     <tr>
                                         <td class="text-center">{{$loop->index+1}}</td>
                                         <td class="text-center">{{$item->date}}</td>
-                                        <td class="text-center"> {{$item->money_receipt}}</td>
+                                        <td class="text-center" style="width: 80px"><a href="{{ route('Account.expense.invoice', ['invno' => $item->id]) }}" onclick="return PopWindow(this.href, this.target);">{{$item->money_receipt}}</a></td>
                                         <td class="text-center">{{$item->accounthead->head_name}}</td>
                                         <td class="text-center">{{$item->purpose}}</td>
                                         <td class="text-right">{{$item->amount}}</td>
-                                        <td class="text-center">{{$item->status==1 ? 'Active':'deactive'}}</td>
+                                        <td class="text-center"><span class="label label-{{$item->status==1?'success':'danger'}}">{{$item->status==1 ? 'Active':'deactive'}}</span></td>
                                         <td class="text-center" style="width: 120px">
-                                            <a href="{{route('Medicine.edit', Crypt::encrypt($item->id))}}"><button class="btn red-meadow"
-                                                    style="background-color : #006666"><i class="fa fa-pencil"
+                                            <a href="{{route('Account.expense.edit', Crypt::encrypt($item->id))}}"><button class="btn red-meadow"
+                                                    style="background-color : #1a1d1d"><i class="fa fa-pencil"
                                                         style="color : #fff"></i></button></a>
-                                            <a href="{{route('Medicine.delete',Crypt::encrypt($item->id))}}" onclick=" return checkDelete();"><button
+                                            <a href="{{route('Account.expense.delete',Crypt::encrypt($item->id))}}" onclick=" return checkDelete();"><button
                                                     class="btn red-meadow" style="background-color : red"><i
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>
@@ -106,4 +106,11 @@
     </section>
     <!-- /.content -->
 
+    <script>
+        function PopWindow(url, win) {
+                var ptr = window.open(url, win,
+                    'width=850,height=500,top=100,left=250');
+                return false;
+            }
+    </script>
 @endsection

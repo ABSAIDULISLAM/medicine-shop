@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.master')
 @section('title', 'employee-ledger')
 
@@ -6,7 +5,7 @@
 
     <section class="content-header">
         <h1>
-           Employee Ledger
+            Employee Ledger
             <small>Employee Ledger</small>
         </h1>
         <ol class="breadcrumb">
@@ -25,23 +24,32 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">Employee Ledger</h3>
                         <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
+                                    class="fa fa-times"></i></button>
                         </div>
                     </div>
                     <!-- /.box-header -->
+                    @includeIf('errors.error')
                     <!-- form start -->
-                    <form method="POST" action="employee-statement" target="_blank">
+                    <form method="get" action="{{route('Report.employee.ledger.statement')}}" target="_blank">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-4">
+                                    @php
+                                        $currentDate = Carbon\Carbon::now();
+                                        $date = $currentDate->subDays(30)->format('Y-m-d');
+                                    @endphp
                                     <div class="form-group">
                                         <label for="datepicker4">Date From</label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="from_date" class="form-control pull-right" id="datepicker4" autocomplete="off">
+                                            <input type="date" value="{{$date}}" name="from_date" class="form-control pull-right"
+                                                id="datepicker4" autocomplete="off" required>
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -53,7 +61,8 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="to_date" class="form-control pull-right" id="datepicker2" autocomplete="off">
+                                            <input type="date" value="{{date('Y-m-d')}}" name="to_date" class="form-control pull-right"
+                                                id="datepicker2" autocomplete="off" required>
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -63,12 +72,13 @@
                                         <label for="cus_id">Employee Name</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                            <select name="employee_id" id="employee_id" class="form-control select2" style="width: 100%;">
+                                            <select name="employee_id" id="employee_id" class="form-control select2"
+                                                style="width: 100%;" required>
                                                 <option value="">Select Employee</option>
-                                                                                                    <option value="2">Md.ashed hossin</option>
-                                                                                                    <option value="1">Md.Hafizulla</option>
-                                                                                                    <option value="3">Sakib Al Hasan</option>
-                                                                                            </select>
+                                                @foreach ($employee as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->employee_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

@@ -16,4 +16,8 @@ class EmployeeSalary extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'id');
+    }
 }

@@ -12,7 +12,7 @@ class CompanyController extends Controller
     public function index()
     {
 
-        $data = Company::orderBy('id', 'asc')->paginate(200);
+        $data = Company::orderBy('id', 'asc')->get();//paginate(200);
         return view('admin.settings.company.index', compact('data'));
 
     }

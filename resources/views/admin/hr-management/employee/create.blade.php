@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title', 'Create-mployee')
+@section('title', 'Create-employee')
 
 @section('content')
 
@@ -18,6 +18,7 @@
     <section class="content">
         <div class="row">
             <!-- left column -->
+            @includeIf('errors.error')
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div class="box box-primary">
@@ -32,7 +33,7 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form method="POST" action="{{ route('HR.employee.create') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('HR.employee.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="box-body">
                             <div class="row">
@@ -40,10 +41,10 @@
                                     <div class="form-group">
                                         <label for="employee_name">Employee Name <span style="color: red">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                             <input type="text" name="employee_name" id="employee_name"
                                                 class="form-control" placeholder="Employee Name" autocomplete="off"
-                                                required="">
+                                                required="" value="{{old('employee_name')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -78,8 +79,8 @@
                                         <label for="mobile_number">Mobile Number <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-phone"></i></span>
-                                            <input type="text" name="mobile_number" id="mobile_number"
-                                                class="form-control" placeholder="Mother's Name" autocomplete="off" required>
+                                            <input type="number" name="mobile_number" id="mobile_number"
+                                                class="form-control" placeholder="Mother's Name" autocomplete="off" required value="{{old('mobile_number')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -87,7 +88,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                                             <input type="email" name="email_address" id="email_address"
-                                                class="form-control" placeholder="Email Address" autocomplete="off" required>
+                                                class="form-control" placeholder="Email Address" autocomplete="off" required value="{{old('email_address')}}">
                                         </div>
                                     </div>
                                 </div>
@@ -96,8 +97,8 @@
                                         <label for="mother_name">Mother's Name <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user-circle"></i></span>
-                                            <input type="text" name="mother_name" id="mobile_number"
-                                                class="form-control" placeholder="Mother's Name" autocomplete="off" required>
+                                            <input type="text" name="mother_name" id="mother_name"
+                                                class="form-control" placeholder="Mother's Name" autocomplete="off" required value="{{old('mother_name')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -105,7 +106,7 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                             <input type="text" name="father_name" id="father_name"
-                                                class="form-control" placeholder="Father's Name" autocomplete="off"
+                                                class="form-control" placeholder="Father's Name" autocomplete="off" value="{{old('father_name')}}"
                                                 required="">
                                         </div>
                                     </div>
@@ -122,14 +123,14 @@
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
                                             <input type="text" name="permanent_address" id="permanent_address"
-                                                class="form-control" placeholder="Permanent Address" autocomplete="off" required>
+                                                class="form-control" placeholder="Permanent Address" autocomplete="off" required value="{{old('permanent_address')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="nid_number">NID Number</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                            <input type="text" name="nid_number" id="nid_number" class="form-control"
+                                            <input type="number" name="nid_number" id="nid_number" class="form-control"  value="{{old('nid_number')}}"
                                                 placeholder="NID Number" autocomplete="off">
                                         </div>
                                     </div>
@@ -139,44 +140,44 @@
                                         <label for="basic_salary">Basic Salary <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="basic_salary" id="basic_salary"
-                                                class="form-control" placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="basic_salary" id="basic_salary"
+                                                class="form-control" placeholder="0.00" autocomplete="off" value="{{old('basic_salary')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="washing_cost">Washing Cost</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="washing_cost" id="washing_cost"
-                                                class="form-control" placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="washing_cost" id="washing_cost"
+                                                class="form-control" placeholder="0.00" autocomplete="off" value="{{old('washing_cost')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="overtime_rate">OverTime Salary Rate</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="overtime_rate" id="overtime_rate"
-                                                class="form-control" placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="overtime_rate" id="overtime_rate"
+                                                class="form-control" placeholder="0.00" autocomplete="off" value="{{old('overtime_rate')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="deposit_amount">provident fund</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="deposit_amount" id="deposit_amount"
+                                            <input type="number" name="deposit_amount" id="deposit_amount"
                                                 class="form-control" placeholder="0.00" autocomplete="off">
-                                            <input type="hidden" name="loan_amount" class="form-control" value="0"
+                                            <input type="hidden" name="loan_amount" class="form-control" value="{{old('loan_amount')}}"
                                                 placeholder="0.00" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="datepicker3">Joining Date </label>
+                                        <label for="datepicker3">Joining Date <span style="color: red">*</span></label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="joining_date" class="form-control pull-right"
-                                                id="datepicker3" autocomplete="off">
+                                            <input type="date" name="joining_date" class="form-control pull-right"
+                                                id="datepicker3" autocomplete="off"  value="{{date('Y-m-d')}}">
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -186,36 +187,36 @@
                                         <label for="house_rent">House Rent</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="house_rent" id="house_rent" class="form-control"
-                                                placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="house_rent" id="house_rent" class="form-control"
+                                                placeholder="0.00" autocomplete="off" value="{{old('house_rent')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="cng_cost">CNG Cost</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="cng_cost" id="cng_cost" class="form-control"
-                                                placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="cng_cost" id="cng_cost" class="form-control"
+                                                placeholder="0.00" autocomplete="off" value="{{old('cng_cost')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="perDaySalery">Per Day Salary</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="perDaySalery" id="permanent_address"
-                                                class="form-control" placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="perDaySalery" id="permanent_address"
+                                                class="form-control" placeholder="0.00" autocomplete="off"value="{{old('perDaySalery')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="mobile_cost">Medical Cost</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                            <input type="text" name="mobile_cost" id="mobile_cost"
-                                                class="form-control" placeholder="0.00" autocomplete="off">
+                                            <input type="number" name="mobile_cost" id="mobile_cost"
+                                                class="form-control" placeholder="0.00" autocomplete="off"value="{{old('mobile_cost')}}">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="status">Status</label>
+                                        <label for="status">Status <span style="color: red">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="status" class="form-control" style="width: 100%;"

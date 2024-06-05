@@ -97,43 +97,53 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('delete/{id}', 'delete')->name('delete');
     });
 
-
     // Account Module
-    Route::controller(App\Http\Controllers\Admin\Account\ExpenseController::class)->prefix('account/expense/')->as('Account.expense.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\Account\ExpenseController::class)
+    ->prefix('account/expense/')->as('Account.expense.')->group(function(){
+        Route::get('list', 'index')->name('list');
+        Route::get('invoice/{invno}', 'invoice')->name('invoice');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::post('bank/balance', 'bankBalance')->name('bank.balance');
+    });
+    Route::controller(App\Http\Controllers\Admin\Account\OtherIncomeController::class)
+    ->prefix('account/other-income/')->as('Account.other-income.')->group(function(){
+        Route::get('list', 'index')->name('list');
+        Route::get('invoice/{invno}', 'invoice')->name('invoice');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::post('bank/balance', 'bankBalance')->name('bank.balance');
+    });
+    Route::controller(App\Http\Controllers\Admin\Account\BankDepositController::class)
+    ->prefix('account/bank/deposit')->as('Account.bank.deposit.')->group(function(){
+        Route::get('list', 'index')->name('list');
+        Route::post('store', 'store')->name('store');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+    });
+    Route::controller(App\Http\Controllers\Admin\Account\BankWithdrawalController::class)
+    ->prefix('account/bank/withdraw')->as('Account.bank.withdraw.')->group(function(){
+        Route::get('list', 'index')->name('list');
+        Route::post('store', 'store')->name('store');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+    });
+    Route::controller(App\Http\Controllers\Admin\Account\BankTransferController::class)
+    ->prefix('account/bank/transfer')->as('Account.bank.transfer.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::get('create', 'create')->name('create');
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
-        Route::get('delete/{id}', 'delete')->name('delete');
-        Route::post('bank/balance', 'bankBalance')->name('bank.balance');
-    });
-    Route::controller(App\Http\Controllers\Admin\Account\OtherIncomeController::class)->prefix('account/other-income/')->as('Account.other-income.')->group(function(){
-        Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit/{id}', 'edit')->name('edit');
         Route::get('update', 'edit')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
-    });
-    Route::controller(App\Http\Controllers\Admin\Account\BankDepositController::class)->prefix('account/bank/deposit')->as('Account.bank.deposit.')->group(function(){
-        Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit/{id}', 'edit')->name('edit');
-        Route::get('update', 'edit')->name('update');
-        Route::get('delete/{id}', 'delete')->name('delete');
-    });
-    Route::controller(App\Http\Controllers\Admin\Account\BankWithdrawalController::class)->prefix('account/bank/withdraw')->as('Account.bank.withdraw.')->group(function(){
-        Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit/{id}', 'edit')->name('edit');
-        Route::get('update', 'edit')->name('update');
-        Route::get('delete/{id}', 'delete')->name('delete');
-    });
-    Route::controller(App\Http\Controllers\Admin\Account\BankTransferController::class)->prefix('account/bank/transfer')->as('Account.bank.transfer.')->group(function(){
-        Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit/{id}', 'edit')->name('edit');
-        Route::get('update', 'edit')->name('update');
-        Route::get('delete/{id}', 'delete')->name('delete');
+        Route::get('balance/transfer', 'balance')->name('balance.transfer');
+        Route::get('balance/savings', 'balancesavings')->name('balance.savings');
     });
 
     // HR-Module
@@ -148,8 +158,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
     ->prefix('hr/employee/')->as('HR.employee.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::get('create', 'create')->name('create');
-        Route::get('edit', 'edit')->name('edit');
-        Route::get('update', 'edit')->name('update');
+        Route::post('store', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
         Route::get('statement', 'statement')->name('statement');
     });
@@ -160,28 +171,43 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
     });
-    Route::controller(App\Http\Controllers\Admin\HR\DesignationController::class)->prefix('hr/employee/salary')->as('HR.employee.salary.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\HR\EmployeeSalaryController::class)
+    ->prefix('hr/employee/salary')->as('HR.employee.salary.')->group(function(){
         Route::get('list', 'index')->name('list');
-        Route::get('create', 'create')->name('create');
-        Route::get('edit', 'edit')->name('edit');
+        Route::post('store', 'store')->name('store');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
 
     });
 
     // Reports
-    Route::controller(App\Http\Controllers\Admin\Report\EmployeeReportController::class)->prefix('report/employee')->as('Report.employee.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\Report\EmployeeReportController::class)
+    ->prefix('report/employee')->as('Report.employee.')->group(function(){
+        // employee report
         Route::get('report', 'EmployeeReport')->name('report');
+        // employee expense
         Route::get('expense', 'EmployeeExpense')->name('expense');
+        Route::get('expense/filter', 'EmployeeExpenseFilter')->name('expense.filter');
+        // employee ledger
         Route::get('ledger', 'EmployeeLedger')->name('ledger');
+        Route::get('ledger/statement', 'EmployeeLedgerStatement')->name('ledger.statement');
+        Route::get('ledger/statement/filter', 'EmployeeLedgerStatementFilter')->name('ledger.statement.filter');
+
         Route::get('monthly-salary-sheet', 'MonthlySalarySheet')->name('monthly.salary.sheet');
         Route::get('employee-statement', 'EmployeeStatement')->name('statement');
     });
-    Route::controller(App\Http\Controllers\Admin\Report\CustomerReportController::class)->prefix('report/customer')->as('Report.customer.')->group(function(){
+
+    Route::controller(App\Http\Controllers\Admin\Report\CustomerReportController::class)
+    ->prefix('report/customer')->as('Report.customer.')->group(function(){
         Route::get('report', 'report')->name('report');
         Route::get('due', 'due')->name('due');
         Route::get('statement', 'statement')->name('statement');
         Route::get('ledger', 'ledger')->name('ledger');
+        Route::get('ledger/statment', 'ledgerStatement')->name('ledger.statement');
+        Route::get('ledger/statment/filter', 'ledgerStatementFilter')->name('ledger.statement.filter');
 
     });
+
     Route::controller(App\Http\Controllers\Admin\StockController::class)
     ->prefix('stock-matching/')->as('Stock-matching.')->group(function(){
         Route::get('index', 'index')->name('index');
@@ -226,7 +252,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
     });
-    Route::controller(App\Http\Controllers\admin\Settings\CompanyController::class)->prefix('settings/company')->as('Settings.company.')->group(function(){
+    Route::controller(App\Http\Controllers\admin\Settings\CompanyController::class)
+    ->prefix('settings/company')->as('Settings.company.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::post('store', 'store')->name('store');
         Route::post('update', 'update')->name('update');
@@ -270,7 +297,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
     });
-    Route::controller(App\Http\Controllers\admin\Settings\CompanySetupController::class)->prefix('settings/company-setup')->as('Settings.company-setup.')->group(function(){
+    Route::controller(App\Http\Controllers\admin\Settings\CompanySetupController::class)
+    ->prefix('settings/company-setup')->as('Settings.company-setup.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::post('store', 'store')->name('store');
         Route::post('update', 'update')->name('update');

@@ -37,38 +37,43 @@
                                         <th class="text-center">Permanent Address</th>
                                         <th class="text-center">Mobile Number</th>
                                         <th class="text-center">Joining Date</th>
-                                        <th class="text-center">Customer Images</th>
+                                        <th class="text-center">Employee Image</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">ACTION</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @forelse ($data as $item)
                                     <tr>
-                                        <td>3</td>
-                                        <td><a href="{{route('HR.employee.statement')}}">Sakib Al Hasan</a></td>
-                                        <td>
-                                            Sales Executive </td>
-                                        <td>khulna</td>
-                                        <td>01717999990</td>
-                                        <td>2022-07-19</td>
+                                        <td>{{$loop->index+1}}</td>
+                                        <td><a href="{{route('HR.employee.statement')}}">{{$item->employee_name}}</a></td>
+                                        <td>{{optional($item->designation)->designation}}</td>
+                                        <td>{{$item->permanent_address}}</td>
+                                        <td>{{$item->mobile_number}}</td>
+                                        <td>{{$item->joining_date}}</td>
                                         <td class="text-center">
 
-                                            <img src="assets/employee_images/1682303496.jpg" alt="Image" width="50px"
+                                            <img src="{{ asset($item->employee_images?: 'backend/assets/employee.jpg') }}" alt="Image" width="50px"
                                                 height="50px" class='img-circle' />
                                         </td>
                                         <td class="text-center">
-                                            <span class="label label-success" style="font-size: 14px;">Active</span>
+                                            <span class="label label-{{$item->status==1 ? 'success':'danger'}}" style="font-size: 14px;">{{$item->status==1 ? 'Active':'Deactive'}}</span>
                                         </td>
                                         <td class="text-center" style="width: 120px">
-                                            <a href="{{route('HR.employee.edit')}}"><button class="btn red-meadow"
+                                            <a href="{{route('HR.employee.edit', ['id'=> Crypt::encrypt($item->id) ]) }}"><button class="btn red-meadow"
                                                     style="background-color : #006666"><i class="fa fa-pencil"
                                                         style="color : #fff"></i></button></a>
-                                            <a href="?name=delete&id=3" onclick=" return checkDelete();"><button
+                                            <a href="{{route('HR.employee.delete', ['id'=> Crypt::encrypt($item->id) ]) }}" onclick=" return checkDelete();"><button
                                                     class="btn red-meadow" style="background-color : red"><i
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>
                                     </tr>
+                                    @empty
+                                        <tr>
+                                            <td class="text-center" colspan="9">No Record Found</td>
+                                        </tr>
+                                    @endforelse
+
                                 </tbody>
                             </table>
                         </div>

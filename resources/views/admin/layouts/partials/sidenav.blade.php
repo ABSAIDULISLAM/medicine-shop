@@ -192,10 +192,10 @@
                                 class="fa fa-money"></i> Employee Salary Sheet</a></li>
 
                     <li><a href="{{ route('Report.customer.report') }}"
-                            class="{{ Request::is('admin/report/employee/customer-report') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('admin/report/customer/report') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Customer Report</a></li>
                     <li><a href="{{ route('Report.customer.due') }}"
-                            class="{{ Request::is('admin/report/employee/customer-due') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('admin/report/customer/due') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Customer Due Report</a></li>
                     <li><a href="{{ route('Report.customer.ledger') }}"
                             class="{{ Request::is('admin/report/employee/customer-ledger') ? 'activeLink' : '' }}"><i

@@ -21,4 +21,25 @@ class Contact extends Model
     {
         return $this->hasMany(Purchases::class, 'supplier_id', 'id');
     }
+
+    public function cusledger()
+    {
+        return $this->hasMany(CustomerLedger::class,'customer_id', 'id');
+    }
+    public function cashstatement()
+    {
+        return $this->hasMany(CashStatement::class,'insert_id', 'id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function collection()
+    {
+        return $this->hasMany(CollectionInfo::class, 'customer_id', 'id');
+    }
+
+
 }

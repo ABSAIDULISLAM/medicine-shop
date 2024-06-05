@@ -16,4 +16,15 @@ class EmployeeLedger extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function incomes()
+    {
+        return $this->hasMany(Income::class, 'employee_id', 'employee_id');
+    }
+
+    // Define a method to get the most recent income
+    public function latestIncome()
+    {
+        return $this->incomes()->orderBy('id', 'desc')->first();
+    }
 }

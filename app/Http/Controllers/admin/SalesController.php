@@ -27,10 +27,6 @@ class SalesController extends Controller
 {
     public function index()
     {
-        // Sales::truncate();
-        // SalesDetail::truncate();
-        // // CustomerLedger::truncate();
-
         $data = Sales::with(['customer' => function($queey){
             $queey->select('id','company_name');
         }])

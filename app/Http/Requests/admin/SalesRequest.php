@@ -25,7 +25,7 @@ class SalesRequest extends FormRequest
             'customer_id' => ['required', 'exists:contacts,id'],
             'mobile_number' => ['required','regex:/\+?(88)?0?1[3456789][0-9]{8}\b/'],
             'previous_dues' => ['required', 'numeric'],
-            'created_by' => ['required', 'exists:users,id'],
+            'created_by' => ['nullable', 'exists:users,id'],
             'invoice_number' => ['required'],
             'date' => ['required', 'date', 'date_format:Y-m-d'],
             'total_amount' => ['required','numeric'],
@@ -36,7 +36,7 @@ class SalesRequest extends FormRequest
             'due_amount' => ['nullable','numeric'],
             'advance' => ['nullable','numeric'],
             'payment_method' => ['required'],
-            
+
             'medicine_id.*' => ['required','numeric'],
             'quantity.*' => ['required','numeric'],
             'unit_price.*' => ['required','numeric'],

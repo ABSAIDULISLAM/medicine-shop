@@ -24,23 +24,32 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">Customer Ledger</h3>
                         <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
+                                    class="fa fa-times"></i></button>
                         </div>
                     </div>
                     <!-- /.box-header -->
+                    @includeIf('errors.error')
                     <!-- form start -->
-                    <form method="POST" action="customer-statement" target="_blank">
+                    <form method="get" action="{{route('Report.customer.ledger.statement')}}" target="_blank">
+                        @csrf
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
+                                        @php
+                                            $currentDate = Carbon\Carbon::now();
+                                            $date = $currentDate->subDays(30)->format('Y-m-d');
+                                        @endphp
                                         <label for="datepicker4">Date From</label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="from_date" class="form-control pull-right" id="datepicker4" autocomplete="off">
+                                            <input type="date" value="{{$date}}" required name="from_date" class="form-control pull-right"
+                                                id="datepicker4" autocomplete="off">
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -52,7 +61,8 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="text" name="to_date" class="form-control pull-right" id="datepicker2" autocomplete="off">
+                                            <input type="date" required value="{{ date('Y-m-d') }}" name="to_date"
+                                                class="form-control pull-right" id="datepicker2" autocomplete="off">
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -62,12 +72,14 @@
                                         <label for="cus_id">Company Name</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                            <select name="customer_id" id="cus_id" class="form-control select2" style="width: 100%;">
+                                            <select name="customer_id" id="cus_id" class="form-control select2"
+                                                style="width: 100%;" required>
                                                 <option value="">Select Company</option>
-                                                                                                    <option value="1213"></option>
-                                                                                                    
-                                                                                                    <option value="1256">Zaman</option>
-                                                                                            </select>
+                                                @forelse ($company as $item)
+                                                <option value="{{$item->id}}">{{$item->company_name}}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -76,7 +88,7 @@
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer text-center">
-                            <button type="submit" name="search_btn" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
                             <button type="reset" class="btn btn-danger">Cancel</button>
                         </div>
                     </form>

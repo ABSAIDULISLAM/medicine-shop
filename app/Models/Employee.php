@@ -16,4 +16,13 @@ class Employee extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class, 'designation_id', 'id');
+    }
+    public function employeetype()
+    {
+        return $this->belongsTo(EmployeeType::class, 'employee_type', 'id');
+    }
 }

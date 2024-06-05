@@ -22,5 +22,18 @@ class Income extends Model
     {
         return $this->belongsTo(AccountHead::class, 'account_head', 'id');
     }
+    public function subhead()
+    {
+        return $this->belongsTo(SubHead::class, 'sub_head_id', 'id');
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'id');
+    }
+
+    public function empledger()
+    {
+        return $this->hasMany(EmployeeLedger::class, 'employee_id', 'employee_id');
+    }
 
 }

@@ -16,4 +16,13 @@ class BankTransfer extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function transfer()
+    {
+        return $this->belongsTo(BankSetup::class, 'transfer_bank_id','id');
+    }
+    public function savings()
+    {
+        return $this->belongsTo(BankSetup::class, 'saving_bank_id','id');
+    }
 }

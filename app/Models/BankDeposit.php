@@ -16,4 +16,8 @@ class BankDeposit extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+    public function bank()
+    {
+        return $this->belongsTo(BankSetup::class,'bank_id','id');
+    }
 }

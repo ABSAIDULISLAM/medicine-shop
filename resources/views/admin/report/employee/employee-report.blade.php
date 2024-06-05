@@ -1,27 +1,49 @@
 @extends('admin.layouts.master')
 @section('title', 'employee-report')
 @section('content')
-<style>
-    @media print {
-        #printbtn {
-            display :  none;
+    <style>
+        @media print {
+            #printbtn {
+                display: none;
+            }
+
+            #reloadButton {
+                display: none;
+            }
+
+            #main-footer {
+                display: none;
+            }
+
+            #search {
+                display: none;
+            }
+
+            a[href]:after {
+                content: none !important;
+            }
         }
-        #reloadButton {
-            display :  none;
+
+        .table {
+            width: 100%;
         }
-        #main-footer{
-            display :  none;
+
+        .table thead,
+        .table tbody {
+            border: 1px solid #000;
         }
-        #search{
-            display :  none;
+
+        .table>tbody>tr>td,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>td,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>thead>tr>th {
+            padding: 5px;
+            line-height: 1.42857143;
+            border: 1px solid #000;
         }
-        a[href]:after {
-            content: none !important;
-        }
-    }
-    .table{width:100%;} .table thead, .table tbody{border:1px solid #000;}
-    .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {padding:5px;line-height:1.42857143;border:1px solid #000;}
-</style>
+    </style>
 
     <section class="content-header">
         <h1>
@@ -40,7 +62,8 @@
         <div class="row">
             <div class="col-xs-12">
                 <div align="right">
-                    <button id ="printbtn" type="button" value="Print this page" onclick="window.print();"><i class="fa fa-print"></i> Print</button>
+                    <button id ="printbtn" type="button" value="Print this page" onclick="window.print();"><i
+                            class="fa fa-print"></i> Print</button>
                     <button id ="reloadButton" onclick="myFunction()">Reload page</button>
                 </div>
                 <script>
@@ -49,10 +72,11 @@
                     }
                 </script>
                 <h4 align="center" class="page-header" style="text-transform:uppercase;">
-                    <img src="company_logo/" alt="logo" height="50px" width="150px" style="height: 50px;width: 150px;margin-left: -16%">
+                    <img src="{{ asset('backend/assets/logo.png') }}" alt="logo" height="80px" width="200px"
+                        style="height: 80px;width: 200px;margin-left: %">
                     <span></span><br>
                     <span style="font-size: 15px">
-                                            </span><br/>
+                    </span><br />
                     <span style="font-size: 15px">
                         Employee Report
                     </span>
@@ -74,53 +98,27 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse ($data as $item)
+                        <tr>
+                            <td>{{$loop->index+1}}</td>
+                            <td>{{$item->employeetype->employee_type}}</td>
+                            <td>{{$item->employee_name}}</td>
+                            <td>{{$item->permanent_address}}</td>
+                            <td>{{$item->mobile_number}}</td>
+                            <td class="text-center"><img src="{{asset($item->employee_images)}}" alt="Image"
+                                    width="50px" height="50px" class='img-circle' /></td>
+                            <td class="text-center">
+                                <span class="label label-{{$item->status==1?'success':'danger'}}" style="font-size: 14px;">{{$item->status==1?'Active':'Deactive'}}</span>
+                            </td>
+                        </tr>
+                        @empty
+                        @endforelse
 
-                            <tr>
-                                <td>1</td>
-                                <td>
-                                    Administration Department                                </td>
-                                <td>Md.ashed hossin</td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center"><img src="assets/employee_images/" alt="Image"  width="50px" height="50px" class='img-circle'/></td>
-                                <td class="text-center">
-                                                                            <span class="label label-success" style="font-size: 14px;">Active</span>
-                                                                        </td>
-
-                            </tr>
-
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    Sales Department                                </td>
-                                <td>Md.Hafizulla</td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center"><img src="assets/employee_images/" alt="Image"  width="50px" height="50px" class='img-circle'/></td>
-                                <td class="text-center">
-                                                                            <span class="label label-success" style="font-size: 14px;">Active</span>
-                                                                        </td>
-
-                            </tr>
-
-                            <tr>
-                                <td>3</td>
-                                <td>
-                                    Sales manager                                 </td>
-                                <td>Sakib Al Hasan</td>
-                                <td>khulna</td>
-                                <td>01717999990</td>
-                                <td class="text-center"><img src="assets/employee_images/1682303496.jpg" alt="Image"  width="50px" height="50px" class='img-circle'/></td>
-                                <td class="text-center">
-                                                                            <span class="label label-success" style="font-size: 14px;">Active</span>
-                                                                        </td>
-
-                            </tr>
-                                            </table>
+                </table>
             </div>
             <!-- /.col
-        </div>
-            <!-- /.row -->
+            </div>
+                <!-- /.row -->
     </section>
 
 
