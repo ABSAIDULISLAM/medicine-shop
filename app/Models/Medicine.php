@@ -34,5 +34,10 @@ class Medicine extends Model
         return $this->belongsTo(Rack::class)->withDefault();
     }
 
+    public function ledger()
+    {
+        return $this->hasMany(StockLedger::class, 'medicine_id', 'id');//->withDefault()
+    }
+
 
 }

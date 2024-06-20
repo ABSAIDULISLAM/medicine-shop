@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\EmployeeLedger;
 use App\Models\EmployeeType;
 use App\Models\Income;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EmployeeReportController extends Controller
@@ -78,67 +79,56 @@ class EmployeeReportController extends Controller
         $employee = Employee::select('id', 'employee_name')->get();
         return view('admin.report.employee.ledger',compact('employee'));
     }
-    // employee ledger statement search
+
     public function EmployeeLedgerStatement(Request $request)
     {
-        $request->validate([
-            'from_date' => 'required|date',
-            'to_date' => 'required|date|after_or_equal:from_date',
-            'employee_id' => 'required|integer',
-        ]);
-        $fromDate = $request->input('from_date');
-        $toDate = $request->input('to_date');
-        $employeeId = $request->input('employee_id');
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $employee_id = $request->input('employee_id', 0);
 
-        $query = Income::whereBetween('date', [$fromDate, $toDate])
-            ->where('account_type', 0) // 1 for expense
-            ->with('empledger');
+        $query = Employee::with(['employeeledger' => function($query) use ($from_date, $to_date) {
+            $query->whereBetween('date', [$from_date, $to_date]);
+        }]);
 
-        if ($employeeId && $employeeId != 0) {
-            $query->where('employee_id', $employeeId);
+        if ($employee_id != 0) {
+            $query->where('id', $employee_id);
         }
 
-        $expense = $query->first();
+        $employee = $query->orderBy('id', 'desc')->first();
 
-        return view('admin.report.employee.statement', compact('expense', 'fromDate', 'toDate','employeeId'));
+        return view('admin.report.employee.statement', compact('employee', 'from_date', 'to_date', 'employee_id'));
     }
-    // for employee statement filter
-    public function EmployeeLedgerStatementFilter(Request $request)
-    {
-        $request->validate([
-            'from_date' => 'required|date',
-            'to_date' => 'required|date|after_or_equal:from_date',
-            'employee_id' => 'required|integer',
-        ]);
-        $fromDate = $request->input('from_date');
-        $toDate = $request->input('to_date');
-        $employeeId = $request->input('employee_id');
-        $filterdata = true;
-        $expense = Income::where('account_type', 0) // 0 for expense
-            ->where('employee_id', $employeeId)
-            ->with(['empledger' => function($query) use ($fromDate, $toDate) {
-                $query->whereBetween('date', [$fromDate, $toDate]);
-            }])
-            ->first();
 
-        return view('admin.report.employee.statement', compact('expense', 'fromDate', 'toDate', 'employeeId','filterdata'));
-    }
+
     // employee salary sheet table data
-    public function MonthlySalarySheet()
+    public function MonthlySalarySheet(Request $request)
     {
-        return $data = Employee::select('id','employee_name')
-        // ->with('')
-        ->orderBy('id','desc')->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $employee_id = $request->input('employee_id', 0);
 
-        $empType = EmployeeType::orderBy('id','desc')->get();
+        $query = Employee::with(['employeesalary' => function($query) use ($from_date, $to_date) {
+            $query->whereBetween('date', [$from_date, $to_date]);
+        }]);
 
-        return view('admin.report.employee.monthly-salary-sheet',compact('data','empType'));
+        if ($employee_id != 0) {
+            $query->where('id', $employee_id);
+        }
+
+        $employees = $query->orderBy('id', 'desc')->get();
+
+        // Calculate the total salary and balances for each employee
+        $employees->each(function ($employee) {
+            $employee->total_salary = $employee->employeesalary->sum('amount');
+            $employee->previous_balance = $employee->deposit_amount;
+            $employee->payment_amount = 0;
+            $employee->current_balance = $employee->previous_balance + $employee->total_salary - $employee->payment_amount;
+        });
+
+        $empType = EmployeeType::all();
+
+        return view('admin.report.employee.monthly-salary-sheet', compact('employees', 'empType', 'from_date', 'to_date', 'employee_id'));
     }
 
 
-
-    public function EmployeeStatement()
-    {
-        return view('admin.report.employee.statement');
-    }
 }

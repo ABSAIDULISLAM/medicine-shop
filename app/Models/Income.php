@@ -20,7 +20,7 @@ class Income extends Model
 
     public function accounthead()
     {
-        return $this->belongsTo(AccountHead::class, 'account_head', 'id');
+        return $this->belongsTo(Journal::class, 'account_head', 'id');
     }
     public function subhead()
     {
@@ -35,5 +35,13 @@ class Income extends Model
     {
         return $this->hasMany(EmployeeLedger::class, 'employee_id', 'employee_id');
     }
+
+
+
+    public function journal()
+    {
+        return $this->belongsTo(Journal::class, 'journal_id', 'id');
+    }
+
 
 }

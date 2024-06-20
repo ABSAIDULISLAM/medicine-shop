@@ -129,10 +129,7 @@
                     </tfoot>
                 </table>
             </div>
-            <!-- /.col
         </div>
-            <!-- /.row -->
-    </section>
 
 
 @endsection

@@ -33,8 +33,8 @@
                                 <thead>
                                     <tr style="background-color: #14A586;color: #fff;">
                                         <th>SL</th>
-                                        <th class="text-center">Account head Name</th>
-                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Journal Name</th>
+                                        <th class="text-center">Head Name</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -42,17 +42,14 @@
                                     $startSerial = ($data->currentPage() - 1) * $data->perPage() + 1;
                                 @endphp
                                 <tbody>
-                                    @forelse ($data as $item)
+                                    @forelse ($data ?? [] as $item)
                                     <tr>
                                         <td style="width: 10px">{{$startSerial++}}</td>
-                                        <td class="text-left" >{{$item->head_name}}</td>
-                                        <td>
-                                            <span class="label label-{{ $item->status == 1 ? 'success' : 'danger' }}"
-                                                style="font-size: 14px;">{{ $item->status == 1 ? 'Active' : 'Inactive' }}</span>
-                                        </td>
+                                        <td class="text-center" >{{$item->journal->name ?? ''}}</td>
+                                        <td>{{$item->head_name}}</td>
                                         <td class="text-center" style="width: 100px">
                                         <button
-                                            onclick="editModal('{{ $item->id }}', '{{ $item->head_name }}','{{ $item->status }}' )"
+                                            onclick="editModal('{{ $item->id }}', '{{ $item->journal->id ?? '' }}','{{ $item->head_name }}' )"
                                             class="btn red-meadow" style="background-color: #006666">
                                             <i class="fa fa-pencil" style="color: #fff"></i>
                                         </button>
@@ -154,17 +151,19 @@
                 <div class="modal-body">
                     <form method="post" action="{{route('Settings.account-head.update')}}">
                         @csrf
-                        <label>Account head Name</label>
-                        <input type="text" name="head_name" class="form-control"
-                            />
-                        <input type="hidden" name="id" class="form-control"
-                             />
-                        <br />
-                        <label>Select status</label>
-                        <select name="status" id="gender" class="form-control">
-                            <option value="1"selected>Active</option>
-                            <option value="0">Inactive</option>
+                        <label>Journal Name <span class="text-danger">*</span></label>
+                        <select name="journal_id" id="gender" class="form-control" required>
+                            <option value="0">Select Journal</option>
+                            @forelse ($journal as $item)
+                            <option value="{{$item->id}}">{{$item->name}}</option>
+                            @empty
+                            @endforelse
+
                         </select>
+                        <br />
+                        <label>Account head Name</label>
+                        <input type="text" name="head_name" class="form-control" placeholder="Account head Name" />
+                        <input type="hidden" name="id">
                         <br />
                         <input type="submit" name="edit_cat" value="Update"
                             class="btn btn-success pull-right" />
@@ -177,12 +176,12 @@
         </div>
     </div>
     <script>
-        function editModal(id, gname, status ) {
+        function editModal(id, jid, hname ) {
             // alert(id);
             $('#edit').modal('show');
             $('#edit').find('input[name="id"]').val(id);
-            $('#edit').find('input[name="head_name"]').val(gname);
-            $('#edit').find('input[name="status"]').val(status);
+            $('#edit').find('select[name="journal_id"]').val(jid);
+            $('#edit').find('input[name="head_name"]').val(hname);
         }
     </script>
     <!-- /.content-wrapper -->
@@ -197,15 +196,20 @@
                 <div class="modal-body">
                     <form method="post" action="{{route('Settings.account-head.store')}}">
                         @csrf
+                        <label>Journal Name <span class="text-danger">*</span></label>
+                        <select name="journal_id" id="gender" class="form-control" required>
+                            <option value="0">Select Journal</option>
+                            @forelse ($journal as $item)
+                            <option value="{{$item->id}}">{{$item->name}}</option>
+                            @empty
+                            @endforelse
+
+                        </select>
+                        <br />
                         <label>Account head Name</label>
                         <input type="text" name="head_name" class="form-control" placeholder="Account head Name" />
                         <br />
-                        <label>Select status</label>
-                        <select name="status" id="gender" class="form-control">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
-                        <br />
+
                         <input type="submit" value="Insert" class="btn btn-success pull-right" />
                     </form>
                 </div>

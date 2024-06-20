@@ -1,8 +1,7 @@
 @extends('admin.layouts.master')
-@section('title', 'sales-report')
+@section('title', 'Payment-report')
 
 @section('content')
-
     <style>
         @media print {
             #printbtn {
@@ -49,13 +48,13 @@
 
     <section class="content-header">
         <h1>
-            Sales Report
-            <small> Sales Report</small>
+            Payment Report
+            <small> Payment Report</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Sales Report</a></li>
-            <li class="active"> Sales Report</li>
+            <li><a href="#">Payment Report</a></li>
+            <li class="active"> Payment Report</li>
         </ol>
     </section>
     <!-- Main content -->
@@ -74,77 +73,66 @@
                     }
                 </script>
                 <h4 align="center" class="page-header" style="text-transform:uppercase;">
-                    <img src="company_logo/" alt="logo" height="50px" width="150px"
-                        style="height: 60px;width: 350px;"><br />
+                    <img src="{{ asset('backend/assets/logo.png') }}" alt="logo" height="80px"
+                            width="200px"><br />
                     <span style="font-size: 15px">
                     </span><br />
                     <span style="font-size: 15px">
-                        Sales Details Report
+                        Payment Report
                     </span><br />
                     <span style="font-size: 15px">
-                        Date : 01-03-2024 To 21-03-2024 </span>
+                        Date : {{$from_date}} To {{$to_date}} </span>
                 </h4>
             </div>
             <div style="margin-right:10px;margin-top:10px;padding:10px;text-align: right" id="search">
-                <form method="POST" action="sales-report">
+                <form method="get" action="{{route('Report.payment.report')}}">
+                    @csrf
                     <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2"></div>
+                        <div class="form-group col-md-3">
                             <div class="form-group">
                                 <label for="datepicker4">From Date </label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" name="from_date" class="form-control pull-right" id="datepicker4"
+                                    <input type="date" name="from_date" value="{{$from_date}}" class="form-control pull-right" id="datepicker4"
                                         autocomplete="off" required="">
                                 </div>
                                 <!-- /.input group -->
                             </div>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-3">
                             <div class="form-group">
                                 <label for="datepicker2">To Date </label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" name="to_date" class="form-control pull-right" id="datepicker2"
-                                        autocomplete="off" required="">
+                                    <input type="date" name="to_date" value="{{$to_date}}" class="form-control pull-right" id="datepicker2"
+                                        autocomplete="off">
                                 </div>
                                 <!-- /.input group -->
                             </div>
                         </div>
                         <div class="form-group col-md-3">
                             <div class="form-group">
-                                <label for="customer_id">Customer Name</label>
+                                <label for="customer_id">Supplier Name</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                     <select name="customer_id" id="customer_id" class="form-control select2"
                                         style="width: 100%;">
                                         <option value="0">ALL</option>
-                                        <option value="1213"></option>
-                                        <option value="1209">a</option>
-                                        <option value="1256">Zaman</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <div class="form-group">
-                                <label for="created_by">Sales Man</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                    <select name="created_by" id="created_by" class="form-control select2"
-                                        style="width: 100%;">
-                                        <option value="S">ALL</option>
-                                        <option value="17">Software Solution Company</option>
+                                        @forelse ($customer as $item)
+                                        <option value="{{$item->id}}" {{$item->id == $cusName ? 'selected': ''}}>{{$item->company_name}}</option>
+                                        @empty
+                                        @endforelse
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group col-md-1">
-                            <button type="submit" name="search_btn" class="btn btn-primary"
+                            <button type="submit" class="btn btn-primary"
                                 style="margin-top:25px">Search</button>
                         </div>
                     </div>
@@ -157,40 +145,49 @@
                 <table class="table table-bordered table-striped">
                     <thead style="font-size: 10px">
                         <tr style="background-color: #14A586;color: #fff;">
-                            <th class="text-center" style="width: 10px">SL</th>
-                            <th class="text-center" style="width: 120px">Company Name</th>
-                            <th class="text-center" style="width: 120px">Invoice No</th>
-                            <th class="text-center" style="width: 100px">Date</th>
-                            <th class="text-center" style="width: 100px">Total Amount</th>
-                            <th class="text-center" style="width: 100px">Cash Received</th>
-                            <th class="text-center" style="width: 100px">Due</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-center">Payment Date</th>
+                            <th class="text-center">Company Name</th>
+                            <th class="text-center">Money Receipt</th>
+                            <th class="text-center">Installment Paid</th>
+                            <th class="text-center">Remarks</th>
                         </tr>
                     </thead>
+                    @php
+                        $total = 0;
+                    @endphp
                     <tbody>
+                        @forelse ($data as $item)
+                        @php
+                            $total += $item->payment;
+                        @endphp
                         <tr>
-                            <td class="text-center">1</td>
-                            <td class="text-left">
-                                Arif </td>
-                            <td class="text-left"><a href="sales-invoice?inv=21" target="_blank">MP17-21</a></td>
-                            <td class="text-right">2024-03-18</td>
-                            <td class="text-right">10.00</td>
-                            <td class="text-right">10.00</td>
-                            <td class="text-right">0.00</td>
-
+                            <td>{{$loop->index+1}}</td>
+                            <td>{{$item->collection_date}}</td>
+                            <td>{{$item->customer->company_name}}</td>
+                            <td>{{$item->money_reset}}</td>
+                            <td>{{$item->payment}}</td>
+                            <td>{{$item->remarks}}</td>
                         </tr>
+                        @empty
+                        <tr>
+                            <td class="text-center" colspan="6">No Record Found</td>
+                        </tr>
+                        @endforelse
+
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="4">Total</th>
-                            <th class="text-right">10.00</th>
-                            <th class="text-right">10.00</th>
-                            <th class="text-right">0.00</th>
+                            <th>Total</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="text-right">{{$total}}/-</th>
+                            <th></th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
-
     </section>
-
 
 @endsection

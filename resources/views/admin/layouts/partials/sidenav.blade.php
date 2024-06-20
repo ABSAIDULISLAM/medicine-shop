@@ -154,7 +154,7 @@
                             class="{{ Request::is('admin/account/expense/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Expense List</a></li>
                     <li><a href="{{ route('Account.other-income.list') }}"
-                            class="{{ Request::is('admin/account/income/list') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('admin/account/other-income/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Others Income</a></li>
                     <li><a href="{{ route('Account.bank.deposit.list') }}"
                             class="{{ Request::is('admin/account/bank/deposit/list') ? 'activeLink' : '' }}"><i
@@ -198,7 +198,7 @@
                             class="{{ Request::is('admin/report/customer/due') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Customer Due Report</a></li>
                     <li><a href="{{ route('Report.customer.ledger') }}"
-                            class="{{ Request::is('admin/report/employee/customer-ledger') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('admin/report/customer/ledger') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Customer Ledger</a></li>
 
 
@@ -206,7 +206,7 @@
                             class="{{ Request::is('admin/report/employee/cash-statement') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Cash Statement Report</a></li>
                     <li><a href="{{ route('Report.expired.medicine.report') }}"
-                            class="{{ Request::is('admin/report/employee/expired-medicine-report') ? 'activeLink' : '' }}"><i
+                            class="{{ Request::is('admin/report/employee/expired-medicine/list') ? 'activeLink' : '' }}"><i
                                 class="fa fa-money"></i> Expire Medicine Report</a></li>
                     <li><a href="{{ route('Report.stock.report') }}"
                             class="{{ Request::is('admin/report/employee/stock-report') ? 'activeLink' : '' }}"><i

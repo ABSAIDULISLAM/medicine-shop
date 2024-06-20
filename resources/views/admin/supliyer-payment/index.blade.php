@@ -6,13 +6,13 @@
 
     <section class="content-header">
         <h1>
-            Collection List
-            <small> Collection List</small>
+            Supplier Payment List
+            <small> Supplier Payment List</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Collection</a></li>
-            <li class="active"> Collection List</li>
+            <li><a href="#">Supplier Payment</a></li>
+            <li class="active"> Supplier Payment List</li>
         </ol>
     </section>
     <!-- Main content -->
@@ -21,7 +21,7 @@
             <div class="col-xs-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title"> Collection</h3>
+                        <h3 class="box-title"> Supplier Payment</h3>
                         <div class="box-tools pull-right">
                             <a href="{{route('Supliyer-payment.create')}}"><button type="button" class="btn bg-navy btn-flat">Add
                                     New</button></a>
@@ -29,17 +29,19 @@
                     </div>
                     <!-- /.box-header -->
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
-                        <form method="post" action="collection-list">
+                        <form method="get" action="{{route('Supliyer-payment.index')}}">
+                            @csrf
                             From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date"
-                                value="2024-03-21">
+                                value="{{$from_date}}">
                             &nbsp;To : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date"
-                                value="2024-03-21">
+                                value="{{$to_date}}">
                             &nbsp;<select name="customer_id" id="customer_id" class="form-control select2"
                                 style="width: 200px;">
                                 <option value="0">ALL</option>
-                                <option value="1213"></option>
-                                <option value="1209">a</option>
-                                <option value="1256">Zaman</option>
+                                @forelse ($customer as $item)
+                                    <option value="{{$item->id}}" {{$item->id==$cusId?'selected':''}}>{{$item->company_name}}</option>
+                                @empty
+                                @endforelse
                             </select>
                             <input type="submit" name="search_btn" value="Search">
                         </form>

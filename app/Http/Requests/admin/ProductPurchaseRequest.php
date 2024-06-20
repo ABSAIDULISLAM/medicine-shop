@@ -22,7 +22,6 @@ class ProductPurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'supplier_id' => ['required', 'exists:contacts,id'],
             'final_amount' => ['nullable', 'numeric'],
             'payment' => ['nullable', 'numeric'],
             'previous_dues' => ['nullable', 'numeric'],
@@ -47,6 +46,7 @@ class ProductPurchaseRequest extends FormRequest
             'product_code.*' => ['nullable'],
             'total_amount' => ['nullable', 'numeric'],
             'total_coast' => ['nullable', 'numeric'],
+            'supplier_id' => ['required', 'exists:contacts,id'],
         ];
     }
 }

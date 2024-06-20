@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BankDeposit;
 use App\Models\BankSetup;
 use App\Models\BankWithdraw;
+use App\Models\CashStatement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -35,6 +36,14 @@ class BankWithdrawalController extends Controller
             'remarks' => $request->remarks,
             'create_by' => Auth::id(),
         ]);
+        CashStatement::create([
+            'date' => $request->date,
+            'remarks' => 'Bank Withdrawal',
+            'debit' => 0,
+            'credit' => $request->deposit_amount ?? 0,
+            'insert_status' => 5,
+            'insert_id' => $request->bank_id,
+        ]);
         return redirect()->back()->with('success', 'Bank Withdraw Created Successfully');
     }
 
@@ -52,6 +61,15 @@ class BankWithdrawalController extends Controller
             'date' => $request->date,
             'withdraw_amount' => $request->deposit_amount,
             'remarks' => $request->remarks,
+        ]);
+
+        CashStatement::where('insert_id', $request->id)->update([
+            'date' => $request->date,
+            'remarks' => 'Bank Withdrawal',
+            'debit' => 0,
+            'credit' => $request->deposit_amount ?? 0,
+            'insert_status' => 5,
+            'insert_id' => $request->bank_id,
         ]);
         return redirect()->back()->with('success', 'Bank Withdraw Updated Successfully');
     }

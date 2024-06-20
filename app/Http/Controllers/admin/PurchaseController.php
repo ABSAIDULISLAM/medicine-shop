@@ -15,53 +15,38 @@ use App\Models\MedicineType;
 use App\Models\Purchases;
 use App\Models\PurchasesDetail;
 use App\Models\Rack;
+use App\Models\Sales;
 use App\Models\StockLedger;
 use App\Models\SupplierLedger;
-use App\Services\admin\ProductPerchaseService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use PHPUnit\Framework\Constraint\Count;
 use Illuminate\Support\Facades\Validator;
 
 class PurchaseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $purchases = Purchases::with(['suplyer'=>function($query){
-            $query->select('id', 'company_name');
-        }])
-        ->latest()->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $cusId = $request->input('customer_id', 0);
 
-        return view('admin.purchase.index', compact('purchases'));
-    }
-
-    public function filter(Request $request)
-    {
-        $fromDate = Carbon::parse($request->input('from_date'))->startOfDay();
-        $toDate = Carbon::parse($request->input('to_date'))->endOfDay();
-        $supplierId = $request->input('supplier_id');
-
-        $purchases = Purchases::query()
-            ->whereBetween('created_at', [$fromDate, $toDate]);
-
-        if ($supplierId != 0) {
-            $purchases->orWhere('supplier_id', $supplierId);
+        $query = Purchases::with(['suplyer:id,company_name']);
+        if (!empty($from_date) && !empty($to_date)) {
+            $query->whereBetween('date', [$from_date, $to_date]);
         }
-
-        $filteredData = $purchases->with(['suplyer'=>function($query){
-            $query->select('id', 'company_name');
-        }])->get();
-
-        return view('admin.purchase.index', compact('filteredData','fromDate','toDate'));
+        if (!empty($cusId)) {
+            $query->where('supplier_id', $cusId);
+        }
+        $purchases = $query->latest()->get();
+        return view('admin.purchase.index', compact('purchases', 'from_date', 'to_date', 'cusId'));
     }
 
     public function create()
     {
         $suplyer = Contact::where('contact_type', 2)->select('id', 'company_name')->get();
         $bank = BankSetup::orderBy('id', 'asc')->select('id', 'bank_name')->get();
-
         $generics = Generic::orderBy('id', 'asc')->select('id', 'generic_name')->get();
         $mediForms = MedicineForm::orderBy('id', 'asc')->select('id', 'medicine_strength')->get();
         $companies = Company::orderBy('id', 'asc')->select('id', 'company_name')->get();
@@ -182,14 +167,14 @@ class PurchaseController extends Controller
         $search = $request->input('pursearchQuery');
 
         $products = Medicine::where('medicine_name', 'like', '%' . $search . '%')
-                    ->orWhere('serial_number', 'like', '%' . $search . '%')
-                    ->get();
+            ->orWhere('serial_number', 'like', '%' . $search . '%')
+            ->get();
 
         $response = [];
         foreach ($products as $product) {
             $response[] = [
                 'value' => $product->medicine_name,
-                'label' => $product->serial_number.' || '.$product->medicine_name.' || '. $product->medicine_form.' || '.$product->medicine_strength.' || '.$product->company_name.' || '.$product->sale_price,
+                'label' => $product->serial_number . ' || ' . $product->medicine_name . ' || ' . $product->medicine_form . ' || ' . $product->medicine_strength . ' || ' . $product->company_name . ' || ' . $product->sale_price,
             ];
         }
 
@@ -225,7 +210,6 @@ class PurchaseController extends Controller
 
             return response()->json($response);
         }
-
         return response()->json(['error' => 'Product not found '], 404);
     }
 
@@ -295,14 +279,13 @@ class PurchaseController extends Controller
                     'created_by' => Auth::id(),
                 ]);
             }
-
             CashStatement::create([
                 'date' => $request->date,
                 'remarks' => $request->invoice_number,
                 'debit' => $request->payment ?? 0,
                 'credit' => 0,
                 'insert_status' => 4, // 4 = payment
-                'insert_id' => $purchase->id,
+                'insert_id' => $request->supplier_id,
             ]);
 
             $latestData = SupplierLedger::where('supplier_id', $request->supplier_id)->orderBy('id', 'desc')->first();
@@ -317,7 +300,6 @@ class PurchaseController extends Controller
             } else {
                 $due = ($request->previous_dues ?? 0) - ($request->payment ?? 0);
             }
-
             $supplierLedger = new SupplierLedger();
             $supplierLedger->supplier_id = $request->supplier_id;
             $supplierLedger->description = $request->invoice_number;
@@ -335,7 +317,6 @@ class PurchaseController extends Controller
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Inserted Successfully');
     }
-
 
     public function edit($id)
     {
@@ -363,111 +344,6 @@ class PurchaseController extends Controller
         $medicineType->save();
         return response()->json($medicineType);
     }
-
-    // public function update(ProductPurchaseRequest $request)
-    // {
-    //     if($request->quantity > 0){
-    //         $purchase = Purchases::find($request->purchaseId);
-    //         if (!$purchase) {
-    //             return redirect()->back()->with('error', 'Purchase record not found.');
-    //         }
-    //         $purchase->supplier_id = $request->supplier_id;
-    //         $purchase->previous_dues = $request->previous_dues ?? 0;
-    //         $purchase->invoice_number = $request->invoice_number;
-    //         $purchase->date = $request->date;
-    //         $purchase->total_cost_amount = $request->total_cost;
-    //         $purchase->total_amount = $request->total_amount;
-    //         $purchase->grand_trade_amount = 0;
-    //         $purchase->grand_vat_amount = 0;
-    //         $purchase->discount = $request->discount ?? 0;
-    //         $purchase->shipping_charge = $request->shipping_charge ?? 0;
-    //         $purchase->final_amount = $request->final_amount;
-    //         $purchase->payment = $request->payment ?? 0;
-    //         $purchase->dues = $request->dues ?? 0;
-    //         if ($request->payment_method == '1') {
-    //             $purchase->payment_method = $request->payment_method;
-    //             $purchase->bank_id = $request->bank_id;
-    //             $purchase->cheque_no = $request->cheque_no;
-    //         } else {
-    //             $purchase->payment_method = $request->payment_method;
-    //             $purchase->bank_id = 0;
-    //             $purchase->cheque_no = 0;
-    //         }
-    //         $purchase->cheque_appr_date = Carbon::now();
-    //         $purchase->created_by = Auth::id();
-    //         $purchase->updated_at = Carbon::now();
-    //         $purchase->save();
-
-    //         PurchasesDetail::where('common_id', $request->purchaseId)->delete();
-    //         StockLedger::where('insert_status', $request->purchaseId)->delete();
-
-    //         foreach ($request->quantity as $key => $value) {
-    //             $medicineId = $request->product_id[$key];
-    //             $medicine = Medicine::find($medicineId);
-    //             $medicine->stock += $value;
-    //             $medicine->save();
-
-    //             $purchaseDetail = new PurchasesDetail();
-    //             $purchaseDetail->product_id = $request->product_id[$key];
-    //             $purchaseDetail->generic_id = 0;
-    //             $purchaseDetail->company_id = 0;
-    //             $purchaseDetail->quantity = $value;
-    //             $purchaseDetail->cost_price = $request->cost_price[$key];
-    //             $purchaseDetail->sales_price = $request->sales_price[$key];
-    //             $purchaseDetail->expire_date = $request->expire_date[$key];
-    //             $purchaseDetail->rack_id = $request->rack_id[$key];
-    //             $purchaseDetail->sub_total = $request->sub_total[$key];
-    //             $purchaseDetail->inStock = $medicine->stock;
-    //             $purchaseDetail->common_id = $purchase->id;
-    //             $purchaseDetail->supplier_id = $request->supplier_id;
-    //             $purchaseDetail->date = $request->date;
-    //             $purchaseDetail->created_by = Auth::id();
-    //             $purchaseDetail->save();
-
-    //             StockLedger::create([
-    //                 'medicine_id' => $medicineId,
-    //                 'generic_id' => 0,
-    //                 'date' => $request->date,
-    //                 'debit_qty' => $value,
-    //                 'credit_qty' => 0,
-    //                 'consumer' => $request->supplier_id,
-    //                 'insert_status' => 1, // 1 = purchase data
-    //                 'insert_id' => $purchase->id,
-    //                 'created_by' => Auth::id(),
-    //             ]);
-    //         }
-
-    //         CashStatement::find($request->purchaseId)->update([
-    //             'date' => $request->date,
-    //             'remarks' => $request->invoice_number,
-    //             'debit' => $request->payment ?? 0,
-    //             'credit' => 0,
-    //             'insert_status' => 4, // 4 = payment
-    //             'insert_id' => $purchase->id,
-    //         ]);
-
-    //         $supplierLedger = SupplierLedger::find($request->purchaseId);
-    //         $supplierLedger->supplier_id = $request->supplier_id;
-    //         $supplierLedger->description = $request->invoice_number;
-    //         $supplierLedger->previous_due = $request->previous_dues ?? 0;
-    //         $supplierLedger->debit = $request->payment ?? 0;
-    //         $supplierLedger->credit = 0;
-    //         $supplierLedger->discount = $request->discount ?? 0;
-    //         $supplierLedger->balance = ($supplierLedger->previous_due - $supplierLedger->debit) + $request->total_amount; // Correct balance calculation
-    //         $supplierLedger->insert_status = 1; // 1 = purchase
-    //         $supplierLedger->insert_id = $purchase->id;
-    //         $supplierLedger->date = $request->date;
-    //         $supplierLedger->created_by = Auth::id();
-    //         $supplierLedger->save();
-
-    //     }else{
-    //         return redirect()->back()->with('error', 'Product Details Data Can not be Empty');
-    //     }
-
-    //     return redirect()->route('Purchase.index')->with('success', 'Purchase Updated Successfully');
-    // }
-
-
 
     public function update(ProductPurchaseRequest $request)
     {
@@ -503,9 +379,9 @@ class PurchaseController extends Controller
             foreach ($request->product_id as $key => $medicineId) {
                 $medicine = Medicine::find($medicineId);
                 $oldQuantity = PurchasesDetail::where('common_id', $request->purchaseId)
-                                            ->where('product_id', $medicineId)
-                                            ->first()
-                                            ->quantity ?? 0;
+                    ->where('product_id', $medicineId)
+                    ->first()
+                    ->quantity ?? 0;
                 $medicine->stock -= $oldQuantity;
                 $medicine->save();
             }
@@ -558,7 +434,7 @@ class PurchaseController extends Controller
                 'debit' => $request->payment ?? 0,
                 'credit' => 0,
                 'insert_status' => 4, // 4 = payment
-                'insert_id' => $purchase->id,
+                'insert_id' => $request->supplier_id,
             ]);
 
             $latestData = SupplierLedger::where('supplier_id', $request->supplier_id)->orderBy('id', 'desc')->first();
@@ -588,17 +464,12 @@ class PurchaseController extends Controller
                 $supplierLedger->created_by = Auth::id();
                 $supplierLedger->save();
             }
-
         } else {
             return redirect()->back()->with('error', 'Product Details Data Cannot be Empty');
         }
 
         return redirect()->route('Purchase.index')->with('success', 'Purchase Updated Successfully');
     }
-
-
-
-
 
     public function delete($id)
     {
@@ -609,14 +480,11 @@ class PurchaseController extends Controller
 
     public function windowPopInvoice($id)
     {
-      $data = PurchasesDetail::where('common_id', $id)
-            ->with(['product' => function($query) {
-                $query->select('id', 'medicine_name', 'purchases_price', 'sale_price');
-            }])
+        $data = PurchasesDetail::where('common_id', $id)
+            ->with(['product:id,medicine_name,purchases_price,sale_price'])
             ->get();
+        $supplier = Purchases::where('id',$id)->select('id','supplier_id','date')->with('suplyer:id,company_name,contact_num,address')->first();
 
-        return view('admin.purchase.invoice', compact('data'));
+        return view('admin.purchase.invoice', compact('data','supplier'));
     }
-
-
 }

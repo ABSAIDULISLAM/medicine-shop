@@ -1,9 +1,6 @@
 @extends('admin.layouts.master')
-
 @section('title', 'stock-matching')
-
 @section('content')
-
     <section class="content-header">
         <h1>
             Stock Matching
@@ -29,12 +26,12 @@
                         </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
-                        <form method="post" action="bill-list">
+                        <form method="get" action="{{route('Stock-matching.index')}}">
                             From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date"
-                                value="2024-03-21">
+                                value="{{$from_date}}">
                             &nbsp;To : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date"
-                                value="2024-03-21">
-                            <input type="submit" name="search_btn" value="Search">
+                                value="{{$to_date}}">
+                            <input type="submit" value="Search">
                         </form>
                     </div>
                     <!-- /.box-header -->

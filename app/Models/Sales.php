@@ -26,4 +26,8 @@ class Sales extends Model
     {
         return $this->belongsTo(Contact::class, 'customer_id', 'id');
     }
+    public function collection()
+    {
+        return $this->belongsTo(CashStatement::class, 'insert_id', 'id');
+    }
 }

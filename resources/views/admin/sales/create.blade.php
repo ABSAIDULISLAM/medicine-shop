@@ -6,8 +6,8 @@
             Sales
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Sales</a></li>
+            <li><a href="{{route('Admin.dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{route('Sales.index')}}">Sales</a></li>
             <li class="active">Create Invoice</li>
         </ol>
     </section>

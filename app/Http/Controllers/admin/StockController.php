@@ -8,17 +8,26 @@ use App\Models\Medicine;
 use App\Models\StockLedger;
 use App\Models\StockMatching;
 use App\Models\StockMatchingDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class StockController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = StockMatching::with('stockmetcingdetails')->orderBy('id', 'desc')->get();
-        return view('admin.stock-matching.index', compact('data'));
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+
+
+        $data = StockMatching::with('stockmetcingdetails')->orderBy('id', 'desc')
+        ->whereBetween('date',[$from_date,$to_date])
+        ->get();
+
+        return view('admin.stock-matching.index', compact('data','from_date','to_date'));
     }
+
     public function create()
     {
         return view('admin.stock-matching.create');
@@ -26,8 +35,6 @@ class StockController extends Controller
 
     public function invoiceView($id)
     {
-        // $id = Crypt::decrypt($id);
-
         $data = StockMatching::with(['stockmetcingdetails', 'stockmetcingdetails.medicine'])->orderBy('id', 'desc')->where('id', $id)->first();
 
         return view('admin.stock-matching.invoice-print',compact('data'));

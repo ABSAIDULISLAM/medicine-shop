@@ -13,4 +13,8 @@ class Journal extends Model
 
     public $timestamps = false;
 
+    public function accounthead()
+    {
+        return $this->belongsTo(AccountHead::class, 'account_head', 'id');
+    }
 }

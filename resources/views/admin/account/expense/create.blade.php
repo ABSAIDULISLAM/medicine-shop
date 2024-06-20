@@ -39,21 +39,21 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="account_head">Account Head <span style="color: red">*</span></label>
+                                        <label for="account_head">Account Head <span style="color: red"></span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="account_head" id="account_head" class="form-control select2 @error('account_head') is-invalid @enderror"
-                                                style="width: 100%;" required="">
+                                                style="width: 100%;">
                                                 <option value="">Select Account Head</option>
-                                                @forelse ($accountHead as $item)
-                                                <option value="{{$item->id}}">{{$item->head_name}}</option>
+                                                @forelse ($journal as $item)
+                                                <option value="{{$item->id}}">{{$item->name}}</option>
                                                 @empty
                                                 @endforelse
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="employee_id">Employee <span style="color: red">*</span></label>
+                                        <label for="employee_id">Employee <span style="color: red"></span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="employee_id" id="employee_id" class="form-control select2 @error('employee_id') is-invalid @enderror"
@@ -93,16 +93,12 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="sub_head_id">Sub Head <span style="color: red">*</span></label>
+                                        <label for="sub_head_id">Sub Head <span style="color: red"></span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="sub_head_id" id="sub_head_id" class="form-control select2 @error('sub_head_id') is-invalid @enderror"
-                                                style="width: 100%;" required>
-                                                <option value="">Select Sub Head</option>
-                                            </option>@forelse ($subHead as $item)
-                                                <option value="{{$item->id}}">{{$item->sub_head}}</option>
-                                            @empty
-                                            @endforelse
+                                                style="width: 100%;">
+                                                <option selected disabled>Select Sub Head</option>
                                             </select>
                                         </div>
                                     </div>
@@ -135,16 +131,12 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="account_head">S.Sub Head <span style="color: red">*</span></label>
+                                        <label for="account_head">S.Sub Head <span style="color: red"></span></label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-text-width"></i></span>
                                             <select name="scnd_head_id" id="scnd_head_id" class="form-control select2 @error('scnd_head_id') is-invalid @enderror"
-                                                style="width: 100%;" required>
-                                                <option value="1">Select Second Sub Head</option>
-                                            </option>@forelse ($scnSubHead as $item)
-                                                <option value="{{$item->id}}">{{$item->second_sub_head}}</option>
-                                            @empty
-                                            @endforelse
+                                                style="width: 100%;">
+                                                <option disabled selected>Select Second Sub Head</option>
                                             </select>
                                         </div>
                                     </div>
@@ -248,7 +240,8 @@
                     var id = $(this).val();
                     $.ajax({
                         type: 'POST',
-                        url: 'ajax-response',
+                        "_token": "{{ csrf_token() }}",
+                        url: '{{route('Account.expense.accounthead')}}',
                         data: {
                             'account_head': id
                         },
@@ -264,11 +257,12 @@
                     var id = $(this).val();
                     $.ajax({
                         type: 'POST',
-                        url: 'ajax-response',
+                        url: '{{route('Account.expense.sub.head')}}',
                         data: {
                             'sub_head_id': id
                         },
                         success: function(html) {
+                            $('#scnd_head_id').val('');
                             $('#scnd_head_id').html(html);
                         }
                     });

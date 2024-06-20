@@ -59,6 +59,8 @@
                     </script>
                     <div style="text-align:center;margin-top: 25px">
                         <h3></h3>
+                        <img class="my-3" src="{{ asset('backend/assets/logo.png') }}" alt="logo" height="80px" width="200px"
+                            style="height: 80px;width: 200px;margin-left: %"><br />
                         <h5></h5>
                         <h4 style="border: 2px solid #000;padding: 5px;width: 180px;border-radius : 5px;margin-left: 38%;font-weight: bold"><i>MONEY RECEIPT</i></h4>
                     </div>

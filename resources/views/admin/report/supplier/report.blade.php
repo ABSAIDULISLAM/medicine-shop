@@ -2,27 +2,49 @@
 @section('title', 'supliyer-details')
 
 @section('content')
-<style>
-    @media print {
-        #printbtn {
-            display :  none;
+    <style>
+        @media print {
+            #printbtn {
+                display: none;
+            }
+
+            #reloadButton {
+                display: none;
+            }
+
+            #main-footer {
+                display: none;
+            }
+
+            #search {
+                display: none;
+            }
+
+            a[href]:after {
+                content: none !important;
+            }
         }
-        #reloadButton {
-            display :  none;
+
+        .table {
+            width: 100%;
         }
-        #main-footer{
-            display :  none;
+
+        .table thead,
+        .table tbody {
+            border: 1px solid #000;
         }
-        #search{
-            display :  none;
+
+        .table>tbody>tr>td,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>td,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>thead>tr>th {
+            padding: 5px;
+            line-height: 1.42857143;
+            border: 1px solid #000;
         }
-        a[href]:after {
-            content: none !important;
-        }
-    }
-    .table{width:100%;} .table thead, .table tbody{border:1px solid #000;}
-    .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {padding:5px;line-height:1.42857143;border:1px solid #000;}
-</style>
+    </style>
 
     <section class="content-header">
         <h1>
@@ -41,7 +63,8 @@
         <div class="row">
             <div class="col-xs-12">
                 <div align="right">
-                    <button id ="printbtn" type="button" value="Print this page" onclick="window.print();"><i class="fa fa-print"></i> Print</button>
+                    <button id ="printbtn" type="button" value="Print this page" onclick="window.print();"><i
+                            class="fa fa-print"></i> Print</button>
                     <button id ="reloadButton" onclick="myFunction()">Reload page</button>
                 </div>
                 <script>
@@ -50,9 +73,9 @@
                     }
                 </script>
                 <h4 align="center" class="page-header" style="text-transform:uppercase;">
-                    <img src="company_logo/" alt="logo" height="50px" width="150px" style="height: 60px;width: 350px;"><br/>
+                    <img src="{{ asset('backend/assets/logo.png') }}" alt="logo" height="80px" width="200px"><br/>
                     <span style="font-size: 15px">
-                                            </span><br/>
+                    </span><br />
                     <span style="font-size: 15px">
                         Supliyer Report
                     </span>
@@ -73,15 +96,30 @@
                             <th class="text-right">Previous Dues</th>
                         </tr>
                     </thead>
+                    @php
+                        $dues = 0;
+                    @endphp
                     <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td class="text-left"><a href="{{route('Report.supliyer.ledger')}}" target="_blank">Aslam </a></td>
-                                    <td></td>
-                                    <td>Savar</td>
-                                    <td></td>
-                                    <td class="text-right">32.00</td>
-                                </tr>
+                        @forelse ($data ?? [] as $item)
+                        @php
+                            $dues += $item->previous_due;
+                        @endphp
+                        <tr>
+                            <td>{{$loop->index+1}}</td>
+                            <td class="text-left">
+                                <a href="{{ route('Report.supliyer.ledger') }}" target="_blank">{{$item->supplier->company_name}}</a>
+                            </td>
+                            <td>{{$item->supplier->contact_person}}</td>
+                            <td>{{$item->supplier->address  }}</td>
+                            <td></td>
+                            <td class="text-right">{{$item->previous_due}}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td class="text-center" colspan="6">No Record Found</td>
+                        </tr>
+                        @endforelse
+
                     </tbody>
                     <tfoot>
                         <tr>
@@ -90,16 +128,15 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <th class="text-right" style="color : red">5,953.00</th>
+                            <th class="text-right" style="color : red">{{$dues}}</th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
             <!-- /.col
-        </div>
-            <!-- /.row -->
+            </div>
+                <!-- /.row -->
     </section>
 
 
 @endsection
-

@@ -6,21 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\EmployeeLedger;
 use App\Models\EmployeeSalary;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EmployeeSalaryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employeeSalary = EmployeeSalary::with([
-            'employee'=>function($query){
-                $query->select('id','employee_name');
-            }])
-            ->latest()
-            ->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $cusId = $request->input('employee_id', 0);
+
+        $query = EmployeeSalary::with(['employee:id,employee_name']);
+
+        if(!empty($cusId)){
+            $query->where('employee_id', $cusId);
+        }
+
+        if(!empty($from_date) && !empty($to_date)){
+            $query->whereBetween('date', [$from_date, $to_date]);
+        }
+
+        $employeeSalary = $query->latest()->get();
+
+
         $employee = Employee::orderBy('id','desc')->get();
 
-        return view('admin.hr-management.salary.index',compact('employee','employeeSalary'));
+        return view('admin.hr-management.salary.index',compact('employee','employeeSalary', 'from_date','to_date','cusId'));
     }
 
     public function store(Request $request)

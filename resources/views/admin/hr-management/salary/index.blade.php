@@ -29,16 +29,18 @@
                         </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
-                        <form method="post" action="">
+                        <form method="get" action="{{route('HR.employee.salary.list')}}">
+                            @csrf
                             &nbsp;From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date"
-                                value="2024-06-03">
+                                value="{{$from_date}}">
                             &nbsp;To : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date"
-                                value="2024-06-03">
+                                value="{{$to_date}}">
                             &nbsp;<select name="employee_id" class="form-control select2" style="width: 200px;">
                                 <option value="0">ALL</option>
-                                <option value="1">Md.Hafizulla</option>
-                                <option value="2">Md.ashed hossin</option>
-                                <option value="3">Sakib Al Hasan</option>
+                                @forelse ($employee as $item)
+                                <option value="{{$item->id}}" {{$item->id==$cusId ?'selected':''}}>{{$item->employee_name}}</option>
+                                @empty
+                                @endforelse
                             </select>
                             <input type="submit" name="search_btn" value="Search">
                         </form>

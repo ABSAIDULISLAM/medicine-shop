@@ -23,7 +23,6 @@ class SubHead extends Model
     }
 
 
-
     public $timestamps = false;
 
     protected $attributes = [

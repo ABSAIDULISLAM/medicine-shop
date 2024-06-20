@@ -22,14 +22,14 @@ class ExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account_head' => ['required', 'exists:account_heads,id'],
-            'employee_id' => ['required', 'exists:employees,id'],
+            'account_head' => ['nullable'],
+            'employee_id' => ['nullable'],
             'amount' => ['required', 'numeric','max_digits:10', 'min_digits:1' ],
             'creator' => ['nullable'],
             'bank_id' => ['nullable','exists:bank_setups,id'],
-            'sub_head_id' => ['required','exists:sub_heads,id'],
+            'sub_head_id' => ['nullable'],
             'remarks' => ['nullable','string'],
-            'scnd_head_id' => ['required', 'exists:second_sub_heads,id'],
+            'scnd_head_id' => ['nullable'],
             'date' => ['required','date', 'date_format:Y-m-d' ],
             'cashAmount' => ['nullable','string', 'max:256'],
             'chequeNum' => ['nullable','string', 'max:256'],

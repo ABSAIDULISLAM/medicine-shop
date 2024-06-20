@@ -33,8 +33,8 @@
                                 <thead>
                                     <tr style="background-color: #14A586;color: #fff;">
                                         <th>SL</th>
-                                        <th>Account Head</th>
                                         <th>Journal Name</th>
+                                        <th>Account Head</th>
                                         <th>Sub Head</th>
                                         <th>Action</th>
                                     </tr>
@@ -44,14 +44,14 @@
                                     @if ($item->accounthead && $item->journal)
                                     <tr>
                                         <td>{{$loop->index+1}}</td>
-                                        <td class="text-left">{{$item->accounthead->head_name}}</td>
                                         <td class="text-left">{{$item->journal->name}}</td>
+                                        <td class="text-left">{{$item->accounthead->head_name}}</td>
                                         <td>{{$item->sub_head}}</td>
                                         <td class="text-center">
                                             <button onclick="editModal('{{ $item->id }}', '{{ $item->accounthead->id }}', '{{ $item->journal->id }}', '{{ $item->sub_head }}', '{{ $item->second_sub_head }}')" class="btn red-meadow" style="background-color: #006666">
                                                 <i class="fa fa-pencil" style="color: #fff"></i>
                                             </button>
-                                            <a href="?name=delete&id=1" onclick=" return checkDelete();"><button
+                                            <a href="{{route('Settings.sub-head.delete',['id'=>Crypt::encrypt($item->id)])}}" onclick=" return checkDelete();"><button
                                                     class="btn red-meadow" style="background-color : red"><i
                                                         class="fa fa-trash-o " style="color : #fff"></i></button></a>
                                         </td>
@@ -87,20 +87,6 @@
                     <form method="post" action="{{route('Settings.sub-head.update')}}">
                         @csrf
                         <div class="form-group">
-                            <label for="account_head">Account Name</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                <select name="account_head" id="account_head" class="form-control select2"
-                                    style="width: 100%;">
-                                    <option value="">Select Account Head</option>
-                                    @forelse ($accountheads as $item)
-                                        <option value="{{$item->id}}">{{$item->head_name}}</option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="jornal_id">Journal Name</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
@@ -115,10 +101,25 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="account_head">Account Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <select name="account_head" id="account_head" class="form-control select2"
+                                    style="width: 100%;">
+                                    <option value="">Select Account Head</option>
+                                    @forelse ($accountheads as $item)
+                                        <option value="{{$item->id}}">{{$item->head_name}}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="sub_head">Sub head</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                <input type="text" name="id" id="id">
+                                <input type="hidden" name="id" id="id">
                                 <input type="text" name="sub_head" id="sub_head"
                                     class="form-control" placeholder="Sub head" autocomplete="off">
                             </div>
@@ -154,20 +155,6 @@
                     <form method="post" action="{{route('Settings.sub-head.store')}}">
                         @csrf
                         <div class="form-group">
-                            <label for="account_head">Account Name</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                <select name="account_head" id="account_head" class="form-control select2"
-                                    style="width: 100%;">
-                                    <option value="">Select Account Head</option>
-                                    @forelse ($accountheads as $item)
-                                        <option value="{{$item->id}}">{{$item->head_name}}</option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="jornal_id">Journal Name</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
@@ -181,6 +168,21 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="account_head">Account Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <select name="account_head" id="account_head" class="form-control select2"
+                                    style="width: 100%;">
+                                    <option value="">Select Account Head</option>
+                                    @forelse ($accountheads as $item)
+                                        <option value="{{$item->id}}">{{$item->head_name}}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="sub_head">Sub head</label>
                             <div class="input-group">

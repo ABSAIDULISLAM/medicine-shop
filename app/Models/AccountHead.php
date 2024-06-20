@@ -16,4 +16,14 @@ class AccountHead extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function subhead()
+    {
+        return $this->hasMany(SubHead::class, 'account_head', 'id');
+    }
+
+    public function journal()
+    {
+        return $this->hasMany(Journal::class, 'account_head', 'id');
+    }
 }

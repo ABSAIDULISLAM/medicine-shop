@@ -6,13 +6,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
     // Route::get('test', [App\Http\Controllers\backend\HomeController::class, 'test'])->name('test');
     Route::get('dashboard', [App\Http\Controllers\backend\HomeController::class, 'index'])->name('Admin.dashboard');
 
-    Route::controller(App\Http\Controllers\Admin\CustomerController::class)->prefix('customer/')->as('Customer.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\CustomerController::class)
+    ->prefix('customer/')->as('Customer.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::post('store', 'store')->name('store');
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
     });
-    Route::controller(App\Http\Controllers\Admin\SupliyerController::class)->prefix('suplyer/')->as('Supliyer.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\SupliyerController::class)
+    ->prefix('suplyer/')->as('Supliyer.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::post('store', 'store')->name('store');
         Route::post('update', 'update')->name('update');
@@ -30,7 +32,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('delete/{id}', 'delete')->name('delete');
     });
 
-    Route::controller(App\Http\Controllers\Admin\MedicineController::class)->prefix('medicine/')->as('Medicine.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\MedicineController::class)
+    ->prefix('medicine/')->as('Medicine.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::get('create', 'create')->name('create');
         Route::post('store', 'store')->name('store');
@@ -43,7 +46,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('search', 'search')->name('search');
     });
 
-    Route::controller(App\Http\Controllers\Admin\PurchaseController::class)->prefix('purchase/')->as('Purchase.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\PurchaseController::class)
+    ->prefix('purchase/')->as('Purchase.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::get('create', 'create')->name('create');
         Route::post('store', 'store')->name('store');
@@ -57,10 +61,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('medicine/store', 'medicineStore')->name('medicine.store');
         Route::post('product/search', 'searchProduct')->name('product.search');
         Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
-        Route::get('filter', 'filter')->name('filter');
     });
 
-    Route::controller(App\Http\Controllers\Admin\SalesController::class)->prefix('sales/')->as('Sales.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\SalesController::class)
+    ->prefix('sales/')->as('Sales.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::get('/sales-data', 'getSalesData')->name('data');
         Route::get('create', 'create')->name('create');
@@ -78,9 +82,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('medicine/store', 'medicineStore')->name('medicine.store');
         // Route::post('product/search', 'searchProduct')->name('product.search');
         Route::post('single/product/search', 'fetchSingleProduct')->name('fetch.single.product');
-        Route::get('filter', 'filter')->name('filter');
-
-        // Route::get('return/list', 'SalesReturnList')->name('return.list');
 
         Route::prefix('return/')->group(function(){
             Route::get('list', 'SalesReturnList')->name('return.list');
@@ -88,7 +89,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         });
     });
 
-    Route::controller(App\Http\Controllers\Admin\CollectionController::class)->prefix('collection/')->as('Collection.')->group(function(){
+    Route::controller(App\Http\Controllers\Admin\CollectionController::class)
+    ->prefix('collection/')->as('Collection.')->group(function(){
         Route::get('list', 'index')->name('index');
         Route::get('money-recipt/{id}', 'MoneyRecipt')->name('money.recipt');
         Route::post('customer/info', 'CustomerInfo')->name('customer.info');
@@ -108,6 +110,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::post('update', 'update')->name('update');
         Route::get('delete/{id}', 'delete')->name('delete');
         Route::post('bank/balance', 'bankBalance')->name('bank.balance');
+        Route::post('account-head/fetch', 'getAccountHead')->name('accounthead');
+        Route::post('sub-head/fetch', 'getSubHead')->name('sub.head');
     });
     Route::controller(App\Http\Controllers\Admin\Account\OtherIncomeController::class)
     ->prefix('account/other-income/')->as('Account.other-income.')->group(function(){
@@ -191,10 +195,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         // employee ledger
         Route::get('ledger', 'EmployeeLedger')->name('ledger');
         Route::get('ledger/statement', 'EmployeeLedgerStatement')->name('ledger.statement');
-        Route::get('ledger/statement/filter', 'EmployeeLedgerStatementFilter')->name('ledger.statement.filter');
-
         Route::get('monthly-salary-sheet', 'MonthlySalarySheet')->name('monthly.salary.sheet');
-        Route::get('employee-statement', 'EmployeeStatement')->name('statement');
     });
 
     Route::controller(App\Http\Controllers\Admin\Report\CustomerReportController::class)
@@ -203,9 +204,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('due', 'due')->name('due');
         Route::get('statement', 'statement')->name('statement');
         Route::get('ledger', 'ledger')->name('ledger');
-        Route::get('ledger/statment', 'ledgerStatement')->name('ledger.statement');
-        Route::get('ledger/statment/filter', 'ledgerStatementFilter')->name('ledger.statement.filter');
-
     });
 
     Route::controller(App\Http\Controllers\Admin\StockController::class)
@@ -221,9 +219,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
 
     Route::controller(App\Http\Controllers\Admin\ReportController::class)
     ->prefix('report/')->as('Report.')->group(function(){
+
         Route::prefix('employee')->group(function(){
             Route::get('cash-statement', 'CashStatement')->name('cash.statement');
-            Route::get('expired-medicine-report', 'ExpiredMedicineReport')->name('expired.medicine.report');
+            Route::get('expired-medicine/list', 'ExpiredMedicineReport')->name('expired.medicine.report');
+            Route::get('medicine-statement/ledger/{id}', 'MedicineLedger')->name('medicine.statment');
             Route::get('stock-report', 'StockReport')->name('stock.report');
             Route::get('stockout', 'Stockout')->name('stockout');
             Route::get('sales-report', 'SalesReport')->name('sales.report');
@@ -231,19 +231,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
             Route::get('purchase-report', 'PurchaseReport')->name('purchase.report');
             Route::get('supliyer-report', 'SupliyerReport')->name('supliyer.report');
             Route::get('supliyer-ledger', 'SupliyerLedger')->name('supliyer.ledger');
-
             Route::get('bank-leadger', 'BankLeadger')->name('bank.leadger');
+            Route::get('bank/statement/{id}', 'BankStatement')->name('bank.statement');
             Route::get('collection-report', 'CollectionReport')->name('collection.report');
             Route::get('payment-report', 'PaymentReport')->name('payment.report');
 
-
             Route::get('expense-head-report', 'ExpenseHeadReport')->name('expense.head.report');
             Route::get('single-head-report', 'SingleHeadReport')->name('single.head.report');
-            Route::get('expense-report', 'ExpenseReport')->name('expense.report');
-            Route::get('invoice-profit', 'InvoiceProfit')->name('invoice.profit');
-            Route::get('profit-loss', 'ProfitLoss')->name('profit-loss');
 
+            Route::get('expense-report', 'ExpenseReport')->name('expense.report');
+            Route::get('expense/voucher/{id}', 'ExpenseDebitVowchar')->name('expense.debit.vouchar');
         });
+
+        Route::get('invoice-profit', 'InvoiceProfit')->name('invoice.profit');
+        Route::get('profit-loss', 'ProfitLoss')->name('profit-loss');
     });
 
     Route::controller(App\Http\Controllers\admin\Settings\GenericController::class)->prefix('settings/generic')->as('Settings.generic.')->group(function(){
@@ -284,7 +285,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('delete/{id}', 'delete')->name('delete');
     });
 
-    Route::controller(App\Http\Controllers\admin\Settings\SubHeadController::class)->prefix('settings/sub-head')->as('Settings.sub-head.')->group(function(){
+    Route::controller(App\Http\Controllers\admin\Settings\SubHeadController::class)
+    ->prefix('settings/sub-head')->as('Settings.sub-head.')->group(function(){
         Route::get('list', 'index')->name('list');
         Route::post('store', 'store')->name('store');
         Route::post('update', 'update')->name('update');
@@ -305,11 +307,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin/')->group(function(){
         Route::get('delete/{id}', 'delete')->name('delete');
     });
 
-    Route::controller(App\Http\Controllers\Admin\SettingsController::class)->prefix('settings/')->as('Settings.')->group(function(){
+    // Route::controller(App\Http\Controllers\Admin\SettingsController::class)->prefix('settings/')->as('Settings.')->group(function(){
 
-        Route::get('new-barcode', 'NewBarcode')->name('new.barcode');
+    //     Route::get('new-barcode', 'NewBarcode')->name('new.barcode');
 
-    });
+    // });
+
+    Route::get('barcode', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('Settings.new.barcode');
+    Route::post('barcode/generate', [App\Http\Controllers\Admin\SettingsController::class, 'generate'])->name('barcode.generate');
+    Route::get('barcode/image/{code}', [App\Http\Controllers\Admin\SettingsController::class, 'generateBarcode'])->name('barcode.image');
 
 
 });

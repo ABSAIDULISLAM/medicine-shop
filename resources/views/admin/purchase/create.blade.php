@@ -18,8 +18,8 @@
             <small>Add Purchases</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Purchases</a></li>
+            <li><a href="{{ route('Admin.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ route('Purchase.index') }}">Purchases</a></li>
             <li class="active">Add Purchases</li>
         </ol>
     </section>

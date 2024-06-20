@@ -27,20 +27,24 @@
                         </div>
                     </div>
                     <div align="right" style="margin-right: 10px;margin-top: 10px;">
-                        <form method="post" action="">
+                        <form method="get" action="{{route('Account.other-income.list')}}">
+                            @csrf
                             From : <input style="height: 27px;margin-top: 2px;" type="date" name="from_date"
-                                value="2024-03-21">
+                                value="{{$from_date}}">
                             &nbsp;To : <input style="height: 27px;margin-top: 2px;" type="date" name="to_date"
-                                value="2024-03-21">
+                                value="{{$to_date}}">
                             &nbsp;<select name="account_head" id="account_head" class="form-control select2"
                                 style="width: 200PX;">
                                 <option value="0">ALL</option>
-                                <option value="8">Administrative </option>
-                                <option value="7">Projonmo</option>
+                                @forelse ($accountheads as $item)
+                                <option value="{{$item->id}}" {{$item->id==$accountHead?'selected':''}}>{{$item->head_name}} </option>
+                                @empty
+                                @endforelse
                             </select>
                             <input style="height: 27px;margin-top: 2px;" type="text" name="voucher_no"
-                                placeholder="Voucher Number">
-                            <input type="submit"  value="Search">
+                                placeholder="Voucher Number" value="{{$inv}}">
+
+                            <input type="submit" value="Search">
                         </form>
                     </div>
                     <!-- /.box-header -->
@@ -63,12 +67,12 @@
                                     @php
                                         $total = 0;
                                     @endphp
-                                    @forelse ($income as $item)
+                                    @forelse ($income ?? [] as $item)
                                     <tr>
                                         <td class="text-center">{{$loop->index+1}}</td>
                                         <td class="text-center">{{$item->date}}</td>
                                         <td class="text-center" style="width: 80px"><a href="{{ route('Account.expense.invoice', ['invno' => $item->id]) }}" onclick="return PopWindow(this.href, this.target);">{{$item->money_receipt}}</a></td>
-                                        <td class="text-center">{{$item->accounthead->head_name}}</td>
+                                        <td class="text-center">{{$item->accounthead->name ?? ''}}</td>
                                         <td class="text-center">{{$item->purpose}}</td>
                                         <td class="text-right">{{$item->amount}}</td>
                                         <td class="text-center"><span class="label label-{{$item->status==1?'success':'danger'}}">{{$item->status==1 ? 'Active':'deactive'}}</span></td>

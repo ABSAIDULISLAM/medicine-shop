@@ -7,8 +7,8 @@
             <small>Add Collection</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Collection</a></li>
+            <li><a href="{{route('Admin.dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{route('Collection.index')}}">Collection</a></li>
             <li class="active">Add Collection</li>
         </ol>
     </section>

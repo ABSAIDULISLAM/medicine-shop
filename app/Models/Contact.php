@@ -41,5 +41,11 @@ class Contact extends Model
         return $this->hasMany(CollectionInfo::class, 'customer_id', 'id');
     }
 
+    public function customerledger()
+    {
+        return $this->hasMany(CustomerLedger::class, 'customer_id', 'id');
+    }
+
+
 
 }

@@ -25,4 +25,12 @@ class Employee extends Model
     {
         return $this->belongsTo(EmployeeType::class, 'employee_type', 'id');
     }
+    public function employeesalary()
+    {
+        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id');
+    }
+    public function employeeledger()
+    {
+        return $this->hasMany(EmployeeLedger::class, 'employee_id', 'id');
+    }
 }

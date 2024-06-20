@@ -8,10 +8,7 @@ use App\Models\BankSetup;
 use App\Models\CashStatement;
 use App\Models\Contact;
 use App\Models\CustomerLedger;
-use App\Models\Generic;
 use App\Models\Medicine;
-use App\Models\Purchases;
-use App\Models\PurchasesDetail;
 use App\Models\Sales;
 use App\Models\SalesDetail;
 use App\Models\SalesReturn;
@@ -25,15 +22,22 @@ use Illuminate\Support\Facades\Validator;
 
 class SalesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = Sales::with(['customer' => function($queey){
-            $queey->select('id','company_name');
-        }])
-        ->latest()
-        ->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $inv = $request->input('invoice_number', '');
 
-        return view('admin.sales.index', compact('data'));
+        $query = Sales::with(['customer:id,company_name']);
+        if (!empty($from_date) && !empty($to_date)) {
+            $query->whereBetween('date', [$from_date, $to_date]);
+        }
+        if (!empty($inv)) {
+            $query->where('invoice_number', $inv);
+        }
+        $data = $query->latest()->get();
+
+        return view('admin.sales.index', compact('data','from_date','to_date','inv'));
     }
 
     public function getSalesData()
@@ -41,27 +45,6 @@ class SalesController extends Controller
         $sales = Sales::with(['salesDetails','customer'])->get();
         return response()->json($sales);
     }
-
-
-    // public function filter(Request $request)
-    // {
-    //     $fromDate = Carbon::parse($request->input('from_date'))->startOfDay();
-    //     $toDate = Carbon::parse($request->input('to_date'))->endOfDay();
-    //     $supplierId = $request->input('supplier_id');
-
-    //     $purchases = Purchases::query()
-    //         ->whereBetween('created_at', [$fromDate, $toDate]);
-
-    //     if ($supplierId != 0) {
-    //         $purchases->orWhere('supplier_id', $supplierId);
-    //     }
-
-    //     $filteredData = $purchases->with(['suplyer'=>function($query){
-    //         $query->select('id', 'company_name');
-    //     }])->get();
-
-    //     return view('admin.purchase.index', compact('filteredData','fromDate','toDate'));
-    // }
 
     public function create()
     {
@@ -370,7 +353,7 @@ class SalesController extends Controller
                 'debit' => 0,
                 'credit' => $request->cash_paid ?? 0,
                 'insert_status' => 1, // 1=collection
-                'insert_id' => $sales->id,
+                'insert_id' => $request->customer_id,
             ]);
 
             return redirect()->route('Sales.invoice.print', ['id' => Crypt::encrypt($sales->id)])->with('success', 'Sales Invoice Created Successfully');
@@ -525,7 +508,7 @@ class SalesController extends Controller
             'debit' => $request->payment ?? 0,
             'credit' => 0,
             'insert_status' => 1, // 1 = Sale
-            'insert_id' => $sales->id,
+            'insert_id' => $request->customer_id,
         ]);
 
         return redirect()->route('Sales.index')->with('success', 'Sales Invoice Updated Successfully');
@@ -653,8 +636,8 @@ class SalesController extends Controller
                 'remarks' => $request->invoice_number,
                 'debit' => 0,
                 'credit' => $request->cash_paid ?? 0,
-                'insert_status' => 1,
-                'insert_id' => $sales->id,
+                'insert_status' => 5,
+                'insert_id' => $request->customer_id,
             ]);
 
         }
@@ -675,15 +658,23 @@ class SalesController extends Controller
         }
     }
 
-    public function SalesReturnList()
+    public function SalesReturnList(Request $request)
     {
-        $data = SalesReturn::with(['customer' => function($queey){
-            $queey->select('id','company_name');
-        }])
-        ->latest()
-        ->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $inv = $request->input('invoice_number', '');
 
-        return view('admin.sales.return-list', compact('data'));
+        $query = SalesReturn::with(['customer:id,company_name']);
+        if (!empty($from_date) && !empty($to_date)) {
+            $query->whereBetween('date', [$from_date, $to_date]);
+        }
+        if (!empty($inv)) {
+            $query->where('invoice_number', $inv);
+        }
+        $data = $query->latest()->get();
+
+        return view('admin.sales.return-list', compact('data','from_date','to_date','inv'));
+
     }
 
     public function SalesReturndelete($id)

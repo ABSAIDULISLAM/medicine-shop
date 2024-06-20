@@ -50,19 +50,19 @@
                     }
                 </script>
                 <h4 align="center" class="page-header" style="text-transform:uppercase;">
-                    <img src="company_logo/" alt="logo" style="height: 160px;width: 200px;"><br/>
-                    <span style="font-size: 15px">
-                                            </span><br/>
+                    <img src="{{ asset('backend/assets/logo.png') }}" alt="logo" height="80px" width="200px"><br/>
+                    <span style="font-size: 15px"></span><br/>
                     <span style="font-size: 15px">
                         Cash Statement
                     </span><br>
                     <span style="font-size: 12px;margin-left: 30px">
-                                                Date               : 21-03-2024                                               <span style="float: right;">21-03-2024</span>
+                        Date : {{$fromDate}}  <strong> To </strong>  {{$toDate}}
                     </span>
                 </h4>
             </div>
-             <div  style="margin-right:10px;margin-top:10px;padding:10px;text-align: right" id="search">
-                <form method="POST" action="">
+            <div style="margin-right:10px;margin-top:10px;padding:10px;text-align: right" id="search">
+                <form method="get" action="{{ route('Report.cash.statement') }}">
+                    @csrf
                     <div class="row">
                         <div class="form-group col-md-5"></div>
                         <div class="form-group col-md-3">
@@ -72,7 +72,9 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="date" name="from_date" class="form-control pull-right" value="2024-03-01" autocomplete="off" required="">
+                                    <input type="date" value="{{ $fromDate }}" name="from_date"
+                                        class="form-control pull-right" id="datepicker4" autocomplete="off"
+                                        required="">
                                 </div>
                                 <!-- /.input group -->
                             </div>
@@ -84,14 +86,15 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="date" name="to_date" class="form-control pull-right" value="2024-03-21" autocomplete="off" required="">
+                                    <input type="date" value="{{ $toDate }}" name="to_date"
+                                        class="form-control pull-right" id="datepicker2" autocomplete="off"
+                                        required="">
                                 </div>
                                 <!-- /.input group -->
                             </div>
                         </div>
-
                         <div class="form-group col-md-1">
-                            <button type="submit" name="search_btn" class="btn btn-primary" style="margin-top:25px">Search</button>
+                            <button type="submit" class="btn btn-primary" style="margin-top:25px">Search</button>
                         </div>
                     </div>
                 </form>
@@ -99,7 +102,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12 table-responsive">
-                 <table class="table table-striped">
+                <table class="table table-striped">
                     <thead>
                         <tr style="background-color: #029653;color: #fff">
                             <th style="width: 10px;text-align: center">SL</th>
@@ -111,26 +114,73 @@
                             <th style="width: 120px;text-align: center">Remarks</th>
                         </tr>
                     </thead>
+                    @php
+                        $totalDebit = 0;
+                        $totalCredit = 0;
+                    @endphp
                     <tbody>
-
                         <tr>
-                            <th colspan="4" style="width: 350px;text-align: left; color: red">Opening Balance</th>
-                            <th style="width: 100px;text-align: right;color: red">44476051.33</th>
-                            <th style="width: 100px;text-align: right;color: red"></th>
-                            <th style="width: 120px;text-align: center"></th>
+                            <th colspan="4" style="text-align: left; color: red">Opening Balance</th>
+                            <th style="text-align: right; color: red">{{$totalDebit}}</th>
+                            <th style="text-align: right; color: red"></th>
+                            <th style="text-align: center"></th>
                         </tr>
-
-
-
-
+                        @forelse ($cashstatement as $item)
+                        @php
+                            $totalDebit += $item->debit;
+                            $totalCredit += $item->credit;
+                            $title = '';
+                            $info = '';
+                            $contact = App\Models\Contact::find($item->insert_id);
+                            switch ($item->insert_status) {
+                                case 1:
+                                    $title = 'Sale';
+                                    $info = $contact ? $contact->company_name : 'N/A';
+                                    break;
+                                case 2:
+                                    $title = 'Collection';
+                                    $info = $contact ? $contact->company_name : 'N/A';
+                                    break;
+                                case 3:
+                                    $title = 'Expense';
+                                    $info = $contact ? $contact->company_name : 'N/A';
+                                    break;
+                                case 4:
+                                    $title = 'Purchase';
+                                    $info = $contact ? $contact->company_name : 'N/A';
+                                    break;
+                                case 5:
+                                    $title = 'Else';
+                                    $info = $contact ? $contact->company_name : 'N/A';
+                                    break;
+                            }
+                        @endphp
                         <tr>
-                            <th colspan="4" style="width: 350px;text-align: left; color: red">Total Amount</th>
-                            <th style="width: 100px;text-align: right;color: red">44476051.33</th>
-                            <th style="width: 100px;text-align: right;color: red">0.00</th>
-                            <th style="width: 120px;text-align: left;color: red;font-size: 13px">Closing balance : 44476051.33</th>
+                            <td class="text-center">{{$loop->index + 1}}</td>
+                            <td class="text-center">{{$item->date}}</td>
+                            <td class="text-center">{{ $title }} / {{ $info }}</td>
+                            <td class="text-center">{{ $title }}</td>
+                            <td class="text-center">{{ number_format($item->debit, 2) }}</td>
+                            <td class="text-center">{{ number_format($item->credit, 2) }}</td>
+                            <td class="text-center">{{ $item->remarks }}</td>
                         </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center">No Record Found</td>
+                        </tr>
+                        @endforelse
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" style="text-align: left; color: red">Total Amount</th>
+                            <th style="text-align: right; color: red">{{ number_format($totalDebit, 2) }}</th>
+                            <th style="text-align: right; color: red">{{ number_format($totalCredit, 2) }}</th>
+                            <th style="text-align: left; color: red; font-size: 13px">Closing balance: {{ number_format($totalDebit - $totalCredit, 2) }}</th>
+                        </tr>
+                    </tfoot>
                 </table>
+
+
             </div>
 
     </section>

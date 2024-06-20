@@ -33,7 +33,7 @@
                     <!-- /.box-header -->
                     @includeIf('errors.error')
                     <!-- form start -->
-                    <form method="get" action="{{route('Report.customer.ledger.statement')}}" target="_blank">
+                    <form method="get" action="{{route('Report.customer.statement')}}" target="_blank">
                         @csrf
                         <div class="box-body">
                             <div class="row">
@@ -72,7 +72,7 @@
                                         <label for="cus_id">Company Name</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                            <select name="customer_id" id="cus_id" class="form-control select2"
+                                            <select name="cusId" id="cus_id" class="form-control select2"
                                                 style="width: 100%;" required>
                                                 <option value="">Select Company</option>
                                                 @forelse ($company as $item)

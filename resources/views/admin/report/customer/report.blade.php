@@ -109,7 +109,7 @@
                         @endphp
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td class="text-left"><a href="view-customer?id={{ $item->id }}" target="_blank">{{ $item->company_name }}</a></td>
+                            <td class="text-left"><a href="{{ route('Report.customer.statement',['cusId'=>$item->id])}}" target="_blank">{{ $item->company_name }}</a></td>
                             <td>{{ $item->contact_person }}</td>
                             <td>{{ $item->address }}</td>
                             <td>{{ $item->contact_num }}</td>

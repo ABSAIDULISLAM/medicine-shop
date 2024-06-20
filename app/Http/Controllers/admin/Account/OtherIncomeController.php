@@ -11,18 +11,39 @@ use App\Models\Employee;
 use App\Models\Income;
 use App\Models\SecondSubHead;
 use App\Models\SubHead;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class OtherIncomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $income = Income::with('accounthead')->where('account_type', 1)->orderBy('id', 'desc')->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $inv = $request->input('voucher_no', '');
+        $accountHead = $request->input('account_head', 0);
 
-        return view('admin.account.other-income.index', compact('income'));
+        $query = Income::with('accounthead')
+                        ->where('account_type', 1)
+                        ->when($from_date && $to_date, function($query) use ($from_date, $to_date) {
+                            return $query->whereBetween('date', [$from_date, $to_date]);
+                        })
+                        ->when($inv, function($query) use ($inv) {
+                            return $query->where('money_receipt', $inv);
+                        })
+                        ->when($accountHead, function($query) use ($accountHead) {
+                            return $query->where('account_head', $accountHead);
+                        });
+
+        $income = $query->orderBy('id', 'desc')->get();
+        $accountheads = AccountHead::orderBy('id', 'desc')->get();
+
+        return view('admin.account.other-income.index', compact('income', 'from_date', 'to_date', 'inv', 'accountheads', 'accountHead'));
+
     }
+
     public function invoice($id){
         $data = Income::with(['accounthead', 'subhead',
         'employee'=>function($employee){
@@ -95,7 +116,7 @@ class OtherIncomeController extends Controller
             'debit'=>$request->amount,
             'credit'=>0,
             'insert_status'=> 2, //2 == collection
-            'insert_id'=> $expense->id,
+            'insert_id'=> $request->employee_id,
         ]);
 
         return redirect()->route('Account.other-income.list')->with('success', 'Income Inserted Successfully');

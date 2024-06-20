@@ -6,21 +6,42 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ExpenseRequest;
 use App\Models\AccountHead;
 use App\Models\BankSetup;
+use App\Models\CashStatement;
 use App\Models\Employee;
 use App\Models\Income;
+use App\Models\Journal;
 use App\Models\SecondSubHead;
 use App\Models\SubHead;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $expense = Income::with('accounthead')->where('account_type', 0)->orderBy('id', 'desc')->get();
+        $from_date = $request->input('from_date', Carbon::now()->subDays(30)->format('Y-m-d'));
+        $to_date = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+        $inv = $request->input('voucher_no', '');
+        $accountHead = $request->input('account_head', 0);
 
-        return view('admin.account.expense.index', compact('expense'));
+        $query = Income::with('accounthead')
+                        ->where('account_type', 0)
+                        ->when($from_date && $to_date, function($query) use ($from_date, $to_date) {
+                            return $query->whereBetween('date', [$from_date, $to_date]);
+                        })
+                        ->when($inv, function($query) use ($inv) {
+                            return $query->where('money_receipt', $inv);
+                        })
+                        ->when($accountHead, function($query) use ($accountHead) {
+                            return $query->where('account_head', $accountHead);
+                        });
+
+        $expense = $query->orderBy('id', 'desc')->get();
+        $accountheads = AccountHead::orderBy('id', 'desc')->get();
+
+        return view('admin.account.expense.index', compact('expense', 'from_date', 'to_date', 'inv', 'accountheads', 'accountHead'));
     }
 
     public function invoice($id){
@@ -34,16 +55,16 @@ class ExpenseController extends Controller
 
     public function create()
     {
-        $accountHead = AccountHead::orderBy('id', 'asc')->get();
-        $subHead = SubHead::orderBy('id', 'asc')->get();
-        $scnSubHead = SecondSubHead::orderBy('id', 'asc')->get();
+        $journal = Journal::orderBy('id', 'asc')->get();
+        // $accounthead = AccountHead::orderBy('id', 'asc')->get();
+        // $subhead = SubHead::orderBy('id', 'asc')->get();
         $employee = Employee::orderBy('id', 'asc')->get();
         $bank = BankSetup::orderBy('id', 'asc')->get();
 
         return view('admin.account.expense.create', compact([
-            'accountHead',
-            'subHead',
-            'scnSubHead',
+            'journal',
+            // 'accounthead',
+            // 'subhead',
             'employee',
             'bank',
         ]));
@@ -89,23 +110,35 @@ class ExpenseController extends Controller
         }
         $expense->save();
 
+        CashStatement::create([
+            'date'=>$request->date,
+            'remarks'=>$request->remarks,
+            'debit'=>$request->amount,
+            'credit'=>0,
+            'insert_status'=> 3, //3 for expense
+            'insert_id'=> $request->employee_id,
+        ]);
+
+
         return redirect()->route('Account.expense.list')->with('success', 'Expense Inserted Successfully');
     }
 
     public function edit($id)
     {
         $id = crypt::decrypt($id);
+        $journal = Journal::orderBy('id', 'asc')->get();
         $accountHead = AccountHead::orderBy('id', 'asc')->get();
         $subHead = SubHead::orderBy('id', 'asc')->get();
-        $scnSubHead = SecondSubHead::orderBy('id', 'asc')->get();
+        // $scnSubHead = SecondSubHead::orderBy('id', 'asc')->get();
         $employee = Employee::orderBy('id', 'asc')->get();
         $bank = BankSetup::orderBy('id', 'asc')->get();
          $data = Income::find($id);
 
         return view('admin.account.expense.edit', compact([
+            'journal',
             'accountHead',
             'subHead',
-            'scnSubHead',
+            // 'scnSubHead',
             'employee',
             'bank',
             'data',
@@ -152,4 +185,27 @@ class ExpenseController extends Controller
         Income::find($id)->delete();
         return redirect()->back()->with('success', 'Expense Deleted Successfully');
     }
+
+
+    public function getAccountHead(Request $request)
+    {
+        $options = AccountHead::where('journal_id', $request->account_head)
+            ->pluck('head_name', 'id')
+            ->map(function($head_name, $id) {
+                return "<option value='{$id}'>{$head_name}</option>";
+            })->implode('');
+
+        return response()->json($options);
+    }
+    public function getSubHead(Request $request)
+    {
+        $options = SubHead::where('account_head', $request->sub_head_id)
+            ->pluck('sub_head', 'id')
+            ->map(function($sub_head, $id) {
+                return "<option value='{$id}'>{$sub_head}</option>";
+            })->implode('');
+
+        return response()->json($options);
+    }
+
 }

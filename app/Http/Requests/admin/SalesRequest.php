@@ -22,10 +22,8 @@ class SalesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['required', 'exists:contacts,id'],
             'mobile_number' => ['required','regex:/\+?(88)?0?1[3456789][0-9]{8}\b/'],
             'previous_dues' => ['required', 'numeric'],
-            'created_by' => ['nullable', 'exists:users,id'],
             'invoice_number' => ['required'],
             'date' => ['required', 'date', 'date_format:Y-m-d'],
             'total_amount' => ['required','numeric'],
@@ -44,6 +42,8 @@ class SalesRequest extends FormRequest
             'sub_total.*' => ['required','numeric'],
             'sell_price.*' => ['nullable','numeric'],
             'cost_price.*' => ['nullable','numeric'],
+            'customer_id' => ['required', 'exists:contacts,id'],
+            'created_by' => ['nullable', 'exists:users,id'],
         ];
     }
 }

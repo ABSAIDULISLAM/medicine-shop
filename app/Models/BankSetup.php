@@ -16,4 +16,9 @@ class BankSetup extends Model
     protected $attributes = [
         'deletion_status' => 0,
     ];
+
+    public function bankstatement()
+    {
+        return $this->hasMany(BankStatement::class, 'bank_id','id');
+    }
 }

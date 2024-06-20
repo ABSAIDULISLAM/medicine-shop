@@ -59,6 +59,8 @@
                     </script>
                     <div style="text-align:center;margin-top: 25px">
                         <h3></h3>
+                        <img class="my-3" src="{{ asset('backend/assets/logo.png') }}" alt="logo" height="80px" width="200px"
+                            style="height: 80px;width: 200px;margin-left: %"><br />
                         <h5></h5>
                         <h4 style="border: 2px solid #000;padding: 5px;width: 220px;border-radius : 5px;margin-left: 35%;font-weight: bold"><i>CASH DEBIT VOUCHER</i></h4>
                     </div>
@@ -88,13 +90,13 @@
                             <table style="width: 100%;border:none !important;">
                                  <tr>
                                      <td class="noBorder" style="width: 85%"></td>
-                                     <td style="width: 15%;text-align: center"><b> Taka </b></td>
+                                     <td style="width: 15%;text-align: center"><b>Taka</b></td>
                                  </tr>
                                  <tr>
                                      <td class="noBorder" style="width: 85%;">
                                          <table style="width: 100%">
                                              <td class="btmBorder" style="width: 20%;font-size: 12px;"><b> Account Head </b></td>
-                                             <td class="btmBorder" style="width: 80%;font-size: 12px"> {{$data->accounthead->head_name}} </td>
+                                             <td class="btmBorder" style="width: 80%;font-size: 12px"> {{$data->accounthead->name ?? ''}} </td>
                                          </table>
                                      </td>
                                      <td style="width: 15%;text-align: right"></td>
@@ -103,7 +105,7 @@
                                      <td class="noBorder" style="width: 85%">
                                          <table style="width: 100%;">
                                              <td class="btmBorder" style="width: 20%;font-size: 12px"><b> Sub Head </b></td>
-                                             <td class="btmBorder" style="width: 80%;font-size: 12px"> {{$data->subhead->sub_head}}</td>
+                                             <td class="btmBorder" style="width: 80%;font-size: 12px"> {{$data->subhead->sub_head ?? ''}}</td>
                                          </table>
                                      </td>
                                      <td style="width: 15%"></td>
@@ -112,7 +114,7 @@
                                      <td class="noBorder" style="width: 85%">
                                          <table style="width: 100%">
                                              <td class="btmBorder" style="width: 20%;font-size: 12px"><b> Paid To </b></td>
-                                             <td class="btmBorder" style="width: 80%;font-size: 12px"> {{$data->employee->employee_name}}</td>
+                                             <td class="btmBorder" style="width: 80%;font-size: 12px"> {{$data->employee->employee_name ?? ''}}</td>
                                          </table>
                                      </td>
                                      <td style="width: 15%"></td>
@@ -121,10 +123,10 @@
                                      <td class="noBorder" style="width: 85%">
                                          <table style="width: 100%">
                                              <td style="width: 20%;font-size: 12px"><b> On Account of </b></td>
-                                             <td style="width: 80%;font-size: 12px">{{$data->purpose}}</td>
+                                             <td style="width: 80%;font-size: 12px">{{$data->purpose ?? ''}}</td>
                                          </table>
                                      </td>
-                                     <td style="width: 15%;text-align: right"><b>{{$data->amount}}</b></td>
+                                     <td style="width: 15%;text-align: right"><b>{{$data->amount ?? 0}}</b></td>
                                  </tr>
                             </table>
                         </div>
